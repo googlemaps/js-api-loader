@@ -24,7 +24,6 @@ jobs:
       image: selenium/standalone-chrome:latest
       options: --user 1001
     steps:
-      - run: whoami
       - uses: actions/checkout@v2
       - run: npm i
       - run: npm run test:e2e
@@ -36,7 +35,6 @@ jobs:
       image: selenium/standalone-firefox:latest
       options: --user 1001
     steps:
-      - run: whoami
       - uses: actions/checkout@v2
       - run: npm i
       - run: npm run test:e2e
@@ -48,7 +46,6 @@ jobs:
       image: selenium/standalone-opera:latest
       options: --user 1001
     steps:
-      - run: whoami
       - uses: actions/checkout@v2
       - run: npm i
       - run: npm run test:e2e
