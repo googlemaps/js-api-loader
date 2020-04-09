@@ -1,0 +1,59 @@
+{
+  "name": "@googlemaps/js-api-loader",
+  "version": "1.0.0-rc.1",
+  "description": "Wrapper for the loading of Google Maps JavaScript API script in the browser",
+  "keywords": [
+    "google",
+    "maps"
+  ],
+  "homepage": "https://github.com/googlemaps/js-api-loader",
+  "bugs": {
+    "url": "https://github.com/googlemaps/js-api-loader/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/googlemaps/js-api-loader.git"
+  },
+  "license": "Apache-2.0",
+  "author": "Justin Poehnelt",
+  "main": "dist/loader.umd.js",
+  "unpkg": "dist/loader.min.js",
+  "module": "dist/loader.esm.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "docs": "typedoc",
+    "format": "prettier *.json *.js src/* e2e/* examples/* --write",
+    "lint": "eslint src/*",
+    "prepare": "rollup -c",
+    "test": "jest src/*",
+    "test:e2e": "jest e2e/*"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.9.5",
+    "@babel/runtime-corejs3": "^7.9.2",
+    "@types/googlemaps": "^3.39.3",
+    "@types/jest": "^25.2.1",
+    "@types/selenium-webdriver": "^4.0.9",
+    "@typescript-eslint/eslint-plugin": ">=2.25.0",
+    "@typescript-eslint/parser": ">=2.25.0",
+    "chromedriver": "^80.0.2",
+    "core-js": "^3.6.4",
+    "eslint": "^6.8.0",
+    "eslint-plugin-jest": "^23.8.2",
+    "geckodriver": "^1.19.1",
+    "jest": "^25.3.0",
+    "prettier": "^2.0.4",
+    "rollup-plugin-babel": "^4.4.0",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-terser": "^5.3.0",
+    "rollup-plugin-typescript2": "^0.27.0",
+    "selenium-webdriver": "^4.0.0-alpha.7",
+    "ts-jest": "^25.3.1",
+    "typedoc": "^0.17.0-3",
+    "typescript": "^3.8.3"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://wombat-dressing-room.appspot.com"
+  }
+}
