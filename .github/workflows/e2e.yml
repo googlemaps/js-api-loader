@@ -21,9 +21,10 @@ jobs:
   chrome:
     runs-on: ubuntu-latest
     container: 
-      image: selenium/standalone-chrome:latest
+      image: cypress/browsers:node12.13.0-chrome80-ff74
       options: --user 1001
     steps:
+      - run: apt install nodejs -y
       - uses: actions/checkout@v2
       - run: npm i
       - run: npm run test:e2e
@@ -32,23 +33,14 @@ jobs:
   firefox:
     runs-on: ubuntu-latest
     container: 
-      image: selenium/standalone-firefox:latest
+      image: cypress/browsers:node12.13.0-chrome80-ff74
       options: --user 1001
     steps:
+      - run: apt install nodejs -y
       - uses: actions/checkout@v2
       - run: npm i
       - run: npm run test:e2e
         env:
           GOOGLE_MAPS_API_KEY: ${{ secrets.SYNCED_GOOGLE_MAPS_API_KEY_WEB }}
-  opera:
-    runs-on: ubuntu-latest
-    container: 
-      image: selenium/standalone-opera:latest
-      options: --user 1001
-    steps:
-      - uses: actions/checkout@v2
-      - run: npm i
-      - run: npm run test:e2e
-        env:
-          GOOGLE_MAPS_API_KEY: ${{ secrets.SYNCED_GOOGLE_MAPS_API_KEY_WEB }}
-      
+          BROWSER: firefox
+  
