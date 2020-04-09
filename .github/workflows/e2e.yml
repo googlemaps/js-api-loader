@@ -23,6 +23,9 @@ jobs:
     container: 
       image: selenium/standalone-chrome:latest
     steps:
+      - run: whoami
+      - run: su 1001
+      - run: id
       - uses: actions/checkout@v2
       - run: npm i
       - run: npm run test:e2e
@@ -33,6 +36,9 @@ jobs:
     container: 
       image: selenium/standalone-firefox:latest
     steps:
+      - run: whoami
+      - run: su 1001
+      - run: id
       - uses: actions/checkout@v2
       - run: npm i
       - run: npm run test:e2e
@@ -43,6 +49,9 @@ jobs:
     container: 
       image: selenium/standalone-opera:latest
     steps:
+      - run: whoami
+      - run: su 1001
+      - run: id
       - uses: actions/checkout@v2
       - run: npm i
       - run: npm run test:e2e
