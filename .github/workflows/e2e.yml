@@ -24,7 +24,6 @@ jobs:
       image: cypress/browsers:node12.13.0-chrome80-ff74
       options: --user 1001
     steps:
-      - run: apt install nodejs -y
       - uses: actions/checkout@v2
       - run: npm i
       - run: npm run test:e2e
@@ -36,7 +35,6 @@ jobs:
       image: cypress/browsers:node12.13.0-chrome80-ff74
       options: --user 1001
     steps:
-      - run: apt install nodejs -y
       - uses: actions/checkout@v2
       - run: npm i
       - run: npm run test:e2e
