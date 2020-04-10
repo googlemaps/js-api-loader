@@ -20,32 +20,30 @@ import webdriver from "selenium-webdriver";
 let driver: webdriver.WebDriver;
 
 beforeAll(async () => {
-  let capabilities: webdriver.Capabilities;
+  const server = `http://${
+    process.env.SELENIUM_HUB_HOST || "localhost"
+  }:4444/wd/hub`;
+
   switch (process.env.BROWSER || "chrome") {
-    case "safari": {
-      capabilities = webdriver.Capabilities.safari();
+    case "chrome": {
+      driver = new webdriver.Builder()
+        .usingServer(server)
+        .withCapabilities({
+          browserName: "chrome",
+        })
+        .build();
       break;
     }
     case "firefox": {
-      require("geckodriver");
-      capabilities = webdriver.Capabilities.firefox();
-      break;
-    }
-    case "chrome": {
-      require("chromedriver");
-      capabilities = webdriver.Capabilities.chrome();
-      capabilities.set("chromeOptions", {
-        args: [
-          "--headless",
-          "--no-sandbox",
-          "--disable-gpu",
-          "--window-size=1980,1200",
-        ],
-      });
+      driver = new webdriver.Builder()
+        .usingServer(server)
+        .withCapabilities({
+          browserName: "firefox",
+        })
+        .build();
       break;
     }
   }
-  driver = await new webdriver.Builder().withCapabilities(capabilities).build();
 });
 
 afterAll(async () => {

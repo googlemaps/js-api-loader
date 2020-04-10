@@ -20,9 +20,11 @@ on:
 jobs:
   chrome:
     runs-on: ubuntu-latest
-    container: 
-      image: cypress/browsers:node12.13.0-chrome80-ff74
-      options: --user 1001
+    env:
+      SELENIUM_HUB_HOST: hub
+    services:
+      hub:
+        image: selenium/standalone-chrome
     steps:
       - uses: actions/checkout@v2
       - run: npm i
@@ -31,9 +33,11 @@ jobs:
           GOOGLE_MAPS_API_KEY: ${{ secrets.SYNCED_GOOGLE_MAPS_API_KEY_WEB }}
   firefox:
     runs-on: ubuntu-latest
-    container: 
-      image: cypress/browsers:node12.13.0-chrome80-ff74
-      options: --user 1001
+    env:
+      SELENIUM_HUB_HOST: hub
+    services:
+      hub:
+        image: selenium/standalone-firefox
     steps:
       - uses: actions/checkout@v2
       - run: npm i
