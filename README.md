@@ -24,7 +24,7 @@ or
 
 Alternativly you may add the umd package directly to the html document using the unpkg link.
 
-`<script src="https://unpkg.com/@googlemaps/js-api-loader@1.0.0/dist/loader.umd.js"></script>`
+`<script src="https://unpkg.com/@googlemaps/js-api-loader@1.0.0/dist/index.min.js"></script>`
 
 When adding via unpkg, the loader can be accessed at `google.maps.plugins.loader.Loader`.
 

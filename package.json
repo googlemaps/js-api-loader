@@ -16,9 +16,9 @@
   },
   "license": "Apache-2.0",
   "author": "Justin Poehnelt",
-  "main": "dist/loader.umd.js",
-  "unpkg": "dist/loader.min.js",
-  "module": "dist/loader.esm.js",
+  "main": "dist/index.umd.js",
+  "unpkg": "dist/index.min.js",
+  "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "docs": "typedoc",
