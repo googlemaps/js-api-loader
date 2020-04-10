@@ -20,9 +20,7 @@ import webdriver from "selenium-webdriver";
 let driver: webdriver.WebDriver;
 
 beforeAll(async () => {
-  const server = `http://${
-    process.env.SELENIUM_HUB_HOST || "localhost"
-  }:4444/wd/hub`;
+  const server = `http://localhost:4444/wd/hub`;
 
   switch (process.env.BROWSER || "chrome") {
     case "chrome": {
