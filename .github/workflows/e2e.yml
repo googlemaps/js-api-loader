@@ -13,7 +13,7 @@
 # limitations under the License.
 
 name: e2e
-on: 
+on:
   push:
   schedule:
     - cron: "0 12 * * *"
@@ -22,9 +22,14 @@ jobs:
     runs-on: ubuntu-latest
     services:
       hub:
-        image: selenium/standalone-chrome
+        image: selenium/hub:3.141.59-gold
         ports:
-        - 4444:4444
+          - 4444:4444
+      chrome:
+        image: selenium/node-chrome:3.141.59-gold
+        env:
+          HUB_HOST: hub
+          HUB_PORT: 4444
     steps:
       - uses: actions/checkout@v2
       - run: npm i
@@ -37,7 +42,7 @@ jobs:
       hub:
         image: selenium/standalone-firefox
         ports:
-        - 4444:4444
+          - 4444:4444
     steps:
       - uses: actions/checkout@v2
       - run: npm i
@@ -45,4 +50,3 @@ jobs:
         env:
           GOOGLE_MAPS_API_KEY: ${{ secrets.SYNCED_GOOGLE_MAPS_API_KEY_WEB }}
           BROWSER: firefox
-  
