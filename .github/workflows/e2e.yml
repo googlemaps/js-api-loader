@@ -21,15 +21,12 @@ jobs:
   chrome:
     runs-on: ubuntu-latest
     services:
-      hub:
-        image: selenium/hub:3.141.59-gold
+       hub:
+        image: selenium/standalone-chrome
+        volumes:
+          - $GITHUB_WORKSPACE:$GITHUB_WORKSPACE
         ports:
           - 4444:4444
-      chrome:
-        image: selenium/node-chrome:3.141.59-gold
-        env:
-          HUB_HOST: hub
-          HUB_PORT: 4444
     steps:
       - uses: actions/checkout@v2
       - run: npm i
@@ -41,6 +38,8 @@ jobs:
     services:
       hub:
         image: selenium/standalone-firefox
+        volumes:
+          - $GITHUB_WORKSPACE:$GITHUB_WORKSPACE
         ports:
           - 4444:4444
     steps:
