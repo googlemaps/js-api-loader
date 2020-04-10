@@ -49,6 +49,7 @@ afterAll(async () => {
 });
 
 it("loader should load map and getCenter", async () => {
+  jest.setTimeout(30000);
   await driver.get("file://" + path.resolve(__dirname, "index.html"));
 
   await expect(
