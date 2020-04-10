@@ -35,7 +35,7 @@ export default [
       terser(terserOptions),
     ],
     output: {
-      file: "dist/loader.umd.js",
+      file: "dist/index.umd.js",
       format: "umd",
       name: "google.maps.plugins.loader",
       sourcemap: true,
@@ -50,7 +50,7 @@ export default [
       terser(terserOptions),
     ],
     output: {
-      file: "dist/loader.min.js",
+      file: "dist/index.min.js",
       format: "iife",
       name: "google.maps.plugins.loader",
     },
@@ -59,7 +59,7 @@ export default [
     input: "src/index.ts",
     plugins: [typescript(), commonjs(), babel(babelOptions)],
     output: {
-      file: "dist/loader.dev.js",
+      file: "dist/index.dev.js",
       format: "iife",
       name: "google.maps.plugins.loader",
     },
@@ -68,7 +68,7 @@ export default [
     input: "src/index.ts",
     plugins: [typescript()],
     output: {
-      file: "dist/loader.esm.js",
+      file: "dist/index.esm.js",
       format: "esm",
       sourcemap: true,
     },
