@@ -24,7 +24,7 @@ jobs:
        hub:
         image: selenium/standalone-chrome
         volumes:
-          - ${{ GITHUB_WORKSPACE}}:${{ GITHUB_WORKSPACE }}
+          - ${{ github.workspace }}:${{ GITHUB_WORKSPACE }}
         ports:
           - 4444:4444
     steps:
@@ -39,7 +39,7 @@ jobs:
       hub:
         image: selenium/standalone-firefox
         volumes:
-          - ${{ GITHUB_WORKSPACE}}:${{ GITHUB_WORKSPACE }}
+          - ${{ github.workspace }}:${{ GITHUB_WORKSPACE }}
         ports:
           - 4444:4444
     steps:
