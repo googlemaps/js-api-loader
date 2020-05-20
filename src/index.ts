@@ -192,10 +192,6 @@ export class Loader {
     region,
     version,
   }: LoaderOptions) {
-    if (typeof apiKey !== "string" || !apiKey) {
-      throw "Invalid apiKey " + apiKey;
-    }
-
     this.version = version;
     this.apiKey = apiKey;
     this.libraries = libraries;
@@ -211,7 +207,10 @@ export class Loader {
     let url = this.URL;
 
     url += `?callback=${this.CALLBACK}`;
-    url += `&key=${this.apiKey}`;
+
+    if (this.apiKey) {
+      url += `&key=${this.apiKey}`;
+    }
 
     if (this.libraries.length > 0) {
       url += `&libraries=${this.libraries.join(",")}`;
