@@ -17,6 +17,7 @@
 import { Loader, LoaderOptions } from ".";
 
 test.each([
+  [{}, "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback"],
   [
     { apiKey: "foo" },
     "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&key=foo",
@@ -113,10 +114,4 @@ test("loader should wait if already loading", () => {
   loader["loading"] = true;
 
   loader.load();
-});
-
-test("loader should throw exception if invalid key format", () => {
-  expect(() => new Loader({ apiKey: "" })).toThrow();
-  expect(() => new Loader({ apiKey: {} as string })).toThrow();
-  expect(() => new Loader({ apiKey: (1 as unknown) as string })).toThrow();
 });
