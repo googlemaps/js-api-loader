@@ -32,6 +32,10 @@ test.each([
     },
     "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&key=foo&libraries=places&language=language&region=region&v=weekly",
   ],
+  [
+    { mapIds: ["foo", "bar"] },
+    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&map_ids=foo,bar",
+  ],
 ])("createUrl is correct", (options: LoaderOptions, expected: string) => {
   const loader = new Loader(options);
   expect(loader.createUrl()).toEqual(expected);

@@ -125,6 +125,11 @@ export interface LoaderOptions {
    * ```
    */
   region?: string;
+  /**
+   * (Beta) You can add multiple Map IDs to your map using the map_ids paramenter in
+   * your bootstrap request.
+   */
+  mapIds?: string[];
 }
 
 /**
@@ -169,6 +174,11 @@ export class Loader {
    */
   region: string;
 
+  /**
+   * See [[LoaderOptions.mapIds]]
+   */
+  mapIds: string[];
+
   private CALLBACK = "__googleMapsCallback";
   private URL = "https://maps.googleapis.com/maps/api/js";
   private callbacks: ((e: Event) => void)[] = [];
@@ -191,12 +201,14 @@ export class Loader {
     language,
     region,
     version,
+    mapIds,
   }: LoaderOptions) {
     this.version = version;
     this.apiKey = apiKey;
     this.libraries = libraries;
     this.language = language;
     this.region = region;
+    this.mapIds = mapIds;
   }
   /**
    * CreateUrl returns the Google Maps JavaScript API script url given the [[LoaderOptions]].
@@ -226,6 +238,10 @@ export class Loader {
 
     if (this.version) {
       url += `&v=${this.version}`;
+    }
+
+    if (this.mapIds) {
+      url += `&map_ids=${this.mapIds.join(",")}`;
     }
 
     return url;
