@@ -23,7 +23,7 @@ declare global {
   }
 }
 
-type Libraries = ("drawing" | "geometry" | "places" | "visualization")[];
+type Libraries = ("drawing" | "geometry" | "localContext" | "places" | "visualization")[];
 
 /**
  * The Google Maps JavaScript API
