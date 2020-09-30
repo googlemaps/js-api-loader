@@ -16,6 +16,10 @@
 
 import { Loader, LoaderOptions } from ".";
 
+afterEach(() => {
+  document.getElementsByTagName('html')[0].innerHTML = ''; 
+});
+
 test.each([
   [{}, "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback"],
   [
@@ -52,11 +56,27 @@ test("setScript adds a script to head with correct attributes", () => {
 
   const script = document.head.childNodes[0] as HTMLScriptElement;
 
+  expect(script.id).toEqual(loader.id);
   expect(script.src).toEqual(loader.createUrl());
   expect(script.defer).toBeTruthy();
   expect(script.async).toBeTruthy();
   expect(script.onerror).toBeTruthy();
   expect(script.type).toEqual("text/javascript");
+});
+
+test("setScript does not add second script with same id", () => {
+  new Loader({ apiKey: "foo", id: "bar" })['setScript']();
+  new Loader({ apiKey: "foo", id: "bar" })['setScript']();
+
+  expect(document.head.childNodes.length).toBe(1);
+});
+
+test("setScript adds a script with id", () => {
+  const loader = new Loader({ apiKey: "foo", id: "bar" });
+  loader["setScript"]();
+
+  const script = document.head.childNodes[0] as HTMLScriptElement;
+  expect(script.id).toEqual(loader.id);
 });
 
 test("load should return a promise that resolves even if called twice", () => {

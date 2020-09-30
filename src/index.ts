@@ -23,7 +23,13 @@ declare global {
   }
 }
 
-type Libraries = ("drawing" | "geometry" | "localContext" | "places" | "visualization")[];
+type Libraries = (
+  | "drawing"
+  | "geometry"
+  | "localContext"
+  | "places"
+  | "visualization"
+)[];
 
 /**
  * The Google Maps JavaScript API
@@ -65,6 +71,10 @@ export interface LoaderOptions {
    * receive your default channel.
    */
   version?: string;
+  /**
+   * The id of the script tag. Before adding a new script, the Loader will check for an existing one.
+   */
+  id?: string;
   /**
    * When loading the Maps JavaScript API via the URL you may optionally load
    * additional libraries through use of the libraries URL parameter. Libraries
@@ -165,6 +175,10 @@ export class Loader {
    */
   apiKey: string;
   /**
+   * See [[LoaderOptions.id]]
+   */
+  id: string;
+  /**
    * See [[LoaderOptions.libraries]]
    */
   libraries: Libraries;
@@ -205,6 +219,7 @@ export class Loader {
    */
   constructor({
     apiKey,
+    id = "__googleMapsScriptId",
     libraries = [],
     language,
     region,
@@ -214,6 +229,7 @@ export class Loader {
   }: LoaderOptions) {
     this.version = version;
     this.apiKey = apiKey;
+    this.id = id;
     this.libraries = libraries;
     this.language = language;
     this.region = region;
@@ -293,9 +309,14 @@ export class Loader {
    * Set the script on document.
    */
   private setScript(): void {
+    if (this.id && document.getElementById(this.id)) {
+      this.callback();
+      return;      
+    }
+    
     const url = this.createUrl();
     const script = document.createElement("script");
-
+    script.id = this.id;
     script.type = "text/javascript";
     script.src = url;
     script.onerror = this.loadErrorCallback.bind(this);
