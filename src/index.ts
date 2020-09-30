@@ -130,6 +130,10 @@ export interface LoaderOptions {
    * your bootstrap request.
    */
   mapIds?: string[];
+  /**
+   * Use a custom url and path to load the Google Maps API script.
+   */
+  url?: string;
 }
 
 /**
@@ -179,8 +183,12 @@ export class Loader {
    */
   mapIds: string[];
 
+  /**
+   * See [[LoaderOptions.url]]
+   */
+  url: string;
+
   private CALLBACK = "__googleMapsCallback";
-  private URL = "https://maps.googleapis.com/maps/api/js";
   private callbacks: ((e: Event) => void)[] = [];
   private done = false;
   private loading = false;
@@ -202,6 +210,7 @@ export class Loader {
     region,
     version,
     mapIds,
+    url = "https://maps.googleapis.com/maps/api/js",
   }: LoaderOptions) {
     this.version = version;
     this.apiKey = apiKey;
@@ -209,6 +218,7 @@ export class Loader {
     this.language = language;
     this.region = region;
     this.mapIds = mapIds;
+    this.url = url;
   }
   /**
    * CreateUrl returns the Google Maps JavaScript API script url given the [[LoaderOptions]].
@@ -216,7 +226,7 @@ export class Loader {
    * @ignore
    */
   createUrl(): string {
-    let url = this.URL;
+    let url = this.url;
 
     url += `?callback=${this.CALLBACK}`;
 
