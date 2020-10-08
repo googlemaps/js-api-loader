@@ -1,0 +1,182 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>@googlemaps/js-api-loader</title>
+	<meta name="description" content="Documentation for @googlemaps/js-api-loader">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">@googlemaps/js-api-loader</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1>@googlemaps/js-api-loader</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<a href="#google-maps-javascript-api-loader" id="google-maps-javascript-api-loader" style="color: inherit; text-decoration: none;">
+					<h1>Google Maps JavaScript API Loader</h1>
+				</a>
+				<p><a href="https://www.npmjs.com/package/@googlemaps/js-api-loader"><img src="https://img.shields.io/npm/v/@googlemaps/js-api-loader" alt="npm"></a>
+					<img src="https://github.com/googlemaps/js-api-loader/workflows/Build/badge.svg" alt="Build">
+					<img src="https://github.com/googlemaps/js-api-loader/workflows/Release/badge.svg" alt="Release">
+					<a href="https://codecov.io/gh/googlemaps/js-api-loader"><img src="https://codecov.io/gh/googlemaps/js-api-loader/branch/master/graph/badge.svg" alt="codecov"></a>
+					<img src="https://img.shields.io/github/contributors/googlemaps/js-api-loader?color=green" alt="GitHub contributors">
+				<a href="https://github.com/semantic-release/semantic-release"><img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg" alt="semantic-release"></a></p>
+				<a href="#description" id="description" style="color: inherit; text-decoration: none;">
+					<h2>Description</h2>
+				</a>
+				<p>Load the Google Maps JavaScript API script dynamically. This takes inspiration from the <a href="https://www.npmjs.com/package/google-maps">google-maps</a> npm package but updates it with ES6, Promises, and TypeScript.</p>
+				<p>A previous version of the package was available at <a href="https://www.npmjs.com/package/@googlemaps/loader">@googlemaps/loader</a> but was renamed to the package <a href="https://www.npmjs.com/package/@googlemaps/js-api-loader">@googlemaps/js-api-loader</a> here.</p>
+				<a href="#install" id="install" style="color: inherit; text-decoration: none;">
+					<h2>Install</h2>
+				</a>
+				<p>Available via npm as the package <a href="https://www.npmjs.com/package/@googlemaps/js-api-loader">@googlemaps/js-api-loader</a>.</p>
+				<p><code>npm i @googlemaps/js-api-loader</code></p>
+				<p>or</p>
+				<p><code>yarn add @googlemaps/js-api-loader</code></p>
+				<p>Alternativly you may add the umd package directly to the html document using the unpkg link.</p>
+				<p><code>&lt;script src=&quot;https://unpkg.com/@googlemaps/js-api-loader@1.0.0/dist/index.min.js&quot;&gt;&lt;/script&gt;</code></p>
+				<p>When adding via unpkg, the loader can be accessed at <code>google.maps.plugins.loader.Loader</code>.</p>
+				<a href="#documentation" id="documentation" style="color: inherit; text-decoration: none;">
+					<h2>Documentation</h2>
+				</a>
+				<p>The reference documentation can be found at this <a href="https://googlemaps.github.io/js-api-loader/docs/index.html">link</a>. The Google Maps JavaScript API <a href="https://developers.google.com/maps/documentation/javascript/tutorial">documentation</a> is the authoritative source for the loader options.</p>
+				<a href="#example" id="example" style="color: inherit; text-decoration: none;">
+					<h2>Example</h2>
+				</a>
+				<pre><code class="language-javascript"><span class="hljs-keyword">import</span> { Loader } <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@googlemaps/js-api-loader&#x27;</span>;
+
+<span class="hljs-keyword">const</span> loader = <span class="hljs-keyword">new</span> Loader({
+  <span class="hljs-attr">apiKey</span>: <span class="hljs-string">&quot;&quot;</span>,
+  <span class="hljs-attr">version</span>: <span class="hljs-string">&quot;weekly&quot;</span>,
+  <span class="hljs-attr">libraries</span>: [<span class="hljs-string">&quot;places&quot;</span>]
+});
+
+<span class="hljs-keyword">const</span> mapOptions = {
+  <span class="hljs-attr">center</span>: {
+    <span class="hljs-attr">lat</span>: <span class="hljs-number">0</span>,
+    <span class="hljs-attr">lng</span>: <span class="hljs-number">0</span>
+  },
+  <span class="hljs-attr">zoom</span>: <span class="hljs-number">4</span>
+};
+</code></pre>
+				<p>Using a promise for when the script has loaded.</p>
+				<pre><code class="language-javascript"><span class="hljs-comment">// Promise</span>
+loader
+  .load()
+  .then(<span class="hljs-function">() =&gt;</span> {
+    <span class="hljs-keyword">new</span> google.maps.Map(<span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&quot;map&quot;</span>), mapOptions);
+  })
+  .catch(<span class="hljs-function"><span class="hljs-params">e</span> =&gt;</span> {
+    <span class="hljs-comment">// do something</span>
+  });</code></pre>
+				<p>Alternatively, if you want to use a callback.</p>
+				<pre><code class="language-javascript"><span class="hljs-comment">// Callback</span>
+loader.loadCallback(<span class="hljs-function"><span class="hljs-params">e</span> =&gt;</span> {
+  <span class="hljs-keyword">if</span> (e) {
+    <span class="hljs-built_in">console</span>.log(e);
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">new</span> google.maps.Map(<span class="hljs-built_in">document</span>.getElementById(<span class="hljs-string">&quot;map&quot;</span>), mapOptions);
+  }
+});
+</code></pre>
+				<p>View the package in action <a href="https://googlemaps.github.io/js-api-loader/examples/index.html">here</a>.</p>
+				<a href="#support" id="support" style="color: inherit; text-decoration: none;">
+					<h2>Support</h2>
+				</a>
+				<p>This library is community supported. We&#39;re comfortable enough with the stability and features of
+				the library that we want you to build real production applications on it.</p>
+				<p>If you find a bug, or have a feature suggestion, please <a href="https://github.com/googlemaps/js-api-loader/issues">log an issue</a>. If you&#39;d like to
+				contribute, please read <a href="https://github.com/googlemaps/js-api-loader/blob/master/packages/loader/CONTRIBUTING.md">How to Contribute</a>.</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-class">
+						<a href="classes/loader.html" class="tsd-kind-icon">Loader</a>
+					</li>
+					<li class=" tsd-kind-interface">
+						<a href="interfaces/loaderoptions.html" class="tsd-kind-icon">Loader<wbr>Options</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-constructor tsd-parent-kind-class"><span class="tsd-kind-icon">Constructor</span></li>
+				<li class="tsd-kind-property tsd-parent-kind-class"><span class="tsd-kind-icon">Property</span></li>
+				<li class="tsd-kind-method tsd-parent-kind-class"><span class="tsd-kind-icon">Method</span></li>
+			</ul>
+			<ul class="tsd-legend">
+				<li class="tsd-kind-property tsd-parent-kind-interface"><span class="tsd-kind-icon">Property</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
