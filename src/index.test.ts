@@ -17,7 +17,7 @@
 import { Loader, LoaderOptions } from ".";
 
 afterEach(() => {
-  document.getElementsByTagName('html')[0].innerHTML = ''; 
+  document.getElementsByTagName("html")[0].innerHTML = "";
 });
 
 test.each([
@@ -65,8 +65,8 @@ test("setScript adds a script to head with correct attributes", () => {
 });
 
 test("setScript does not add second script with same id", () => {
-  new Loader({ apiKey: "foo", id: "bar" })['setScript']();
-  new Loader({ apiKey: "foo", id: "bar" })['setScript']();
+  new Loader({ apiKey: "foo", id: "bar" })["setScript"]();
+  new Loader({ apiKey: "foo", id: "bar" })["setScript"]();
 
   expect(document.head.childNodes.length).toBe(1);
 });
@@ -142,4 +142,12 @@ test("loader should wait if already loading", () => {
   loader["loading"] = true;
 
   loader.load();
+});
+
+test("setScript adds a nonce", () => {
+  const nonce = "bar";
+  const loader = new Loader({ apiKey: "foo", nonce });
+  loader["setScript"]();
+  const script = document.head.childNodes[0] as HTMLScriptElement;
+  expect(script.nonce).toBe(nonce);
 });
