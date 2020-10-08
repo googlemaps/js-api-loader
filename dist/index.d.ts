@@ -135,6 +135,10 @@ export interface LoaderOptions {
      * Use a custom url and path to load the Google Maps API script.
      */
     url?: string;
+    /**
+     * Use a cryptographic nonce attribute.
+     */
+    nonce?: string;
 }
 /**
  * [[Loader]] makes it easier to add Google Maps JavaScript API to your application
@@ -185,6 +189,10 @@ export declare class Loader {
      */
     mapIds: string[];
     /**
+     * See [[LoaderOptions.nonce]]
+     */
+    nonce: string | null;
+    /**
      * See [[LoaderOptions.url]]
      */
     url: string;
@@ -202,7 +210,7 @@ export declare class Loader {
      * const loader = Loader({apiKey, version: 'weekly', libraries: ['places']});
      * ```
      */
-    constructor({ apiKey, id, libraries, language, region, version, mapIds, url, }: LoaderOptions);
+    constructor({ apiKey, id, libraries, language, region, version, mapIds, nonce, url, }: LoaderOptions);
     /**
      * CreateUrl returns the Google Maps JavaScript API script url given the [[LoaderOptions]].
      *

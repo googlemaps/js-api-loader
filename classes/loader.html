@@ -108,6 +108,7 @@ loader.load().<span class="hljs-keyword">then</span>(() =&gt; {
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="loader.html#language" class="tsd-kind-icon">language</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="loader.html#libraries" class="tsd-kind-icon">libraries</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="loader.html#mapids" class="tsd-kind-icon">map<wbr>Ids</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="loader.html#nonce" class="tsd-kind-icon">nonce</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="loader.html#region" class="tsd-kind-icon">region</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="loader.html#url" class="tsd-kind-icon">url</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="loader.html#version" class="tsd-kind-icon">version</a></li>
@@ -129,13 +130,13 @@ loader.load().<span class="hljs-keyword">then</span>(() =&gt; {
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Loader<span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>apiKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>language<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>libraries<span class="tsd-signature-symbol">: </span><a href="../globals.html#libraries" class="tsd-signature-type">Libraries</a><span class="tsd-signature-symbol">; </span>mapIds<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>region<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="loader.html" class="tsd-signature-type">Loader</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Loader<span class="tsd-signature-symbol">(</span>__namedParameters<span class="tsd-signature-symbol">: </span><span class="tsd-signature-symbol">{ </span>apiKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>language<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>libraries<span class="tsd-signature-symbol">: </span><a href="../globals.html#libraries" class="tsd-signature-type">Libraries</a><span class="tsd-signature-symbol">; </span>mapIds<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>nonce<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>region<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="loader.html" class="tsd-signature-type">Loader</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/961a445/src/index.ts#L209">index.ts:209</a></li>
+									<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/2bd3829/src/index.ts#L218">index.ts:218</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -149,7 +150,7 @@ loader.load().<span class="hljs-keyword">then</span>(() =&gt; {
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>__namedParameters: <span class="tsd-signature-symbol">{ </span>apiKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>language<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>libraries<span class="tsd-signature-symbol">: </span><a href="../globals.html#libraries" class="tsd-signature-type">Libraries</a><span class="tsd-signature-symbol">; </span>mapIds<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>region<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></h5>
+									<h5>__namedParameters: <span class="tsd-signature-symbol">{ </span>apiKey<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>language<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>libraries<span class="tsd-signature-symbol">: </span><a href="../globals.html#libraries" class="tsd-signature-type">Libraries</a><span class="tsd-signature-symbol">; </span>mapIds<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span><span class="tsd-signature-symbol">; </span>nonce<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>region<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>url<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">; </span>version<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> }</span></h5>
 									<ul class="tsd-parameters">
 										<li class="tsd-parameter">
 											<h5>api<wbr>Key<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
@@ -165,6 +166,9 @@ loader.load().<span class="hljs-keyword">then</span>(() =&gt; {
 										</li>
 										<li class="tsd-parameter">
 											<h5>map<wbr>Ids<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></h5>
+										</li>
+										<li class="tsd-parameter">
+											<h5>nonce<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
 										</li>
 										<li class="tsd-parameter">
 											<h5>region<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span></h5>
@@ -191,7 +195,7 @@ loader.load().<span class="hljs-keyword">then</span>(() =&gt; {
 					<div class="tsd-signature tsd-kind-icon">api<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/961a445/src/index.ts#L176">index.ts:176</a></li>
+							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/2bd3829/src/index.ts#L180">index.ts:180</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -206,7 +210,7 @@ loader.load().<span class="hljs-keyword">then</span>(() =&gt; {
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/961a445/src/index.ts#L180">index.ts:180</a></li>
+							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/2bd3829/src/index.ts#L184">index.ts:184</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -221,7 +225,7 @@ loader.load().<span class="hljs-keyword">then</span>(() =&gt; {
 					<div class="tsd-signature tsd-kind-icon">language<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/961a445/src/index.ts#L188">index.ts:188</a></li>
+							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/2bd3829/src/index.ts#L192">index.ts:192</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -236,7 +240,7 @@ loader.load().<span class="hljs-keyword">then</span>(() =&gt; {
 					<div class="tsd-signature tsd-kind-icon">libraries<span class="tsd-signature-symbol">:</span> <a href="../globals.html#libraries" class="tsd-signature-type">Libraries</a></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/961a445/src/index.ts#L184">index.ts:184</a></li>
+							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/2bd3829/src/index.ts#L188">index.ts:188</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -251,7 +255,7 @@ loader.load().<span class="hljs-keyword">then</span>(() =&gt; {
 					<div class="tsd-signature tsd-kind-icon">map<wbr>Ids<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/961a445/src/index.ts#L198">index.ts:198</a></li>
+							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/2bd3829/src/index.ts#L202">index.ts:202</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -261,12 +265,27 @@ loader.load().<span class="hljs-keyword">then</span>(() =&gt; {
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="nonce" class="tsd-anchor"></a>
+					<h3>nonce</h3>
+					<div class="tsd-signature tsd-kind-icon">nonce<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">null</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/2bd3829/src/index.ts#L207">index.ts:207</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>See <a href="../interfaces/loaderoptions.html#nonce">LoaderOptions.nonce</a></p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="region" class="tsd-anchor"></a>
 					<h3>region</h3>
 					<div class="tsd-signature tsd-kind-icon">region<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/961a445/src/index.ts#L193">index.ts:193</a></li>
+							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/2bd3829/src/index.ts#L197">index.ts:197</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -281,7 +300,7 @@ loader.load().<span class="hljs-keyword">then</span>(() =&gt; {
 					<div class="tsd-signature tsd-kind-icon">url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/961a445/src/index.ts#L203">index.ts:203</a></li>
+							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/2bd3829/src/index.ts#L212">index.ts:212</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -296,7 +315,7 @@ loader.load().<span class="hljs-keyword">then</span>(() =&gt; {
 					<div class="tsd-signature tsd-kind-icon">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/961a445/src/index.ts#L172">index.ts:172</a></li>
+							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/2bd3829/src/index.ts#L176">index.ts:176</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -318,7 +337,7 @@ loader.load().<span class="hljs-keyword">then</span>(() =&gt; {
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/961a445/src/index.ts#L279">index.ts:279</a></li>
+									<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/2bd3829/src/index.ts#L290">index.ts:290</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -340,7 +359,7 @@ loader.load().<span class="hljs-keyword">then</span>(() =&gt; {
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/961a445/src/index.ts#L303">index.ts:303</a></li>
+									<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/2bd3829/src/index.ts#L314">index.ts:314</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -410,6 +429,9 @@ loader.load().<span class="hljs-keyword">then</span>(() =&gt; {
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="loader.html#mapids" class="tsd-kind-icon">map<wbr>Ids</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="loader.html#nonce" class="tsd-kind-icon">nonce</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="loader.html#region" class="tsd-kind-icon">region</a>
