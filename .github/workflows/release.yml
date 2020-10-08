@@ -38,3 +38,15 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_WOMBAT_TOKEN }}
+      - run: |        
+          npm i
+          npm run docs
+          cp -r dist docs/dist
+          cp -r examples docs/examples
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          user_name: 'googlemaps-bot'
+          user_email: 'googlemaps-bot@users.noreply.github.com'
+          commit_message: ${{ github.event.head_commit.message }}
