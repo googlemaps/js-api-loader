@@ -18,6 +18,11 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="script-src 'nonce-caffe67d7b989af3a1c7f4a1a6c79bd9fb2b4eb0'"
+    />
+
     <title>Loader Example</title>
     <style>
       html,
@@ -28,9 +33,16 @@
         padding: 0;
       }
     </style>
-    <script type="text/javascript" src="../dist/index.dev.js"></script>
+    <script
+      nonce="caffe67d7b989af3a1c7f4a1a6c79bd9fb2b4eb0"
+      type="text/javascript"
+      src="../dist/index.dev.js"
+    ></script>
 
-    <script type="text/javascript">
+    <script
+      nonce="caffe67d7b989af3a1c7f4a1a6c79bd9fb2b4eb0"
+      type="text/javascript"
+    >
       const mapOptions = {
         center: {
           lat: 0,
@@ -43,6 +55,7 @@
         apiKey: "",
         version: "weekly",
         libraries: ["places"],
+        nonce: "caffe67d7b989af3a1c7f4a1a6c79bd9fb2b4eb0",
       });
 
       // Promise
@@ -68,6 +81,5 @@
 
   <body>
     <div id="map" class="map"></div>
-    <div id="map2" class="map"></div>
   </body>
 </html>
