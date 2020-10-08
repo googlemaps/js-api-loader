@@ -144,6 +144,10 @@ export interface LoaderOptions {
    * Use a custom url and path to load the Google Maps API script.
    */
   url?: string;
+  /**
+   * Use a cryptographic nonce attribute.
+   */
+  nonce?: string;
 }
 
 /**
@@ -198,6 +202,11 @@ export class Loader {
   mapIds: string[];
 
   /**
+   * See [[LoaderOptions.nonce]]
+   */
+  nonce: string | null;
+
+  /**
    * See [[LoaderOptions.url]]
    */
   url: string;
@@ -225,6 +234,7 @@ export class Loader {
     region,
     version,
     mapIds,
+    nonce,
     url = "https://maps.googleapis.com/maps/api/js",
   }: LoaderOptions) {
     this.version = version;
@@ -234,6 +244,7 @@ export class Loader {
     this.language = language;
     this.region = region;
     this.mapIds = mapIds;
+    this.nonce = nonce;
     this.url = url;
   }
   /**
@@ -311,9 +322,9 @@ export class Loader {
   private setScript(): void {
     if (this.id && document.getElementById(this.id)) {
       this.callback();
-      return;      
+      return;
     }
-    
+
     const url = this.createUrl();
     const script = document.createElement("script");
     script.id = this.id;
@@ -322,6 +333,11 @@ export class Loader {
     script.onerror = this.loadErrorCallback.bind(this);
     script.defer = true;
     script.async = true;
+
+    if (this.nonce) {
+      script.nonce = this.nonce;
+    }
+
     document.head.appendChild(script);
   }
 
