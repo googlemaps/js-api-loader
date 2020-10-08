@@ -30,7 +30,7 @@ When adding via unpkg, the loader can be accessed at `google.maps.plugins.loader
 
 ## Documentation
 
-The reference documentation can be found at this [link](https://googlemaps.github.io/js-api-loader/docs/index.html). The Google Maps JavaScript API [documentation](https://developers.google.com/maps/documentation/javascript/tutorial) is the authoritative source for the loader options.
+The reference documentation can be found at this [link](https://googlemaps.github.io/js-api-loader/index.html). The Google Maps JavaScript API [documentation](https://developers.google.com/maps/documentation/javascript/tutorial) is the authoritative source for the loader options.
 
 
 ## Example
