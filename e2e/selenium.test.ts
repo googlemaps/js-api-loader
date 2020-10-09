@@ -89,3 +89,43 @@ it("loader should load map and getCenter", async () => {
     }, process.env.GOOGLE_MAPS_API_KEY)
   ).resolves.toEqual("(0, 0)");
 });
+
+it("tests the sample embedding into documentation", async () => {
+  jest.setTimeout(30000);
+  await driver.get("file://" + path.resolve(__dirname, "index.html"));
+
+  await expect(
+    driver.executeAsyncScript(async (apiKey: string) => {
+      // @ts-ignore-next-line
+      const callback = arguments[arguments.length - 1];
+
+      try {
+        // @ts-ignore-next-line
+        const Loader = google.maps.plugins.loader.Loader;
+
+        // [START maps_js_api_loader_e2e_sample]
+        const loader = new Loader({
+          apiKey,
+          libraries: ["places"],
+          version: "weekly",
+        });
+
+        loader.load().then(() => {
+          const map = new google.maps.Map(document.getElementById("map"), {
+            center: {
+              lat: 0,
+              lng: 0,
+            },
+            zoom: 4,
+          });          
+        });
+        // [END maps_js_api_loader_e2e_sample]
+
+        await loader.load();
+        callback()
+      } catch (e) {
+        callback(e);
+      }
+    }, process.env.GOOGLE_MAPS_API_KEY)
+  ).resolves.toBeUndefined();
+});
