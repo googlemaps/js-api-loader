@@ -95,7 +95,7 @@ it("tests the sample embedding into documentation", async () => {
   await driver.get("file://" + path.resolve(__dirname, "index.html"));
 
   await expect(
-    driver.executeAsyncScript(async (apiKey: string) => {
+    driver.executeAsyncScript((apiKey: string) => {
       // @ts-ignore-next-line
       const callback = arguments[arguments.length - 1];
 
@@ -117,12 +117,12 @@ it("tests the sample embedding into documentation", async () => {
               lng: 0,
             },
             zoom: 4,
-          });          
+          });
         });
         // [END maps_js_api_loader_e2e_sample]
-
-        await loader.load();
-        callback()
+        loader.load(() => {
+          callback();
+        });
       } catch (e) {
         callback(e);
       }
