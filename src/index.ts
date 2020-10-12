@@ -44,14 +44,14 @@ export interface LoaderOptions {
   /**
    * In your application you can specify release channels or version numbers:
    *
-   * The weekly channel is specified with `version=weekly`. This channel is
+   * The weekly version is specified with `version=weekly`. This version is
    * updated once per week, and is the most current.
    *
    * ```
    * const loader = Loader({apiKey, version: 'weekly'});
    * ```
    *
-   * The quarterly channel is specified with `version=quarterly`. This channel
+   * The quarterly version is specified with `version=quarterly`. This version
    * is updated once per quarter, and is the most predictable.
    *
    * ```
@@ -66,10 +66,9 @@ export interface LoaderOptions {
    * const loader = Loader({apiKey, version: '3.40'});
    * ```
    *
-   * If you do not explicitly specify a channel or version, you will receive the
-   * weekly channel by default. If you specify an invalid version, you will
-   * receive your default channel.
-   */
+   * If you do not explicitly specify a version, you will receive the
+   * weekly version by default.
+   */ 
   version?: string;
   /**
    * The id of the script tag. Before adding a new script, the Loader will check for an existing one.
