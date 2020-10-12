@@ -44,6 +44,10 @@ test.each([
     { url: "https://example.com/js" },
     "https://example.com/js?callback=__googleMapsCallback",
   ],
+  [
+    { channel: "foo" },
+    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&channel=foo",
+  ],
 ])("createUrl is correct", (options: LoaderOptions, expected: string) => {
   const loader = new Loader(options);
   expect(loader.createUrl()).toEqual(expected);
