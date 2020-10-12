@@ -43,13 +43,14 @@ var Loader = /** @class */ (function () {
      * ```
      */
     function Loader(_a) {
-        var apiKey = _a.apiKey, _b = _a.id, id = _b === void 0 ? "__googleMapsScriptId" : _b, _c = _a.libraries, libraries = _c === void 0 ? [] : _c, language = _a.language, region = _a.region, version = _a.version, mapIds = _a.mapIds, nonce = _a.nonce, _d = _a.url, url = _d === void 0 ? "https://maps.googleapis.com/maps/api/js" : _d;
+        var apiKey = _a.apiKey, channel = _a.channel, _b = _a.id, id = _b === void 0 ? "__googleMapsScriptId" : _b, _c = _a.libraries, libraries = _c === void 0 ? [] : _c, language = _a.language, region = _a.region, version = _a.version, mapIds = _a.mapIds, nonce = _a.nonce, _d = _a.url, url = _d === void 0 ? "https://maps.googleapis.com/maps/api/js" : _d;
         this.CALLBACK = "__googleMapsCallback";
         this.callbacks = [];
         this.done = false;
         this.loading = false;
         this.version = version;
         this.apiKey = apiKey;
+        this.channel = channel;
         this.id = id;
         this.libraries = libraries;
         this.language = language;
@@ -68,6 +69,9 @@ var Loader = /** @class */ (function () {
         url += "?callback=" + this.CALLBACK;
         if (this.apiKey) {
             url += "&key=" + this.apiKey;
+        }
+        if (this.channel) {
+            url += "&channel=" + this.channel;
         }
         if (this.libraries.length > 0) {
             url += "&libraries=" + this.libraries.join(",");
