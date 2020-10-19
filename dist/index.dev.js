@@ -1881,6 +1881,8 @@ this.google.maps.plugins.loader = (function (exports) {
 
 	exports.Loader = Loader;
 
+	Object.defineProperty(exports, '__esModule', { value: true });
+
 	return exports;
 
 }({}));
