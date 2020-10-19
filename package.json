@@ -47,7 +47,7 @@
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-commonjs": "^10.1.0",
     "rollup-plugin-terser": "^7.0.0",
-    "rollup-plugin-typescript2": "^0.27.0",
+    "rollup-plugin-typescript2": "^0.28.0",
     "selenium-webdriver": "^4.0.0-alpha.7",
     "ts-jest": "^25.3.1",
     "typedoc": "^0.19.2",
