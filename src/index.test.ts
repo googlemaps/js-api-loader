@@ -155,3 +155,12 @@ test("setScript adds a nonce", () => {
   const script = document.head.childNodes[0] as HTMLScriptElement;
   expect(script.nonce).toBe(nonce);
 });
+
+test("loader should resolve immediately when google.maps defined", async () => {
+  const loader = new Loader({ apiKey: "foo" });
+  window.google = { maps: { version: "3.*.*" } as any };
+  console.warn = jest.fn();
+  await expect(loader.loadPromise()).resolves.toBeUndefined();
+  delete window.google;
+  expect(console.warn).toHaveBeenCalledTimes(1);
+});
