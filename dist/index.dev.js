@@ -1865,6 +1865,11 @@ this.google.maps.plugins.loader = (function (exports) {
 	  };
 
 	  Loader.prototype.execute = function () {
+	    if (window.google && window.google.maps && window.google.maps.version) {
+	      console.warn("Aborted attempt to load Google Maps JS with @googlemaps/js-api-loader." + "This may result in undesirable behavior as script parameters may not match.");
+	      this.callback();
+	    }
+
 	    if (this.done) {
 	      this.callback();
 	    } else {
