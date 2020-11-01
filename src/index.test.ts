@@ -158,7 +158,7 @@ test("setScript adds a nonce", () => {
 
 test("loader should resolve immediately when google.maps defined", async () => {
   const loader = new Loader({ apiKey: "foo" });
-  window.google = { maps: {} as any };
+  window.google = { maps: { version: "3.*.*" } as any };
   console.warn = jest.fn();
   await expect(loader.loadPromise()).resolves.toBeUndefined();
   delete window.google;
