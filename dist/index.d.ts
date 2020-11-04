@@ -33,32 +33,13 @@ export interface LoaderOptions {
      */
     apiKey: string;
     /**
-     * To track usage across different applications using the same client ID,
-     * you may provide an optional channel parameter with your requests. By
-     * specifying different channel values for different aspects of your
-     * application, you can determine precisely how your application is used.
-     *
-     * For example, your externally-facing website may access the API using a
-     * channel set to customer while your internal marketing department may use
-     * a channel set to mkting. Your reports will break down usage by those
-     * channel values.
-     *
-     * Channel reporting is available for applications using the Maps JavaScript
-     * API, the image APIs or any of the Google Maps Platform web services.
-     *
-     * The channel parameter must use the following format:
-     *
-     * - Must be an ASCII alphanumeric string.
-     * - Period (.), underscore (_) and hyphen (-) characters are allowed.
-     * - The channel parameter is case-insensitive; upper-case, mixed-case, and
-     *   lower-cased channel parameters will be merged into their lower-case
-     *   equivalent. For example, usage on the `CUSTOMER` channel will be combined
-     *   with the usage on the `customer` channel.
-     * - The channel value must be a static value assigned per application
-     *   instance, and must not be generated dynamically. You may not use
-     *   channel values to track individual users, for example.
+    * @deprecated See https://developers.google.com/maps/premium/overview.
      */
     channel?: string;
+    /**
+     * @deprecated See https://developers.google.com/maps/premium/overview, use `apiKey` instead.
+     */
+    client?: string;
     /**
      * In your application you can specify release channels or version numbers:
      *
@@ -195,11 +176,15 @@ export declare class Loader {
      */
     apiKey: string;
     /**
-     * See [[LoaderOptions.id]]
+     * See [[LoaderOptions.channel]]
      */
     channel: string;
     /**
-     * See [[LoaderOptions.channel]]
+     * See [[LoaderOptions.client]]
+     */
+    client: string;
+    /**
+     * See [[LoaderOptions.id]]
      */
     id: string;
     /**
@@ -240,7 +225,7 @@ export declare class Loader {
      * const loader = Loader({apiKey, version: 'weekly', libraries: ['places']});
      * ```
      */
-    constructor({ apiKey, channel, id, libraries, language, region, version, mapIds, nonce, url, }: LoaderOptions);
+    constructor({ apiKey, channel, client, id, libraries, language, region, version, mapIds, nonce, url, }: LoaderOptions);
     /**
      * CreateUrl returns the Google Maps JavaScript API script url given the [[LoaderOptions]].
      *

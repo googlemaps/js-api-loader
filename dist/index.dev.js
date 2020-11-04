@@ -1713,6 +1713,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	  function Loader(_a) {
 	    var apiKey = _a.apiKey,
 	        channel = _a.channel,
+	        client = _a.client,
 	        _b = _a.id,
 	        id = _b === void 0 ? "__googleMapsScriptId" : _b,
 	        _c = _a.libraries,
@@ -1731,6 +1732,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	    this.version = version;
 	    this.apiKey = apiKey;
 	    this.channel = channel;
+	    this.client = client;
 	    this.id = id;
 	    this.libraries = libraries;
 	    this.language = language;
@@ -1756,6 +1758,10 @@ this.google.maps.plugins.loader = (function (exports) {
 
 	    if (this.channel) {
 	      url += "&channel=" + this.channel;
+	    }
+
+	    if (this.client) {
+	      url += "&client=" + this.client;
 	    }
 
 	    if (this.libraries.length > 0) {
