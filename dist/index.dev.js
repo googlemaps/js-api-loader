@@ -17,7 +17,9 @@ this.google.maps.plugins.loader = (function (exports) {
 
 	var global_1 = // eslint-disable-next-line no-undef
 	check(typeof globalThis == 'object' && globalThis) || check(typeof window == 'object' && window) || check(typeof self == 'object' && self) || check(typeof commonjsGlobal == 'object' && commonjsGlobal) || // eslint-disable-next-line no-new-func
-	Function('return this')();
+	function () {
+	  return this;
+	}() || Function('return this')();
 
 	var fails = function (exec) {
 	  try {
@@ -209,7 +211,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	  (module.exports = function (key, value) {
 	    return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
 	  })('versions', []).push({
-	    version: '3.6.5',
+	    version: '3.7.0',
 	    mode:  'global',
 	    copyright: '© 2020 Denis Pushkarev (zloirock.ru)'
 	  });
@@ -250,12 +252,13 @@ this.google.maps.plugins.loader = (function (exports) {
 	};
 
 	if (nativeWeakMap) {
-	  var store$1 = new WeakMap$1();
+	  var store$1 = sharedStore.state || (sharedStore.state = new WeakMap$1());
 	  var wmget = store$1.get;
 	  var wmhas = store$1.has;
 	  var wmset = store$1.set;
 
 	  set = function (it, metadata) {
+	    metadata.facade = it;
 	    wmset.call(store$1, it, metadata);
 	    return metadata;
 	  };
@@ -272,6 +275,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	  hiddenKeys[STATE] = true;
 
 	  set = function (it, metadata) {
+	    metadata.facade = it;
 	    createNonEnumerableProperty(it, STATE, metadata);
 	    return metadata;
 	  };
@@ -301,10 +305,18 @@ this.google.maps.plugins.loader = (function (exports) {
 	    var unsafe = options ? !!options.unsafe : false;
 	    var simple = options ? !!options.enumerable : false;
 	    var noTargetGet = options ? !!options.noTargetGet : false;
+	    var state;
 
 	    if (typeof value == 'function') {
-	      if (typeof key == 'string' && !has(value, 'name')) createNonEnumerableProperty(value, 'name', key);
-	      enforceInternalState(value).source = TEMPLATE.join(typeof key == 'string' ? key : '');
+	      if (typeof key == 'string' && !has(value, 'name')) {
+	        createNonEnumerableProperty(value, 'name', key);
+	      }
+
+	      state = enforceInternalState(value);
+
+	      if (!state.source) {
+	        state.source = TEMPLATE.join(typeof key == 'string' ? key : '');
+	      }
 	    }
 
 	    if (O === global_1) {
@@ -852,58 +864,74 @@ this.google.maps.plugins.loader = (function (exports) {
 	  if (it != undefined) return it[ITERATOR$1] || it['@@iterator'] || iterators[classof(it)];
 	};
 
-	var callWithSafeIterationClosing = function (iterator, fn, value, ENTRIES) {
-	  try {
-	    return ENTRIES ? fn(anObject(value)[0], value[1]) : fn(value); // 7.4.6 IteratorClose(iterator, completion)
-	  } catch (error) {
-	    var returnMethod = iterator['return'];
-	    if (returnMethod !== undefined) anObject(returnMethod.call(iterator));
-	    throw error;
+	var iteratorClose = function (iterator) {
+	  var returnMethod = iterator['return'];
+
+	  if (returnMethod !== undefined) {
+	    return anObject(returnMethod.call(iterator)).value;
 	  }
 	};
 
-	var iterate_1 = createCommonjsModule(function (module) {
-	  var Result = function (stopped, result) {
-	    this.stopped = stopped;
-	    this.result = result;
+	var Result = function (stopped, result) {
+	  this.stopped = stopped;
+	  this.result = result;
+	};
+
+	var iterate = function (iterable, unboundFunction, options) {
+	  var that = options && options.that;
+	  var AS_ENTRIES = !!(options && options.AS_ENTRIES);
+	  var IS_ITERATOR = !!(options && options.IS_ITERATOR);
+	  var INTERRUPTED = !!(options && options.INTERRUPTED);
+	  var fn = functionBindContext(unboundFunction, that, 1 + AS_ENTRIES + INTERRUPTED);
+	  var iterator, iterFn, index, length, result, next, step;
+
+	  var stop = function (condition) {
+	    if (iterator) iteratorClose(iterator);
+	    return new Result(true, condition);
 	  };
 
-	  var iterate = module.exports = function (iterable, fn, that, AS_ENTRIES, IS_ITERATOR) {
-	    var boundFunction = functionBindContext(fn, that, AS_ENTRIES ? 2 : 1);
-	    var iterator, iterFn, index, length, result, next, step;
+	  var callFn = function (value) {
+	    if (AS_ENTRIES) {
+	      anObject(value);
+	      return INTERRUPTED ? fn(value[0], value[1], stop) : fn(value[0], value[1]);
+	    }
 
-	    if (IS_ITERATOR) {
-	      iterator = iterable;
-	    } else {
-	      iterFn = getIteratorMethod(iterable);
-	      if (typeof iterFn != 'function') throw TypeError('Target is not iterable'); // optimisation for array iterators
+	    return INTERRUPTED ? fn(value, stop) : fn(value);
+	  };
 
-	      if (isArrayIteratorMethod(iterFn)) {
-	        for (index = 0, length = toLength(iterable.length); length > index; index++) {
-	          result = AS_ENTRIES ? boundFunction(anObject(step = iterable[index])[0], step[1]) : boundFunction(iterable[index]);
-	          if (result && result instanceof Result) return result;
-	        }
+	  if (IS_ITERATOR) {
+	    iterator = iterable;
+	  } else {
+	    iterFn = getIteratorMethod(iterable);
+	    if (typeof iterFn != 'function') throw TypeError('Target is not iterable'); // optimisation for array iterators
 
-	        return new Result(false);
+	    if (isArrayIteratorMethod(iterFn)) {
+	      for (index = 0, length = toLength(iterable.length); length > index; index++) {
+	        result = callFn(iterable[index]);
+	        if (result && result instanceof Result) return result;
 	      }
 
-	      iterator = iterFn.call(iterable);
+	      return new Result(false);
 	    }
 
-	    next = iterator.next;
+	    iterator = iterFn.call(iterable);
+	  }
 
-	    while (!(step = next.call(iterator)).done) {
-	      result = callWithSafeIterationClosing(iterator, boundFunction, step.value, AS_ENTRIES);
-	      if (typeof result == 'object' && result && result instanceof Result) return result;
+	  next = iterator.next;
+
+	  while (!(step = next.call(iterator)).done) {
+	    try {
+	      result = callFn(step.value);
+	    } catch (error) {
+	      iteratorClose(iterator);
+	      throw error;
 	    }
 
-	    return new Result(false);
-	  };
+	    if (typeof result == 'object' && result && result instanceof Result) return result;
+	  }
 
-	  iterate.stop = function (result) {
-	    return new Result(true, result);
-	  };
-	});
+	  return new Result(false);
+	};
 
 	var ITERATOR$2 = wellKnownSymbol('iterator');
 	var SAFE_CLOSING = false;
@@ -973,6 +1001,8 @@ this.google.maps.plugins.loader = (function (exports) {
 
 	var engineIsIos = /(iphone|ipod|ipad).*applewebkit/i.test(engineUserAgent);
 
+	var engineIsNode = classofRaw(global_1.process) == 'process';
+
 	var location = global_1.location;
 	var set$1 = global_1.setImmediate;
 	var clear = global_1.clearImmediate;
@@ -1030,7 +1060,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	  }; // Node.js 0.8-
 
 
-	  if (classofRaw(process) == 'process') {
+	  if (engineIsNode) {
 	    defer = function (id) {
 	      process.nextTick(runner(id));
 	    }; // Sphere (JS game engine) Dispatch API
@@ -1047,7 +1077,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	    channel.port1.onmessage = listener;
 	    defer = functionBindContext(port.postMessage, port, 1); // Browsers with postMessage, skip WebWorkers
 	    // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
-	  } else if (global_1.addEventListener && typeof postMessage == 'function' && !global_1.importScripts && !fails(post) && location.protocol !== 'file:') {
+	  } else if (global_1.addEventListener && typeof postMessage == 'function' && !global_1.importScripts && location && location.protocol !== 'file:' && !fails(post)) {
 	    defer = post;
 	    global_1.addEventListener('message', listener, false); // IE8-
 	  } else if (ONREADYSTATECHANGE in documentCreateElement('script')) {
@@ -1073,9 +1103,9 @@ this.google.maps.plugins.loader = (function (exports) {
 	var getOwnPropertyDescriptor$2 = objectGetOwnPropertyDescriptor.f;
 	var macrotask = task.set;
 	var MutationObserver = global_1.MutationObserver || global_1.WebKitMutationObserver;
+	var document$2 = global_1.document;
 	var process$1 = global_1.process;
-	var Promise$1 = global_1.Promise;
-	var IS_NODE = classofRaw(process$1) == 'process'; // Node.js 11 shows ExperimentalWarning on getting `queueMicrotask`
+	var Promise$1 = global_1.Promise; // Node.js 11 shows ExperimentalWarning on getting `queueMicrotask`
 
 	var queueMicrotaskDescriptor = getOwnPropertyDescriptor$2(global_1, 'queueMicrotask');
 	var queueMicrotask = queueMicrotaskDescriptor && queueMicrotaskDescriptor.value;
@@ -1084,7 +1114,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	if (!queueMicrotask) {
 	  flush = function () {
 	    var parent, fn;
-	    if (IS_NODE && (parent = process$1.domain)) parent.exit();
+	    if (engineIsNode && (parent = process$1.domain)) parent.exit();
 
 	    while (head) {
 	      fn = head.fn;
@@ -1100,17 +1130,12 @@ this.google.maps.plugins.loader = (function (exports) {
 
 	    last = undefined;
 	    if (parent) parent.enter();
-	  }; // Node.js
+	  }; // browsers with MutationObserver, except iOS - https://github.com/zloirock/core-js/issues/339
 
 
-	  if (IS_NODE) {
-	    notify = function () {
-	      process$1.nextTick(flush);
-	    }; // browsers with MutationObserver, except iOS - https://github.com/zloirock/core-js/issues/339
-
-	  } else if (MutationObserver && !engineIsIos) {
+	  if (!engineIsIos && !engineIsNode && MutationObserver && document$2) {
 	    toggle = true;
-	    node = document.createTextNode('');
+	    node = document$2.createTextNode('');
 	    new MutationObserver(flush).observe(node, {
 	      characterData: true
 	    });
@@ -1126,6 +1151,11 @@ this.google.maps.plugins.loader = (function (exports) {
 
 	    notify = function () {
 	      then.call(promise, flush);
+	    }; // Node.js without promises
+
+	  } else if (engineIsNode) {
+	    notify = function () {
+	      process$1.nextTick(flush);
 	    }; // for other environments - macrotask based on:
 	    // - setImmediate
 	    // - MessageChannel
@@ -1234,13 +1264,13 @@ this.google.maps.plugins.loader = (function (exports) {
 	var getInternalPromiseState = internalState.getterFor(PROMISE);
 	var PromiseConstructor = nativePromiseConstructor;
 	var TypeError$1 = global_1.TypeError;
-	var document$2 = global_1.document;
+	var document$3 = global_1.document;
 	var process$3 = global_1.process;
 	var $fetch = getBuiltIn('fetch');
 	var newPromiseCapability$1 = newPromiseCapability.f;
 	var newGenericPromiseCapability = newPromiseCapability$1;
-	var IS_NODE$1 = classofRaw(process$3) == 'process';
-	var DISPATCH_EVENT = !!(document$2 && document$2.createEvent && global_1.dispatchEvent);
+	var DISPATCH_EVENT = !!(document$3 && document$3.createEvent && global_1.dispatchEvent);
+	var NATIVE_REJECTION_EVENT = typeof PromiseRejectionEvent == 'function';
 	var UNHANDLED_REJECTION = 'unhandledrejection';
 	var REJECTION_HANDLED = 'rejectionhandled';
 	var PENDING = 0;
@@ -1258,7 +1288,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	    // We can't detect it synchronously, so just check versions
 	    if (engineV8Version === 66) return true; // Unhandled rejections tracking support, NodeJS Promise without it fails @@species test
 
-	    if (!IS_NODE$1 && typeof PromiseRejectionEvent != 'function') return true;
+	    if (!engineIsNode && !NATIVE_REJECTION_EVENT) return true;
 	  } // We need Promise#finally in the pure version for preventing prototype pollution
 	  // deoptimization and performance degradation
 	  // https://github.com/zloirock/core-js/issues/679
@@ -1292,7 +1322,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	  return isObject(it) && typeof (then = it.then) == 'function' ? then : false;
 	};
 
-	var notify$1 = function (promise, state, isReject) {
+	var notify$1 = function (state, isReject) {
 	  if (state.notified) return;
 	  state.notified = true;
 	  var chain = state.reactions;
@@ -1312,7 +1342,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	      try {
 	        if (handler) {
 	          if (!ok) {
-	            if (state.rejection === UNHANDLED) onHandleUnhandled(promise, state);
+	            if (state.rejection === UNHANDLED) onHandleUnhandled(state);
 	            state.rejection = HANDLED;
 	          }
 
@@ -1340,7 +1370,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
 	    state.reactions = [];
 	    state.notified = false;
-	    if (isReject && !state.rejection) onUnhandled(promise, state);
+	    if (isReject && !state.rejection) onUnhandled(state);
 	  });
 	};
 
@@ -1348,7 +1378,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	  var event, handler;
 
 	  if (DISPATCH_EVENT) {
-	    event = document$2.createEvent('Event');
+	    event = document$3.createEvent('Event');
 	    event.promise = promise;
 	    event.reason = reason;
 	    event.initEvent(name, false, true);
@@ -1358,23 +1388,24 @@ this.google.maps.plugins.loader = (function (exports) {
 	    reason: reason
 	  };
 
-	  if (handler = global_1['on' + name]) handler(event);else if (name === UNHANDLED_REJECTION) hostReportErrors('Unhandled promise rejection', reason);
+	  if (!NATIVE_REJECTION_EVENT && (handler = global_1['on' + name])) handler(event);else if (name === UNHANDLED_REJECTION) hostReportErrors('Unhandled promise rejection', reason);
 	};
 
-	var onUnhandled = function (promise, state) {
+	var onUnhandled = function (state) {
 	  task$1.call(global_1, function () {
+	    var promise = state.facade;
 	    var value = state.value;
 	    var IS_UNHANDLED = isUnhandled(state);
 	    var result;
 
 	    if (IS_UNHANDLED) {
 	      result = perform(function () {
-	        if (IS_NODE$1) {
+	        if (engineIsNode) {
 	          process$3.emit('unhandledRejection', value, promise);
 	        } else dispatchEvent(UNHANDLED_REJECTION, promise, value);
 	      }); // Browsers should not trigger `rejectionHandled` event if it was handled here, NodeJS - should
 
-	      state.rejection = IS_NODE$1 || isUnhandled(state) ? UNHANDLED : HANDLED;
+	      state.rejection = engineIsNode || isUnhandled(state) ? UNHANDLED : HANDLED;
 	      if (result.error) throw result.value;
 	    }
 	  });
@@ -1384,36 +1415,38 @@ this.google.maps.plugins.loader = (function (exports) {
 	  return state.rejection !== HANDLED && !state.parent;
 	};
 
-	var onHandleUnhandled = function (promise, state) {
+	var onHandleUnhandled = function (state) {
 	  task$1.call(global_1, function () {
-	    if (IS_NODE$1) {
+	    var promise = state.facade;
+
+	    if (engineIsNode) {
 	      process$3.emit('rejectionHandled', promise);
 	    } else dispatchEvent(REJECTION_HANDLED, promise, state.value);
 	  });
 	};
 
-	var bind = function (fn, promise, state, unwrap) {
+	var bind = function (fn, state, unwrap) {
 	  return function (value) {
-	    fn(promise, state, value, unwrap);
+	    fn(state, value, unwrap);
 	  };
 	};
 
-	var internalReject = function (promise, state, value, unwrap) {
+	var internalReject = function (state, value, unwrap) {
 	  if (state.done) return;
 	  state.done = true;
 	  if (unwrap) state = unwrap;
 	  state.value = value;
 	  state.state = REJECTED;
-	  notify$1(promise, state, true);
+	  notify$1(state, true);
 	};
 
-	var internalResolve = function (promise, state, value, unwrap) {
+	var internalResolve = function (state, value, unwrap) {
 	  if (state.done) return;
 	  state.done = true;
 	  if (unwrap) state = unwrap;
 
 	  try {
-	    if (promise === value) throw TypeError$1("Promise can't be resolved itself");
+	    if (state.facade === value) throw TypeError$1("Promise can't be resolved itself");
 	    var then = isThenable(value);
 
 	    if (then) {
@@ -1423,18 +1456,18 @@ this.google.maps.plugins.loader = (function (exports) {
 	        };
 
 	        try {
-	          then.call(value, bind(internalResolve, promise, wrapper, state), bind(internalReject, promise, wrapper, state));
+	          then.call(value, bind(internalResolve, wrapper, state), bind(internalReject, wrapper, state));
 	        } catch (error) {
-	          internalReject(promise, wrapper, error, state);
+	          internalReject(wrapper, error, state);
 	        }
 	      });
 	    } else {
 	      state.value = value;
 	      state.state = FULFILLED;
-	      notify$1(promise, state, false);
+	      notify$1(state, false);
 	    }
 	  } catch (error) {
-	    internalReject(promise, {
+	    internalReject({
 	      done: false
 	    }, error, state);
 	  }
@@ -1450,9 +1483,9 @@ this.google.maps.plugins.loader = (function (exports) {
 	    var state = getInternalState(this);
 
 	    try {
-	      executor(bind(internalResolve, this, state), bind(internalReject, this, state));
+	      executor(bind(internalResolve, state), bind(internalReject, state));
 	    } catch (error) {
-	      internalReject(this, state, error);
+	      internalReject(state, error);
 	    }
 	  }; // eslint-disable-next-line no-unused-vars
 
@@ -1478,10 +1511,10 @@ this.google.maps.plugins.loader = (function (exports) {
 	      var reaction = newPromiseCapability$1(speciesConstructor(this, PromiseConstructor));
 	      reaction.ok = typeof onFulfilled == 'function' ? onFulfilled : true;
 	      reaction.fail = typeof onRejected == 'function' && onRejected;
-	      reaction.domain = IS_NODE$1 ? process$3.domain : undefined;
+	      reaction.domain = engineIsNode ? process$3.domain : undefined;
 	      state.parent = true;
 	      state.reactions.push(reaction);
-	      if (state.state != PENDING) notify$1(this, state, false);
+	      if (state.state != PENDING) notify$1(state, false);
 	      return reaction.promise;
 	    },
 	    // `Promise.prototype.catch` method
@@ -1495,8 +1528,8 @@ this.google.maps.plugins.loader = (function (exports) {
 	    var promise = new Internal();
 	    var state = getInternalState(promise);
 	    this.promise = promise;
-	    this.resolve = bind(internalResolve, promise, state);
-	    this.reject = bind(internalReject, promise, state);
+	    this.resolve = bind(internalResolve, state);
+	    this.reject = bind(internalReject, state);
 	  };
 
 	  newPromiseCapability.f = newPromiseCapability$1 = function (C) {
@@ -1582,7 +1615,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	      var values = [];
 	      var counter = 0;
 	      var remaining = 1;
-	      iterate_1(iterable, function (promise) {
+	      iterate(iterable, function (promise) {
 	        var index = counter++;
 	        var alreadyCalled = false;
 	        values.push(undefined);
@@ -1607,7 +1640,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	    var reject = capability.reject;
 	    var result = perform(function () {
 	      var $promiseResolve = aFunction$1(C.resolve);
-	      iterate_1(iterable, function (promise) {
+	      iterate(iterable, function (promise) {
 	        $promiseResolve.call(C, promise).then(capability.resolve, reject);
 	      });
 	    });
