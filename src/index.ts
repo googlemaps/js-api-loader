@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import isEqual from "lodash/fp/isEqual";
+import isEqual from "fast-deep-equal";
 
 /**
  * @ignore
