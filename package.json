@@ -20,6 +20,9 @@
   "unpkg": "dist/index.min.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist/*"
+  ],
   "scripts": {
     "docs": "typedoc",
     "format": "prettier *.json *.js src/* e2e/* examples/* --write && eslint src/* --fix",
