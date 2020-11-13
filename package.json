@@ -34,7 +34,6 @@
     "@rollup/plugin-node-resolve": "^10.0.0",
     "@types/googlemaps": "^3.39.3",
     "@types/jest": "^26.0.10",
-    "@types/lodash": "^4.14.165",
     "@types/selenium-webdriver": "^4.0.9",
     "@typescript-eslint/eslint-plugin": ">=2.25.0",
     "@typescript-eslint/parser": ">=2.25.0",
@@ -60,6 +59,6 @@
     "registry": "https://wombat-dressing-room.appspot.com"
   },
   "dependencies": {
-    "lodash": "^4.17.20"
+    "fast-deep-equal": "^3.1.3"
   }
 }
