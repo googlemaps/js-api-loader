@@ -25,6 +25,8 @@ declare global {
   }
 }
 
+export const DEFAULT_ID = "__googleMapsScriptId";
+
 type Libraries = (
   | "drawing"
   | "geometry"
@@ -37,6 +39,8 @@ type Libraries = (
  * The Google Maps JavaScript API
  * [documentation](https://developers.google.com/maps/documentation/javascript/tutorial)
  * is the authoritative source for [[LoaderOptions]].
+/**
+ * Loader options
  */
 export interface LoaderOptions {
   /**
@@ -157,6 +161,10 @@ export interface LoaderOptions {
    * Use a cryptographic nonce attribute.
    */
   nonce?: string;
+  /**
+   * The number of script load retries.
+   */
+  retries?: number;
 }
 
 /**
@@ -224,6 +232,11 @@ export class Loader {
   nonce: string | null;
 
   /**
+   * See [[LoaderOptions.retries]]
+   */
+  retries: number;
+
+  /**
    * See [[LoaderOptions.url]]
    */
   url: string;
@@ -234,6 +247,7 @@ export class Loader {
   private loading = false;
   private onerrorEvent: Event;
   private static instance: Loader;
+  private errors: ErrorEvent[] = [];
 
   /**
    * Creates an instance of Loader using [[LoaderOptions]]. No defaults are set
@@ -248,25 +262,27 @@ export class Loader {
     apiKey,
     channel,
     client,
-    id = "__googleMapsScriptId",
+    id = DEFAULT_ID,
     libraries = [],
     language,
     region,
     version,
     mapIds,
     nonce,
+    retries = 3,
     url = "https://maps.googleapis.com/maps/api/js",
   }: LoaderOptions) {
     this.version = version;
     this.apiKey = apiKey;
     this.channel = channel;
     this.client = client;
-    this.id = id;
+    this.id = id || DEFAULT_ID; // Do not allow empty string
     this.libraries = libraries;
     this.language = language;
     this.region = region;
     this.mapIds = mapIds;
     this.nonce = nonce;
+    this.retries = retries;
     this.url = url;
 
     if (Loader.instance) {
@@ -299,6 +315,7 @@ export class Loader {
       url: this.url,
     };
   }
+
   /**
    * CreateUrl returns the Google Maps JavaScript API script url given the [[LoaderOptions]].
    *
@@ -380,7 +397,7 @@ export class Loader {
    * Set the script on document.
    */
   private setScript(): void {
-    if (this.id && document.getElementById(this.id)) {
+    if (document.getElementById(this.id)) {
       // TODO wrap onerror callback for cases where the script was loaded elsewhere
       this.callback();
       return;
@@ -402,9 +419,31 @@ export class Loader {
     document.head.appendChild(script);
   }
 
-  private loadErrorCallback(e: Event): void {
-    this.onerrorEvent = e;
-    this.callback();
+  deleteScript(): void {
+    const script = document.getElementById(this.id);
+    if (script) {
+      script.remove();
+    }
+  }
+
+  private loadErrorCallback(e: ErrorEvent): void {
+    this.errors.push(e);
+
+    if (this.errors.length <= this.retries) {
+      const delay = this.errors.length * 2 ** this.errors.length;
+
+      console.log(
+        `Failed to load Google Maps script, retrying in ${delay} ms.`
+      );
+
+      setTimeout(() => {
+        this.deleteScript();
+        this.setScript();
+      }, delay);
+    } else {
+      this.onerrorEvent = e;
+      this.callback();
+    }
   }
 
   private setCallback(): void {

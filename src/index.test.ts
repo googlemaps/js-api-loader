@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-import { Loader, LoaderOptions } from ".";
+import { DEFAULT_ID, Loader, LoaderOptions } from ".";
+
+jest.useFakeTimers();
 
 afterEach(() => {
   document.getElementsByTagName("html")[0].innerHTML = "";
@@ -52,6 +54,10 @@ test.each([
 ])("createUrl is correct", (options: LoaderOptions, expected: string) => {
   const loader = new Loader(options);
   expect(loader.createUrl()).toEqual(expected);
+});
+
+test("uses default id if empty string", () => {
+  expect(new Loader({ apiKey: "foo", id: "" }).id).toBe(DEFAULT_ID);
 });
 
 test("setScript adds a script to head with correct attributes", () => {
@@ -110,7 +116,7 @@ test("loadCallback callback should fire", () => {
 });
 
 test("script onerror should reject promise", async () => {
-  const loader = new Loader({ apiKey: "foo" });
+  const loader = new Loader({ apiKey: "foo", retries: 0 });
 
   const rejection = expect(loader.load()).rejects.toBeInstanceOf(ErrorEvent);
 
@@ -119,11 +125,12 @@ test("script onerror should reject promise", async () => {
   await rejection;
   expect(loader["done"]).toBeTruthy();
   expect(loader["loading"]).toBeFalsy();
+  expect(loader["errors"].length).toBe(1);
 });
 
 test("script onerror should reject promise with multiple loaders", async () => {
-  const loader = new Loader({ apiKey: "foo" });
-  const extraLoader = new Loader({ apiKey: "foo" });
+  const loader = new Loader({ apiKey: "foo", retries: 0 });
+  const extraLoader = new Loader({ apiKey: "foo", retries: 0 });
 
   let rejection = expect(loader.load()).rejects.toBeInstanceOf(ErrorEvent);
   loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
@@ -137,6 +144,24 @@ test("script onerror should reject promise with multiple loaders", async () => {
   await rejection;
   expect(extraLoader["done"]).toBeTruthy();
   expect(extraLoader["loading"]).toBeFalsy();
+});
+
+test("script onerror should retry", async () => {
+  const loader = new Loader({ apiKey: "foo", retries: 1 });
+  const deleteScript = jest.spyOn(loader, "deleteScript");
+  const rejection = expect(loader.load()).rejects.toBeInstanceOf(ErrorEvent);
+  const log = jest.spyOn(console, "log").mockImplementation(()=>{})
+  
+  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
+  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
+  jest.runAllTimers();
+
+  await rejection;
+  expect(loader["done"]).toBeTruthy();
+  expect(loader["loading"]).toBeFalsy();
+  expect(loader["errors"].length).toBe(2);
+  expect(deleteScript).toHaveBeenCalledTimes(1);
+  expect(log).toHaveBeenCalledTimes(loader.retries);
 });
 
 test("singleton should be used", () => {
@@ -194,4 +219,15 @@ test("loader should resolve immediately when google.maps defined", async () => {
   await expect(loader.loadPromise()).resolves.toBeUndefined();
   delete window.google;
   expect(console.warn).toHaveBeenCalledTimes(1);
+});
+
+test("deleteScript removes script tag from head", () => {
+  const loader = new Loader({ apiKey: "foo" });
+  loader["setScript"]();
+  expect(document.head.childNodes.length).toBe(1);
+  loader.deleteScript();
+  expect(document.head.childNodes.length).toBe(0);
+  // should work without script existing
+  loader.deleteScript();
+  expect(document.head.childNodes.length).toBe(0);
 });
