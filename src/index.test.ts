@@ -112,7 +112,7 @@ test("loadCallback callback should fire", () => {
 test("script onerror should reject promise", async () => {
   const loader = new Loader({ apiKey: "foo" });
 
-  let rejection = expect(loader.load()).rejects.toBeInstanceOf(ErrorEvent);
+  const rejection = expect(loader.load()).rejects.toBeInstanceOf(ErrorEvent);
 
   loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
 
