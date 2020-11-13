@@ -36,7 +36,7 @@
     <script
       nonce="caffe67d7b989af3a1c7f4a1a6c79bd9fb2b4eb0"
       type="text/javascript"
-      src="../dist/index.dev.js"
+      src="../dist/index.umd.js"
     ></script>
 
     <script
@@ -76,6 +76,22 @@
           // new google.maps.Map(document.getElementById("map"), mapOptions);
         }
       });
+
+      // An error is thrown when instantiating loader with new options
+      try {
+        new google.maps.plugins.loader.Loader({apiKey: 'foo'});
+      } catch (e) {
+        console.log(e.message)
+      }
+
+      // The loader is a singleton and new loaders will resolve with the old
+      const anotherLoader = new google.maps.plugins.loader.Loader(
+        loader.options
+      );
+      anotherLoader.load().then(() => {
+        console.log("another loader was used with same options");
+      });
+
     </script>
   </head>
 

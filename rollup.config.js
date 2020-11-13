@@ -16,6 +16,7 @@
 
 import babel from "rollup-plugin-babel";
 import commonjs from "rollup-plugin-commonjs";
+import { nodeResolve } from "@rollup/plugin-node-resolve";
 import { terser } from "rollup-plugin-terser";
 import typescript from "rollup-plugin-typescript2";
 
@@ -25,11 +26,16 @@ const babelOptions = {
 
 const terserOptions = { output: { comments: "" } };
 
+const resolveOptions = {
+  mainFields: ["browser", "jsnext:main", "module", "main"],
+};
+
 export default [
   {
     input: "src/index.ts",
     plugins: [
       typescript(),
+      nodeResolve(resolveOptions),
       commonjs(),
       babel(babelOptions),
       terser(terserOptions),
@@ -45,6 +51,7 @@ export default [
     input: "src/index.ts",
     plugins: [
       typescript(),
+      nodeResolve(resolveOptions),
       commonjs(),
       babel(babelOptions),
       terser(terserOptions),
@@ -57,7 +64,12 @@ export default [
   },
   {
     input: "src/index.ts",
-    plugins: [typescript(), commonjs(), babel(babelOptions)],
+    plugins: [
+      typescript(),
+      nodeResolve(resolveOptions),
+      commonjs(),
+      babel(babelOptions),
+    ],
     output: {
       file: "dist/index.dev.js",
       format: "iife",
@@ -66,7 +78,7 @@ export default [
   },
   {
     input: "src/index.ts",
-    plugins: [typescript()],
+    plugins: [typescript(), nodeResolve(resolveOptions), commonjs()],
     output: {
       file: "dist/index.esm.js",
       format: "esm",

@@ -6,7 +6,9 @@
     "outDir": "./dist",
     "sourceMap": true,
     "esModuleInterop": true,
-    "lib": ["DOM", "ESNext"]
+    "lib": ["DOM", "ESNext"],
+    "target": "ES6",
+    "moduleResolution": "node"
   },
   "include": ["src/**/*"]
 }
