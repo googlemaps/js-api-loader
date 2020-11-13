@@ -79,9 +79,9 @@
 
       // An error is thrown when instantiating loader with new options
       try {
-        new google.maps.plugins.loader.Loader({apiKey: 'foo'});
+        new google.maps.plugins.loader.Loader({ apiKey: "foo" });
       } catch (e) {
-        console.log(e.message)
+        console.log(e.message);
       }
 
       // The loader is a singleton and new loaders will resolve with the old
@@ -91,7 +91,6 @@
       anotherLoader.load().then(() => {
         console.log("another loader was used with same options");
       });
-
     </script>
   </head>
 

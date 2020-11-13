@@ -56,6 +56,5 @@ accept your pull requests.
 1.  Lint (and maybe fix) any changes:
 
         npm run format
-        npm run lint-fix
 
 [setup]: https://cloud.google.com/nodejs/docs/setup

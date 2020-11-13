@@ -22,7 +22,7 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "docs": "typedoc",
-    "format": "prettier *.json *.js src/* e2e/* examples/* --write",
+    "format": "prettier *.json *.js src/* e2e/* examples/* --write && eslint src/* --fix",
     "lint": "eslint src/*",
     "prepare": "rollup -c",
     "test": "jest src/*",
