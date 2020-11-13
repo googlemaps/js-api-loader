@@ -33,7 +33,7 @@ export interface LoaderOptions {
      */
     apiKey: string;
     /**
-    * @deprecated See https://developers.google.com/maps/premium/overview.
+     * @deprecated See https://developers.google.com/maps/premium/overview.
      */
     channel?: string;
     /**
@@ -216,6 +216,7 @@ export declare class Loader {
     private done;
     private loading;
     private onerrorEvent;
+    private static instance;
     /**
      * Creates an instance of Loader using [[LoaderOptions]]. No defaults are set
      * using this library, instead the defaults are set by the Google Maps
@@ -226,6 +227,7 @@ export declare class Loader {
      * ```
      */
     constructor({ apiKey, channel, client, id, libraries, language, region, version, mapIds, nonce, url, }: LoaderOptions);
+    get options(): LoaderOptions;
     /**
      * CreateUrl returns the Google Maps JavaScript API script url given the [[LoaderOptions]].
      *
