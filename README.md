@@ -91,4 +91,4 @@ If you find a bug, or have a feature suggestion, please [log an issue][issues]. 
 contribute, please read [How to Contribute][contrib].
 
 [issues]: https://github.com/googlemaps/js-api-loader/issues
-[contrib]: https://github.com/googlemaps/js-api-loader/blob/master/packages/loader/CONTRIBUTING.md
+[contrib]: https://github.com/googlemaps/js-api-loader/blob/master/CONTRIBUTING.md
