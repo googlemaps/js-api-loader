@@ -150,8 +150,9 @@ test("script onerror should retry", async () => {
   const loader = new Loader({ apiKey: "foo", retries: 1 });
   const deleteScript = jest.spyOn(loader, "deleteScript");
   const rejection = expect(loader.load()).rejects.toBeInstanceOf(ErrorEvent);
-  const log = jest.spyOn(console, "log").mockImplementation(()=>{})
-  
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  console.log = jest.fn();
+
   loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
   loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
   jest.runAllTimers();
@@ -161,7 +162,7 @@ test("script onerror should retry", async () => {
   expect(loader["loading"]).toBeFalsy();
   expect(loader["errors"].length).toBe(2);
   expect(deleteScript).toHaveBeenCalledTimes(1);
-  expect(log).toHaveBeenCalledTimes(loader.retries);
+  expect(console.log).toHaveBeenCalledTimes(loader.retries);
 });
 
 test("singleton should be used", () => {
