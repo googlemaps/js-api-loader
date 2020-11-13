@@ -1834,6 +1834,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	  return a !== a && b !== b;
 	};
 
+	var DEFAULT_ID = "__googleMapsScriptId";
 	/**
 	 * [[Loader]] makes it easier to add Google Maps JavaScript API to your application
 	 * dynamically using
@@ -1869,7 +1870,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	        channel = _ref.channel,
 	        client = _ref.client,
 	        _ref$id = _ref.id,
-	        id = _ref$id === void 0 ? "__googleMapsScriptId" : _ref$id,
+	        id = _ref$id === void 0 ? DEFAULT_ID : _ref$id,
 	        _ref$libraries = _ref.libraries,
 	        libraries = _ref$libraries === void 0 ? [] : _ref$libraries,
 	        language = _ref.language,
@@ -1877,6 +1878,8 @@ this.google.maps.plugins.loader = (function (exports) {
 	        version = _ref.version,
 	        mapIds = _ref.mapIds,
 	        nonce = _ref.nonce,
+	        _ref$retries = _ref.retries,
+	        retries = _ref$retries === void 0 ? 3 : _ref$retries,
 	        _ref$url = _ref.url,
 	        url = _ref$url === void 0 ? "https://maps.googleapis.com/maps/api/js" : _ref$url;
 
@@ -1886,16 +1889,19 @@ this.google.maps.plugins.loader = (function (exports) {
 	    this.callbacks = [];
 	    this.done = false;
 	    this.loading = false;
+	    this.errors = [];
 	    this.version = version;
 	    this.apiKey = apiKey;
 	    this.channel = channel;
 	    this.client = client;
-	    this.id = id;
+	    this.id = id || DEFAULT_ID; // Do not allow empty string
+
 	    this.libraries = libraries;
 	    this.language = language;
 	    this.region = region;
 	    this.mapIds = mapIds;
 	    this.nonce = nonce;
+	    this.retries = retries;
 	    this.url = url;
 
 	    if (Loader.instance) {
@@ -2002,7 +2008,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	  }, {
 	    key: "setScript",
 	    value: function setScript() {
-	      if (this.id && document.getElementById(this.id)) {
+	      if (document.getElementById(this.id)) {
 	        // TODO wrap onerror callback for cases where the script was loaded elsewhere
 	        this.callback();
 	        return;
@@ -2024,10 +2030,33 @@ this.google.maps.plugins.loader = (function (exports) {
 	      document.head.appendChild(script);
 	    }
 	  }, {
+	    key: "deleteScript",
+	    value: function deleteScript() {
+	      var script = document.getElementById(this.id);
+
+	      if (script) {
+	        script.remove();
+	      }
+	    }
+	  }, {
 	    key: "loadErrorCallback",
 	    value: function loadErrorCallback(e) {
-	      this.onerrorEvent = e;
-	      this.callback();
+	      var _this2 = this;
+
+	      this.errors.push(e);
+
+	      if (this.errors.length <= this.retries) {
+	        var delay = this.errors.length * Math.pow(2, this.errors.length);
+	        console.log("Failed to load Google Maps script, retrying in ".concat(delay, " ms."));
+	        setTimeout(function () {
+	          _this2.deleteScript();
+
+	          _this2.setScript();
+	        }, delay);
+	      } else {
+	        this.onerrorEvent = e;
+	        this.callback();
+	      }
 	    }
 	  }, {
 	    key: "setCallback",
@@ -2037,12 +2066,12 @@ this.google.maps.plugins.loader = (function (exports) {
 	  }, {
 	    key: "callback",
 	    value: function callback() {
-	      var _this2 = this;
+	      var _this3 = this;
 
 	      this.done = true;
 	      this.loading = false;
 	      this.callbacks.forEach(function (cb) {
-	        cb(_this2.onerrorEvent);
+	        cb(_this3.onerrorEvent);
 	      });
 	      this.callbacks = [];
 	    }
@@ -2086,6 +2115,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	  return Loader;
 	}();
 
+	exports.DEFAULT_ID = DEFAULT_ID;
 	exports.Loader = Loader;
 
 	Object.defineProperty(exports, '__esModule', { value: true });

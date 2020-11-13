@@ -58,6 +58,7 @@ var fastDeepEqual = function equal(a, b) {
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+const DEFAULT_ID = "__googleMapsScriptId";
 /**
  * [[Loader]] makes it easier to add Google Maps JavaScript API to your application
  * dynamically using
@@ -87,21 +88,23 @@ class Loader {
      * const loader = Loader({apiKey, version: 'weekly', libraries: ['places']});
      * ```
      */
-    constructor({ apiKey, channel, client, id = "__googleMapsScriptId", libraries = [], language, region, version, mapIds, nonce, url = "https://maps.googleapis.com/maps/api/js", }) {
+    constructor({ apiKey, channel, client, id = DEFAULT_ID, libraries = [], language, region, version, mapIds, nonce, retries = 3, url = "https://maps.googleapis.com/maps/api/js", }) {
         this.CALLBACK = "__googleMapsCallback";
         this.callbacks = [];
         this.done = false;
         this.loading = false;
+        this.errors = [];
         this.version = version;
         this.apiKey = apiKey;
         this.channel = channel;
         this.client = client;
-        this.id = id;
+        this.id = id || DEFAULT_ID; // Do not allow empty string
         this.libraries = libraries;
         this.language = language;
         this.region = region;
         this.mapIds = mapIds;
         this.nonce = nonce;
+        this.retries = retries;
         this.url = url;
         if (Loader.instance) {
             if (!fastDeepEqual(this.options, Loader.instance.options)) {
@@ -194,7 +197,7 @@ class Loader {
      * Set the script on document.
      */
     setScript() {
-        if (this.id && document.getElementById(this.id)) {
+        if (document.getElementById(this.id)) {
             // TODO wrap onerror callback for cases where the script was loaded elsewhere
             this.callback();
             return;
@@ -212,9 +215,26 @@ class Loader {
         }
         document.head.appendChild(script);
     }
+    deleteScript() {
+        const script = document.getElementById(this.id);
+        if (script) {
+            script.remove();
+        }
+    }
     loadErrorCallback(e) {
-        this.onerrorEvent = e;
-        this.callback();
+        this.errors.push(e);
+        if (this.errors.length <= this.retries) {
+            const delay = this.errors.length * Math.pow(2, this.errors.length);
+            console.log(`Failed to load Google Maps script, retrying in ${delay} ms.`);
+            setTimeout(() => {
+                this.deleteScript();
+                this.setScript();
+            }, delay);
+        }
+        else {
+            this.onerrorEvent = e;
+            this.callback();
+        }
     }
     setCallback() {
         window.__googleMapsCallback = this.callback.bind(this);
@@ -247,5 +267,5 @@ class Loader {
     }
 }
 
-export { Loader };
+export { DEFAULT_ID, Loader };
 //# sourceMappingURL=index.esm.js.map

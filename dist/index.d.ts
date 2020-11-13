@@ -21,11 +21,14 @@ declare global {
         __googleMapsCallback: (e: Event) => void;
     }
 }
+export declare const DEFAULT_ID = "__googleMapsScriptId";
 declare type Libraries = ("drawing" | "geometry" | "localContext" | "places" | "visualization")[];
 /**
  * The Google Maps JavaScript API
  * [documentation](https://developers.google.com/maps/documentation/javascript/tutorial)
  * is the authoritative source for [[LoaderOptions]].
+/**
+ * Loader options
  */
 export interface LoaderOptions {
     /**
@@ -146,6 +149,10 @@ export interface LoaderOptions {
      * Use a cryptographic nonce attribute.
      */
     nonce?: string;
+    /**
+     * The number of script load retries.
+     */
+    retries?: number;
 }
 /**
  * [[Loader]] makes it easier to add Google Maps JavaScript API to your application
@@ -208,6 +215,10 @@ export declare class Loader {
      */
     nonce: string | null;
     /**
+     * See [[LoaderOptions.retries]]
+     */
+    retries: number;
+    /**
      * See [[LoaderOptions.url]]
      */
     url: string;
@@ -217,6 +228,7 @@ export declare class Loader {
     private loading;
     private onerrorEvent;
     private static instance;
+    private errors;
     /**
      * Creates an instance of Loader using [[LoaderOptions]]. No defaults are set
      * using this library, instead the defaults are set by the Google Maps
@@ -226,7 +238,7 @@ export declare class Loader {
      * const loader = Loader({apiKey, version: 'weekly', libraries: ['places']});
      * ```
      */
-    constructor({ apiKey, channel, client, id, libraries, language, region, version, mapIds, nonce, url, }: LoaderOptions);
+    constructor({ apiKey, channel, client, id, libraries, language, region, version, mapIds, nonce, retries, url, }: LoaderOptions);
     get options(): LoaderOptions;
     /**
      * CreateUrl returns the Google Maps JavaScript API script url given the [[LoaderOptions]].
@@ -252,6 +264,7 @@ export declare class Loader {
      * Set the script on document.
      */
     private setScript;
+    deleteScript(): void;
     private loadErrorCallback;
     private setCallback;
     private callback;
