@@ -18,6 +18,7 @@ import { Loader, LoaderOptions } from ".";
 
 afterEach(() => {
   document.getElementsByTagName("html")[0].innerHTML = "";
+  delete Loader["instance"];
 });
 
 test.each([
@@ -108,20 +109,50 @@ test("loadCallback callback should fire", () => {
   window.__googleMapsCallback(null);
 });
 
-test("script onerror should reject promise", () => {
+test("script onerror should reject promise", async () => {
   const loader = new Loader({ apiKey: "foo" });
 
-  expect.assertions(3);
-
-  const promise = loader.load().catch((e) => {
-    expect(e).toBeTruthy();
-    expect(loader["done"]).toBeTruthy();
-    expect(loader["loading"]).toBeFalsy();
-  });
+  let rejection = expect(loader.load()).rejects.toBeInstanceOf(ErrorEvent);
 
   loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
 
-  return promise;
+  await rejection;
+  expect(loader["done"]).toBeTruthy();
+  expect(loader["loading"]).toBeFalsy();
+});
+
+test("script onerror should reject promise with multiple loaders", async () => {
+  const loader = new Loader({ apiKey: "foo" });
+  const extraLoader = new Loader({ apiKey: "foo" });
+
+  let rejection = expect(loader.load()).rejects.toBeInstanceOf(ErrorEvent);
+  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
+
+  await rejection;
+  expect(loader["done"]).toBeTruthy();
+  expect(loader["loading"]).toBeFalsy();
+  expect(loader["onerrorEvent"]).toBeInstanceOf(ErrorEvent);
+  rejection = expect(extraLoader.load()).rejects.toBeInstanceOf(ErrorEvent);
+
+  await rejection;
+  expect(extraLoader["done"]).toBeTruthy();
+  expect(extraLoader["loading"]).toBeFalsy();
+});
+
+test("singleton should be used", () => {
+  const loader = new Loader({ apiKey: "foo" });
+  const extraLoader = new Loader({ apiKey: "foo" });
+  expect(extraLoader).toBe(loader);
+
+  loader["done"] = true;
+  expect(extraLoader["done"]).toBe(loader["done"]);
+});
+
+test("singleton should throw with different options", () => {
+  new Loader({ apiKey: "foo" });
+  expect(() => {
+    new Loader({ apiKey: "bar" });
+  }).toThrowError();
 });
 
 test("loader should resolve immediately when successfully loaded", async () => {

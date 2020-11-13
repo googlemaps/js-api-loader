@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import isEqual from "lodash/fp/isEqual";
+
 /**
  * @ignore
  */
@@ -42,7 +44,7 @@ export interface LoaderOptions {
    */
   apiKey: string;
   /**
-  * @deprecated See https://developers.google.com/maps/premium/overview.
+   * @deprecated See https://developers.google.com/maps/premium/overview.
    */
   channel?: string;
   /**
@@ -231,6 +233,7 @@ export class Loader {
   private done = false;
   private loading = false;
   private onerrorEvent: Event;
+  private static instance: Loader;
 
   /**
    * Creates an instance of Loader using [[LoaderOptions]]. No defaults are set
@@ -265,6 +268,36 @@ export class Loader {
     this.mapIds = mapIds;
     this.nonce = nonce;
     this.url = url;
+
+    if (Loader.instance) {
+      if (!isEqual(this.options, Loader.instance.options)) {
+        throw new Error(
+          `Loader must not be called again with different options. ${JSON.stringify(
+            this.options
+          )} !== ${JSON.stringify(Loader.instance.options)}`
+        );
+      }
+
+      return Loader.instance;
+    }
+
+    Loader.instance = this;
+  }
+
+  get options(): LoaderOptions {
+    return {
+      version: this.version,
+      apiKey: this.apiKey,
+      channel: this.channel,
+      client: this.client,
+      id: this.id,
+      libraries: this.libraries,
+      language: this.language,
+      region: this.region,
+      mapIds: this.mapIds,
+      nonce: this.nonce,
+      url: this.url,
+    };
   }
   /**
    * CreateUrl returns the Google Maps JavaScript API script url given the [[LoaderOptions]].
@@ -348,6 +381,7 @@ export class Loader {
    */
   private setScript(): void {
     if (this.id && document.getElementById(this.id)) {
+      // TODO wrap onerror callback for cases where the script was loaded elsewhere
       this.callback();
       return;
     }

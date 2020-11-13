@@ -76,6 +76,13 @@
           // new google.maps.Map(document.getElementById("map"), mapOptions);
         }
       });
+
+      const anotherLoader = new google.maps.plugins.loader.Loader(
+        loader.options
+      );
+      anotherLoader.load().then(() => {
+        console.log("another loader was used with same options");
+      });
     </script>
   </head>
 
