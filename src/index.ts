@@ -426,6 +426,15 @@ export class Loader {
     }
   }
 
+  private resetIfRetryingFailed(): void {
+    if (this.done && !this.loading && this.errors.length >= this.retries) {
+      this.deleteScript();
+      this.done = false;
+      this.loading = false;
+      this.errors = [];
+    }
+  }
+
   private loadErrorCallback(e: ErrorEvent): void {
     this.errors.push(e);
 
@@ -470,6 +479,7 @@ export class Loader {
       this.callback();
     }
 
+    this.resetIfRetryingFailed();
     if (this.done) {
       this.callback();
     } else {

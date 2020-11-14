@@ -139,7 +139,9 @@ test("script onerror should reject promise with multiple loaders", async () => {
   expect(loader["done"]).toBeTruthy();
   expect(loader["loading"]).toBeFalsy();
   expect(loader["onerrorEvent"]).toBeInstanceOf(ErrorEvent);
+
   rejection = expect(extraLoader.load()).rejects.toBeInstanceOf(ErrorEvent);
+  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
 
   await rejection;
   expect(extraLoader["done"]).toBeTruthy();
@@ -158,6 +160,52 @@ test("script onerror should retry", async () => {
   jest.runAllTimers();
 
   await rejection;
+  expect(loader["done"]).toBeTruthy();
+  expect(loader["loading"]).toBeFalsy();
+  expect(loader["errors"].length).toBe(2);
+  expect(deleteScript).toHaveBeenCalledTimes(1);
+  expect(console.log).toHaveBeenCalledTimes(loader.retries);
+});
+
+test("script onerror should reset retry mechanism with next loader", async () => {
+  const loader = new Loader({ apiKey: "foo", retries: 1 });
+  const deleteScript = jest.spyOn(loader, "deleteScript");
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  console.log = jest.fn();
+
+  let rejection = expect(loader.load()).rejects.toBeInstanceOf(ErrorEvent);
+  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
+  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
+  jest.runAllTimers();
+  await rejection;
+
+  rejection = expect(loader.load()).rejects.toBeInstanceOf(ErrorEvent);
+  expect(loader["done"]).toBeFalsy();
+  expect(loader["loading"]).toBeTruthy();
+  expect(loader["errors"].length).toBe(0);
+
+  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
+  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
+  jest.runAllTimers();
+
+  await rejection;
+  expect(deleteScript).toHaveBeenCalledTimes(3);
+  expect(console.log).toHaveBeenCalledTimes(loader.retries * 2);
+});
+
+test("script onerror should not reset retry mechanism with parallel loaders", async () => {
+  const loader = new Loader({ apiKey: "foo", retries: 1 });
+  const deleteScript = jest.spyOn(loader, "deleteScript");
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  console.log = jest.fn();
+
+  const rejection1 = expect(loader.load()).rejects.toBeInstanceOf(ErrorEvent);
+  const rejection2 = expect(loader.load()).rejects.toBeInstanceOf(ErrorEvent);
+  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
+  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
+  jest.runAllTimers();
+
+  await Promise.all([rejection1, rejection2]);
   expect(loader["done"]).toBeTruthy();
   expect(loader["loading"]).toBeFalsy();
   expect(loader["errors"].length).toBe(2);
