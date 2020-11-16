@@ -2039,6 +2039,16 @@ this.google.maps.plugins.loader = (function (exports) {
 	      }
 	    }
 	  }, {
+	    key: "resetIfRetryingFailed",
+	    value: function resetIfRetryingFailed() {
+	      if (this.done && !this.loading && this.errors.length >= this.retries) {
+	        this.deleteScript();
+	        this.done = false;
+	        this.loading = false;
+	        this.errors = [];
+	      }
+	    }
+	  }, {
 	    key: "loadErrorCallback",
 	    value: function loadErrorCallback(e) {
 	      var _this2 = this;
@@ -2082,6 +2092,8 @@ this.google.maps.plugins.loader = (function (exports) {
 	        console.warn("Aborted attempt to load Google Maps JS with @googlemaps/js-api-loader." + "This may result in undesirable behavior as script parameters may not match.");
 	        this.callback();
 	      }
+
+	      this.resetIfRetryingFailed();
 
 	      if (this.done) {
 	        this.callback();

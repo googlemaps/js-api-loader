@@ -265,6 +265,7 @@ export declare class Loader {
      */
     private setScript;
     deleteScript(): void;
+    private resetIfRetryingFailed;
     private loadErrorCallback;
     private setCallback;
     private callback;

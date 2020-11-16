@@ -221,6 +221,14 @@ class Loader {
             script.remove();
         }
     }
+    resetIfRetryingFailed() {
+        if (this.done && !this.loading && this.errors.length >= this.retries) {
+            this.deleteScript();
+            this.done = false;
+            this.loading = false;
+            this.errors = [];
+        }
+    }
     loadErrorCallback(e) {
         this.errors.push(e);
         if (this.errors.length <= this.retries) {
@@ -253,6 +261,7 @@ class Loader {
                 "This may result in undesirable behavior as script parameters may not match.");
             this.callback();
         }
+        this.resetIfRetryingFailed();
         if (this.done) {
             this.callback();
         }
