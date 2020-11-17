@@ -213,6 +213,18 @@ test("script onerror should not reset retry mechanism with parallel loaders", as
   expect(console.log).toHaveBeenCalledTimes(loader.retries);
 });
 
+test("loader should not reset retry mechanism if successfully loaded", () => {
+  const loader = new Loader({ apiKey: "foo", retries: 0 });
+  const deleteScript = jest.spyOn(loader, "deleteScript");
+
+  loader["done"] = true;
+  expect(loader.load()).resolves.toBeUndefined();
+
+  expect(loader["done"]).toBeTruthy();
+  expect(loader["loading"]).toBeFalsy();
+  expect(deleteScript).toHaveBeenCalledTimes(0);
+});
+
 test("singleton should be used", () => {
   const loader = new Loader({ apiKey: "foo" });
   const extraLoader = new Loader({ apiKey: "foo" });
@@ -231,7 +243,7 @@ test("singleton should throw with different options", () => {
 
 test("loader should resolve immediately when successfully loaded", async () => {
   // use await/async pattern since the promise resolves without trigger
-  const loader = new Loader({ apiKey: "foo" });
+  const loader = new Loader({ apiKey: "foo", retries: 0 });
   loader["done"] = true;
 
   await expect(loader.loadPromise()).resolves.toBeUndefined();
@@ -239,7 +251,7 @@ test("loader should resolve immediately when successfully loaded", async () => {
 
 test("loader should resolve immediately when failed loading", async () => {
   // use await/async pattern since the promise rejects without trigger
-  const loader = new Loader({ apiKey: "foo" });
+  const loader = new Loader({ apiKey: "foo", retries: 0 });
   loader["done"] = true;
   loader["onerrorEvent"] = document.createEvent("ErrorEvent");
 
@@ -247,7 +259,7 @@ test("loader should resolve immediately when failed loading", async () => {
 });
 
 test("loader should wait if already loading", () => {
-  const loader = new Loader({ apiKey: "foo" });
+  const loader = new Loader({ apiKey: "foo", retries: 0 });
   loader["loading"] = true;
 
   loader.load();
