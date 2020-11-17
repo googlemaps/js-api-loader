@@ -427,7 +427,12 @@ export class Loader {
   }
 
   private resetIfRetryingFailed(): void {
-    if (this.done && !this.loading && this.errors.length >= this.retries) {
+    const totalPossibleAttempts = this.retries + 1;
+    if (
+      this.done &&
+      !this.loading &&
+      this.errors.length >= totalPossibleAttempts
+    ) {
       this.deleteScript();
       this.done = false;
       this.loading = false;
