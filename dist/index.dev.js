@@ -2041,7 +2041,9 @@ this.google.maps.plugins.loader = (function (exports) {
 	  }, {
 	    key: "resetIfRetryingFailed",
 	    value: function resetIfRetryingFailed() {
-	      if (this.done && !this.loading && this.errors.length >= this.retries) {
+	      var possibleAttempts = this.retries + 1;
+
+	      if (this.done && !this.loading && this.errors.length >= possibleAttempts) {
 	        this.deleteScript();
 	        this.done = false;
 	        this.loading = false;
