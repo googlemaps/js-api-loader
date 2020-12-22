@@ -22,7 +22,7 @@ or
 
 `yarn add @googlemaps/js-api-loader`
 
-Alternativly you may add the umd package directly to the html document using the unpkg link.
+Alternatively you may add the umd package directly to the html document using the unpkg link.
 
 `<script src="https://unpkg.com/@googlemaps/js-api-loader@1.0.0/dist/index.min.js"></script>`
 
