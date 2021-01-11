@@ -15,13 +15,10 @@
  */
 
 module.exports = {
-  mode: "file",
-  target: "es6",
   out: "docs",
   exclude: ["**/node_modules/**", "**/*.spec.ts", "**/*.test.ts"],
   name: "@googlemaps/js-api-loader",
   excludePrivate: true,
-  excludeNotExported: true,
   excludeExternals: true,
   toc: ["Loader", "LoaderOptions"],
 };
