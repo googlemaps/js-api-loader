@@ -24,7 +24,7 @@
     "dist/*"
   ],
   "scripts": {
-    "docs": "typedoc",
+    "docs": "typedoc src/index.ts",
     "format": "prettier *.json *.js src/* e2e/* examples/* --write && eslint src/* --fix",
     "lint": "eslint src/*",
     "prepare": "rollup -c",
