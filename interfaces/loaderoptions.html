@@ -7,6 +7,7 @@
 	<meta name="description" content="Documentation for @googlemaps/js-api-loader">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
+	<script async src="../assets/js/search.js" id="search-script"></script>
 </head>
 <body>
 <header>
@@ -49,7 +50,7 @@
 		<div class="container">
 			<ul class="tsd-breadcrumb">
 				<li>
-					<a href="../globals.html">Globals</a>
+					<a href="../modules.html">@googlemaps/js-api-loader</a>
 				</li>
 				<li>
 					<a href="loaderoptions.html">LoaderOptions</a>
@@ -113,7 +114,7 @@
 					<div class="tsd-signature tsd-kind-icon">api<wbr>Key<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/91b72de/src/index.ts#L49">index.ts:49</a></li>
+							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/d2b5a02/src/index.ts#L49">index.ts:49</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -128,7 +129,7 @@
 					<div class="tsd-signature tsd-kind-icon">channel<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/91b72de/src/index.ts#L53">index.ts:53</a></li>
+							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/d2b5a02/src/index.ts#L53">index.ts:53</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -145,7 +146,7 @@
 					<div class="tsd-signature tsd-kind-icon">client<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/91b72de/src/index.ts#L57">index.ts:57</a></li>
+							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/d2b5a02/src/index.ts#L57">index.ts:57</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -162,7 +163,7 @@
 					<div class="tsd-signature tsd-kind-icon">id<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/91b72de/src/index.ts#L90">index.ts:90</a></li>
+							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/d2b5a02/src/index.ts#L90">index.ts:90</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -177,7 +178,7 @@
 					<div class="tsd-signature tsd-kind-icon">language<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/91b72de/src/index.ts#L128">index.ts:128</a></li>
+							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/d2b5a02/src/index.ts#L128">index.ts:128</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -192,7 +193,8 @@
 						</div>
 						<p>For example, the following example localizes the language to the United
 						Kingdom:</p>
-						<pre><code>const loader = <span class="hljs-constructor">Loader({<span class="hljs-params">apiKey</span>, <span class="hljs-params">language</span>: &#x27;<span class="hljs-params">ja</span>&#x27;, <span class="hljs-params">region</span>: &#x27;JP&#x27;})</span>;</code></pre>
+						<pre><code><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">loader</span><span style="color: #000000"> = </span><span style="color: #795E26">Loader</span><span style="color: #000000">({</span><span style="color: #001080">apiKey</span><span style="color: #000000">, </span><span style="color: #001080">language:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;ja&#039;</span><span style="color: #000000">, </span><span style="color: #001080">region:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;JP&#039;</span><span style="color: #000000">});</span>
+</code></pre>
 						<p>See the <a href="https://developers.google.com/maps/faq#languagesupport">list of supported
 							languages</a>. Note
 						that new languages are added often, so this list may not be exhaustive.</p>
@@ -201,10 +203,10 @@
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
 					<a name="libraries" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagOptional">Optional</span> libraries</h3>
-					<div class="tsd-signature tsd-kind-icon">libraries<span class="tsd-signature-symbol">:</span> <a href="../globals.html#libraries" class="tsd-signature-type">Libraries</a></div>
+					<div class="tsd-signature tsd-kind-icon">libraries<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Libraries</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/91b72de/src/index.ts#L106">index.ts:106</a></li>
+							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/d2b5a02/src/index.ts#L106">index.ts:106</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -214,10 +216,11 @@
 								are modules of code that provide additional functionality to the main Maps
 							JavaScript API but are not loaded unless you specifically request them.</p>
 						</div>
-						<pre><code><span class="hljs-attribute">const loader</span> = Loader({
- apiKey,
- libraries: [<span class="hljs-string">&#x27;drawing&#x27;</span>, <span class="hljs-string">&#x27;geometry&#x27;</span>, <span class="hljs-string">&#x27;places&#x27;</span>, <span class="hljs-string">&#x27;visualization&#x27;</span>],
-});</code></pre>
+						<pre><code><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">loader</span><span style="color: #000000"> = </span><span style="color: #795E26">Loader</span><span style="color: #000000">({</span>
+<span style="color: #000000"> </span><span style="color: #001080">apiKey</span><span style="color: #000000">,</span>
+<span style="color: #000000"> </span><span style="color: #001080">libraries:</span><span style="color: #000000"> [</span><span style="color: #A31515">&#039;drawing&#039;</span><span style="color: #000000">, </span><span style="color: #A31515">&#039;geometry&#039;</span><span style="color: #000000">, </span><span style="color: #A31515">&#039;places&#039;</span><span style="color: #000000">, </span><span style="color: #A31515">&#039;visualization&#039;</span><span style="color: #000000">],</span>
+<span style="color: #000000">});</span>
+</code></pre>
 						<p>Set the <a href="https://developers.google.com/maps/documentation/javascript/libraries">list of libraries</a> for more options.</p>
 					</div>
 				</section>
@@ -227,7 +230,7 @@
 					<div class="tsd-signature tsd-kind-icon">map<wbr>Ids<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/91b72de/src/index.ts#L155">index.ts:155</a></li>
+							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/d2b5a02/src/index.ts#L155">index.ts:155</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -243,7 +246,7 @@
 					<div class="tsd-signature tsd-kind-icon">nonce<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/91b72de/src/index.ts#L163">index.ts:163</a></li>
+							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/d2b5a02/src/index.ts#L163">index.ts:163</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -258,7 +261,7 @@
 					<div class="tsd-signature tsd-kind-icon">region<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/91b72de/src/index.ts#L150">index.ts:150</a></li>
+							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/d2b5a02/src/index.ts#L150">index.ts:150</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -277,7 +280,8 @@
 							&quot;uk&quot; (corresponding to the domain .co.uk) while its region identifier is
 						&quot;GB.&quot;</p>
 						<p>For example, the following example localizes the map to the United Kingdom:</p>
-						<pre><code><span class="hljs-attribute">const loader</span> = Loader({apiKey, region: <span class="hljs-string">&#x27;GB&#x27;</span>});</code></pre>
+						<pre><code><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">loader</span><span style="color: #000000"> = </span><span style="color: #795E26">Loader</span><span style="color: #000000">({</span><span style="color: #001080">apiKey</span><span style="color: #000000">, </span><span style="color: #001080">region:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;GB&#039;</span><span style="color: #000000">});</span>
+</code></pre>
 					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
@@ -286,7 +290,7 @@
 					<div class="tsd-signature tsd-kind-icon">retries<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">number</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/91b72de/src/index.ts#L167">index.ts:167</a></li>
+							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/d2b5a02/src/index.ts#L167">index.ts:167</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -301,7 +305,7 @@
 					<div class="tsd-signature tsd-kind-icon">url<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/91b72de/src/index.ts#L159">index.ts:159</a></li>
+							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/d2b5a02/src/index.ts#L159">index.ts:159</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -316,7 +320,7 @@
 					<div class="tsd-signature tsd-kind-icon">version<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/91b72de/src/index.ts#L86">index.ts:86</a></li>
+							<li>Defined in <a href="https://github.com/googlemaps/js-api-loader/blob/d2b5a02/src/index.ts#L86">index.ts:86</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -325,14 +329,17 @@
 						</div>
 						<p>The weekly version is specified with <code>version=weekly</code>. This version is
 						updated once per week, and is the most current.</p>
-						<pre><code>const loader = <span class="hljs-constructor">Loader({<span class="hljs-params">apiKey</span>, <span class="hljs-params">version</span>: &#x27;<span class="hljs-params">weekly</span>&#x27;})</span>;</code></pre>
+						<pre><code><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">loader</span><span style="color: #000000"> = </span><span style="color: #795E26">Loader</span><span style="color: #000000">({</span><span style="color: #001080">apiKey</span><span style="color: #000000">, </span><span style="color: #001080">version:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;weekly&#039;</span><span style="color: #000000">});</span>
+</code></pre>
 						<p>The quarterly version is specified with <code>version=quarterly</code>. This version
 						is updated once per quarter, and is the most predictable.</p>
-						<pre><code>const loader = <span class="hljs-constructor">Loader({<span class="hljs-params">apiKey</span>, <span class="hljs-params">version</span>: &#x27;<span class="hljs-params">quarterly</span>&#x27;})</span>;</code></pre>
+						<pre><code><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">loader</span><span style="color: #000000"> = </span><span style="color: #795E26">Loader</span><span style="color: #000000">({</span><span style="color: #001080">apiKey</span><span style="color: #000000">, </span><span style="color: #001080">version:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;quarterly&#039;</span><span style="color: #000000">});</span>
+</code></pre>
 						<p>The version number is specified with <code>version=n.nn</code>. You can choose
 							<code>version=3.40</code>, <code>version=3.39</code>, or <code>version=3.38</code>. Version numbers are
 						updated once per quarter.</p>
-						<pre><code><span class="hljs-attribute">const loader</span> = Loader({apiKey, version: <span class="hljs-string">&#x27;3.40&#x27;</span>});</code></pre>
+						<pre><code><span style="color: #0000FF">const</span><span style="color: #000000"> </span><span style="color: #0070C1">loader</span><span style="color: #000000"> = </span><span style="color: #795E26">Loader</span><span style="color: #000000">({</span><span style="color: #001080">apiKey</span><span style="color: #000000">, </span><span style="color: #001080">version:</span><span style="color: #000000"> </span><span style="color: #A31515">&#039;3.40&#039;</span><span style="color: #000000">});</span>
+</code></pre>
 						<p>If you do not explicitly specify a version, you will receive the
 						weekly version by default.</p>
 					</div>
@@ -342,8 +349,8 @@
 		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
 			<nav class="tsd-navigation primary">
 				<ul>
-					<li class="globals  ">
-						<a href="../globals.html"><em>Globals</em></a>
+					<li class=" ">
+						<a href="../modules.html">Exports</a>
 					</li>
 				</ul>
 			</nav>
