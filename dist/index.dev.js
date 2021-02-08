@@ -212,7 +212,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	    return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
 	  })('versions', []).push({
 	    version: '3.8.3',
-	    mode:  'global',
+	    mode: 'global',
 	    copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
 	  });
 	});
@@ -1630,7 +1630,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	    return C === PromiseConstructor || C === PromiseWrapper ? new OwnPromiseCapability(C) : newGenericPromiseCapability(C);
 	  };
 
-	  if ( typeof nativePromiseConstructor == 'function') {
+	  if (typeof nativePromiseConstructor == 'function') {
 	    nativeThen = nativePromiseConstructor.prototype.then; // wrap native Promise#then for native async functions
 
 	    redefine(nativePromiseConstructor.prototype, 'then', function then(onFulfilled, onRejected) {
@@ -1684,12 +1684,12 @@ this.google.maps.plugins.loader = (function (exports) {
 	_export({
 	  target: PROMISE,
 	  stat: true,
-	  forced:  FORCED$1
+	  forced: FORCED$1
 	}, {
 	  // `Promise.resolve` method
 	  // https://tc39.es/ecma262/#sec-promise.resolve
 	  resolve: function resolve(x) {
-	    return promiseResolve( this, x);
+	    return promiseResolve(this, x);
 	  }
 	});
 	_export({
