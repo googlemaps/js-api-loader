@@ -1931,13 +1931,30 @@ this.google.maps.plugins.loader = (function (exports) {
 	  }
 
 	  _createClass(Loader, [{
-	    key: "createUrl",
-
+	    key: "options",
+	    get: function get() {
+	      return {
+	        version: this.version,
+	        apiKey: this.apiKey,
+	        channel: this.channel,
+	        client: this.client,
+	        id: this.id,
+	        libraries: this.libraries,
+	        language: this.language,
+	        region: this.region,
+	        mapIds: this.mapIds,
+	        nonce: this.nonce,
+	        url: this.url
+	      };
+	    }
 	    /**
 	     * CreateUrl returns the Google Maps JavaScript API script url given the [[LoaderOptions]].
 	     *
 	     * @ignore
 	     */
+
+	  }, {
+	    key: "createUrl",
 	    value: function createUrl() {
 	      var url = this.url;
 	      url += "?callback=".concat(this.CALLBACK);
@@ -2121,23 +2138,6 @@ this.google.maps.plugins.loader = (function (exports) {
 	          this.setScript();
 	        }
 	      }
-	    }
-	  }, {
-	    key: "options",
-	    get: function get() {
-	      return {
-	        version: this.version,
-	        apiKey: this.apiKey,
-	        channel: this.channel,
-	        client: this.client,
-	        id: this.id,
-	        libraries: this.libraries,
-	        language: this.language,
-	        region: this.region,
-	        mapIds: this.mapIds,
-	        nonce: this.nonce,
-	        url: this.url
-	      };
 	    }
 	  }]);
 
