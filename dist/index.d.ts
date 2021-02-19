@@ -101,8 +101,7 @@ export interface LoaderOptions {
      * browser's language setting, you can force it to display information in a
      * particular language when loading the Maps JavaScript API code.
      *
-     * For example, the following example localizes the language to the United
-     * Kingdom:
+     * For example, the following example localizes the language to Japan:
      *
      * ```
      * const loader = Loader({apiKey, language: 'ja', region: 'JP'});
