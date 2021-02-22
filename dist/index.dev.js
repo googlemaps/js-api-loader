@@ -15,8 +15,9 @@ this.google.maps.plugins.loader = (function (exports) {
 	}; // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 
 
-	var global_1 = // eslint-disable-next-line no-undef
-	check(typeof globalThis == 'object' && globalThis) || check(typeof window == 'object' && window) || check(typeof self == 'object' && self) || check(typeof commonjsGlobal == 'object' && commonjsGlobal) || // eslint-disable-next-line no-new-func
+	var global_1 =
+	/* global globalThis -- safe */
+	check(typeof globalThis == 'object' && globalThis) || check(typeof window == 'object' && window) || check(typeof self == 'object' && self) || check(typeof commonjsGlobal == 'object' && commonjsGlobal) || // eslint-disable-next-line no-new-func -- fallback
 	function () {
 	  return this;
 	}() || Function('return this')();
@@ -72,7 +73,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
 	var indexedObject = fails(function () {
 	  // throws an error in rhino, see https://github.com/mozilla/rhino/issues/346
-	  // eslint-disable-next-line no-prototype-builtins
+	  // eslint-disable-next-line no-prototype-builtins -- safe
 	  return !Object('z').propertyIsEnumerable(0);
 	}) ? function (it) {
 	  return classofRaw(it) == 'String' ? split.call(it, '') : Object(it);
@@ -211,7 +212,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	  (module.exports = function (key, value) {
 	    return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
 	  })('versions', []).push({
-	    version: '3.8.3',
+	    version: '3.9.0',
 	    mode: 'global',
 	    copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
 	  });
@@ -375,10 +376,10 @@ this.google.maps.plugins.loader = (function (exports) {
 	    var length = toLength(O.length);
 	    var index = toAbsoluteIndex(fromIndex, length);
 	    var value; // Array#includes uses SameValueZero equality algorithm
-	    // eslint-disable-next-line no-self-compare
+	    // eslint-disable-next-line no-self-compare -- NaN check
 
 	    if (IS_INCLUDES && el != el) while (length > index) {
-	      value = O[index++]; // eslint-disable-next-line no-self-compare
+	      value = O[index++]; // eslint-disable-next-line no-self-compare -- NaN check
 
 	      if (value != value) return true; // Array#indexOf ignores holes, Array#includes - not
 	    } else for (; length > index; index++) {
@@ -541,13 +542,14 @@ this.google.maps.plugins.loader = (function (exports) {
 
 	var nativeSymbol = !!Object.getOwnPropertySymbols && !fails(function () {
 	  // Chrome 38 Symbol has incorrect toString conversion
-	  // eslint-disable-next-line no-undef
+
+	  /* global Symbol -- required for testing */
 	  return !String(Symbol());
 	});
 
-	var useSymbolAsUid = nativeSymbol // eslint-disable-next-line no-undef
-	&& !Symbol.sham // eslint-disable-next-line no-undef
-	&& typeof Symbol.iterator == 'symbol';
+	var useSymbolAsUid = nativeSymbol
+	/* global Symbol -- safe */
+	&& !Symbol.sham && typeof Symbol.iterator == 'symbol';
 
 	var WellKnownSymbolsStore = shared('wks');
 	var Symbol$1 = global_1.Symbol;
@@ -648,8 +650,8 @@ this.google.maps.plugins.loader = (function (exports) {
 	  proto: true,
 	  forced: FORCED
 	}, {
+	  // eslint-disable-next-line no-unused-vars -- required for `.length`
 	  concat: function concat(arg) {
-	    // eslint-disable-line no-unused-vars
 	    var O = toObject(this);
 	    var A = arraySpeciesCreate(O, 0);
 	    var n = 0;
@@ -803,46 +805,18 @@ this.google.maps.plugins.loader = (function (exports) {
 	var arrayMethodIsStrict = function (METHOD_NAME, argument) {
 	  var method = [][METHOD_NAME];
 	  return !!method && fails(function () {
-	    // eslint-disable-next-line no-useless-call,no-throw-literal
+	    // eslint-disable-next-line no-useless-call,no-throw-literal -- required for testing
 	    method.call(null, argument || function () {
 	      throw 1;
 	    }, 1);
 	  });
 	};
 
-	var defineProperty = Object.defineProperty;
-	var cache = {};
-
-	var thrower = function (it) {
-	  throw it;
-	};
-
-	var arrayMethodUsesToLength = function (METHOD_NAME, options) {
-	  if (has(cache, METHOD_NAME)) return cache[METHOD_NAME];
-	  if (!options) options = {};
-	  var method = [][METHOD_NAME];
-	  var ACCESSORS = has(options, 'ACCESSORS') ? options.ACCESSORS : false;
-	  var argument0 = has(options, 0) ? options[0] : thrower;
-	  var argument1 = has(options, 1) ? options[1] : undefined;
-	  return cache[METHOD_NAME] = !!method && !fails(function () {
-	    if (ACCESSORS && !descriptors) return true;
-	    var O = {
-	      length: -1
-	    };
-	    if (ACCESSORS) defineProperty(O, 1, {
-	      enumerable: true,
-	      get: thrower
-	    });else O[1] = 1;
-	    method.call(O, argument0, argument1);
-	  });
-	};
-
 	var $forEach = arrayIteration.forEach;
-	var STRICT_METHOD = arrayMethodIsStrict('forEach');
-	var USES_TO_LENGTH = arrayMethodUsesToLength('forEach'); // `Array.prototype.forEach` method implementation
+	var STRICT_METHOD = arrayMethodIsStrict('forEach'); // `Array.prototype.forEach` method implementation
 	// https://tc39.es/ecma262/#sec-array.prototype.foreach
 
-	var arrayForEach = !STRICT_METHOD || !USES_TO_LENGTH ? function forEach(callbackfn
+	var arrayForEach = !STRICT_METHOD ? function forEach(callbackfn
 	/* , thisArg */
 	) {
 	  return $forEach(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
@@ -925,12 +899,12 @@ this.google.maps.plugins.loader = (function (exports) {
 	  return target;
 	};
 
-	var defineProperty$1 = objectDefineProperty.f;
+	var defineProperty = objectDefineProperty.f;
 	var TO_STRING_TAG$2 = wellKnownSymbol('toStringTag');
 
 	var setToStringTag = function (it, TAG, STATIC) {
 	  if (it && !has(it = STATIC ? it : it.prototype, TO_STRING_TAG$2)) {
-	    defineProperty$1(it, TO_STRING_TAG$2, {
+	    defineProperty(it, TO_STRING_TAG$2, {
 	      configurable: true,
 	      value: TAG
 	    });
@@ -1063,7 +1037,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
 	  iteratorWithReturn[ITERATOR$2] = function () {
 	    return this;
-	  }; // eslint-disable-next-line no-throw-literal
+	  }; // eslint-disable-next-line no-throw-literal -- required for testing
 
 
 	  Array.from(iteratorWithReturn, function () {
@@ -1125,7 +1099,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	var defer, channel, port;
 
 	var run = function (id) {
-	  // eslint-disable-next-line no-prototype-builtins
+	  // eslint-disable-next-line no-prototype-builtins -- safe
 	  if (queue.hasOwnProperty(id)) {
 	    var fn = queue[id];
 	    delete queue[id];
@@ -1157,7 +1131,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	    while (arguments.length > i) args.push(arguments[i++]);
 
 	    queue[++counter] = function () {
-	      // eslint-disable-next-line no-new-func
+	      // eslint-disable-next-line no-new-func -- spec requirement
 	      (typeof fn == 'function' ? fn : Function(fn)).apply(undefined, args);
 	    };
 
@@ -1581,7 +1555,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	    } catch (error) {
 	      internalReject(state, error);
 	    }
-	  }; // eslint-disable-next-line no-unused-vars
+	  }; // eslint-disable-next-line no-unused-vars -- required for `.length`
 
 
 	  Internal = function Promise(executor) {
@@ -1647,7 +1621,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	      enumerable: true,
 	      forced: true
 	    }, {
-	      // eslint-disable-next-line no-unused-vars
+	      // eslint-disable-next-line no-unused-vars -- required for `.length`
 	      fetch: function fetch(input
 	      /* , init */
 	      ) {
