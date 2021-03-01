@@ -234,7 +234,7 @@ this.google.maps.plugins.loader = (function (exports) {
     (module.exports = function (key, value) {
       return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.9.0',
+      version: '3.9.1',
       mode: 'global',
       copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
     });
@@ -562,11 +562,34 @@ this.google.maps.plugins.loader = (function (exports) {
     if (propertyKey in object) objectDefineProperty.f(object, propertyKey, createPropertyDescriptor(0, value));else object[propertyKey] = value;
   };
 
-  var nativeSymbol = !!Object.getOwnPropertySymbols && !fails(function () {
-    // Chrome 38 Symbol has incorrect toString conversion
+  var engineIsNode = classofRaw(global_1.process) == 'process';
 
+  var engineUserAgent = getBuiltIn('navigator', 'userAgent') || '';
+
+  var process = global_1.process;
+  var versions = process && process.versions;
+  var v8 = versions && versions.v8;
+  var match, version;
+
+  if (v8) {
+    match = v8.split('.');
+    version = match[0] + match[1];
+  } else if (engineUserAgent) {
+    match = engineUserAgent.match(/Edge\/(\d+)/);
+
+    if (!match || match[1] >= 74) {
+      match = engineUserAgent.match(/Chrome\/(\d+)/);
+      if (match) version = match[1];
+    }
+  }
+
+  var engineV8Version = version && +version;
+
+  var nativeSymbol = !!Object.getOwnPropertySymbols && !fails(function () {
     /* global Symbol -- required for testing */
-    return !String(Symbol());
+    return !Symbol.sham && ( // Chrome 38 Symbol has incorrect toString conversion
+    // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
+    engineIsNode ? engineV8Version === 38 : engineV8Version > 37 && engineV8Version < 41);
   });
 
   var useSymbolAsUid = nativeSymbol
@@ -578,8 +601,12 @@ this.google.maps.plugins.loader = (function (exports) {
   var createWellKnownSymbol = useSymbolAsUid ? Symbol$1 : Symbol$1 && Symbol$1.withoutSetter || uid;
 
   var wellKnownSymbol = function (name) {
-    if (!has(WellKnownSymbolsStore, name)) {
-      if (nativeSymbol && has(Symbol$1, name)) WellKnownSymbolsStore[name] = Symbol$1[name];else WellKnownSymbolsStore[name] = createWellKnownSymbol('Symbol.' + name);
+    if (!has(WellKnownSymbolsStore, name) || !(nativeSymbol || typeof WellKnownSymbolsStore[name] == 'string')) {
+      if (nativeSymbol && has(Symbol$1, name)) {
+        WellKnownSymbolsStore[name] = Symbol$1[name];
+      } else {
+        WellKnownSymbolsStore[name] = createWellKnownSymbol('Symbol.' + name);
+      }
     }
 
     return WellKnownSymbolsStore[name];
@@ -602,27 +629,6 @@ this.google.maps.plugins.loader = (function (exports) {
 
     return new (C === undefined ? Array : C)(length === 0 ? 0 : length);
   };
-
-  var engineUserAgent = getBuiltIn('navigator', 'userAgent') || '';
-
-  var process = global_1.process;
-  var versions = process && process.versions;
-  var v8 = versions && versions.v8;
-  var match, version;
-
-  if (v8) {
-    match = v8.split('.');
-    version = match[0] + match[1];
-  } else if (engineUserAgent) {
-    match = engineUserAgent.match(/Edge\/(\d+)/);
-
-    if (!match || match[1] >= 74) {
-      match = engineUserAgent.match(/Chrome\/(\d+)/);
-      if (match) version = match[1];
-    }
-  }
-
-  var engineV8Version = version && +version;
 
   var SPECIES$1 = wellKnownSymbol('species');
 
@@ -985,8 +991,6 @@ this.google.maps.plugins.loader = (function (exports) {
   var html = getBuiltIn('document', 'documentElement');
 
   var engineIsIos = /(iphone|ipod|ipad).*applewebkit/i.test(engineUserAgent);
-
-  var engineIsNode = classofRaw(global_1.process) == 'process';
 
   var location = global_1.location;
   var set$1 = global_1.setImmediate;
