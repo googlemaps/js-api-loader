@@ -61,19 +61,19 @@ this.google.maps.plugins.loader = (function (exports) {
   });
 
   var nativePropertyIsEnumerable = {}.propertyIsEnumerable;
-  var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor; // Nashorn ~ JDK8 bug
+  var getOwnPropertyDescriptor$2 = Object.getOwnPropertyDescriptor; // Nashorn ~ JDK8 bug
 
-  var NASHORN_BUG = getOwnPropertyDescriptor && !nativePropertyIsEnumerable.call({
+  var NASHORN_BUG = getOwnPropertyDescriptor$2 && !nativePropertyIsEnumerable.call({
     1: 2
   }, 1); // `Object.prototype.propertyIsEnumerable` method implementation
   // https://tc39.es/ecma262/#sec-object.prototype.propertyisenumerable
 
-  var f = NASHORN_BUG ? function propertyIsEnumerable(V) {
-    var descriptor = getOwnPropertyDescriptor(this, V);
+  var f$5 = NASHORN_BUG ? function propertyIsEnumerable(V) {
+    var descriptor = getOwnPropertyDescriptor$2(this, V);
     return !!descriptor && descriptor.enumerable;
   } : nativePropertyIsEnumerable;
   var objectPropertyIsEnumerable = {
-    f: f
+    f: f$5
   };
 
   var createPropertyDescriptor = function (bitmap, value) {
@@ -131,16 +131,16 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var hasOwnProperty = {}.hasOwnProperty;
 
-  var has = function (it, key) {
+  var has$1 = function (it, key) {
     return hasOwnProperty.call(it, key);
   };
 
-  var document$1 = global_1.document; // typeof document.createElement is 'object' in old IE
+  var document$3 = global_1.document; // typeof document.createElement is 'object' in old IE
 
-  var EXISTS = isObject(document$1) && isObject(document$1.createElement);
+  var EXISTS = isObject(document$3) && isObject(document$3.createElement);
 
   var documentCreateElement = function (it) {
-    return EXISTS ? document$1.createElement(it) : {};
+    return EXISTS ? document$3.createElement(it) : {};
   };
 
   var ie8DomDefine = !descriptors && !fails(function () {
@@ -154,7 +154,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var nativeGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor; // `Object.getOwnPropertyDescriptor` method
   // https://tc39.es/ecma262/#sec-object.getownpropertydescriptor
 
-  var f$1 = descriptors ? nativeGetOwnPropertyDescriptor : function getOwnPropertyDescriptor(O, P) {
+  var f$4 = descriptors ? nativeGetOwnPropertyDescriptor : function getOwnPropertyDescriptor(O, P) {
     O = toIndexedObject(O);
     P = toPrimitive(P, true);
     if (ie8DomDefine) try {
@@ -162,10 +162,10 @@ this.google.maps.plugins.loader = (function (exports) {
     } catch (error) {
       /* empty */
     }
-    if (has(O, P)) return createPropertyDescriptor(!objectPropertyIsEnumerable.f.call(O, P), O[P]);
+    if (has$1(O, P)) return createPropertyDescriptor(!objectPropertyIsEnumerable.f.call(O, P), O[P]);
   };
   var objectGetOwnPropertyDescriptor = {
-    f: f$1
+    f: f$4
   };
 
   var anObject = function (it) {
@@ -179,7 +179,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var nativeDefineProperty = Object.defineProperty; // `Object.defineProperty` method
   // https://tc39.es/ecma262/#sec-object.defineproperty
 
-  var f$2 = descriptors ? nativeDefineProperty : function defineProperty(O, P, Attributes) {
+  var f$3 = descriptors ? nativeDefineProperty : function defineProperty(O, P, Attributes) {
     anObject(O);
     P = toPrimitive(P, true);
     anObject(Attributes);
@@ -193,7 +193,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return O;
   };
   var objectDefineProperty = {
-    f: f$2
+    f: f$3
   };
 
   var createNonEnumerableProperty = descriptors ? function (object, key, value) {
@@ -214,8 +214,8 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var SHARED = '__core-js_shared__';
-  var store = global_1[SHARED] || setGlobal(SHARED, {});
-  var sharedStore = store;
+  var store$1 = global_1[SHARED] || setGlobal(SHARED, {});
+  var sharedStore = store$1;
 
   var functionToString = Function.toString; // this helper broken in `3.4.1-3.4.4`, so we can't use `shared` helper
 
@@ -227,8 +227,8 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var inspectSource = sharedStore.inspectSource;
 
-  var WeakMap = global_1.WeakMap;
-  var nativeWeakMap = typeof WeakMap === 'function' && /native code/.test(inspectSource(WeakMap));
+  var WeakMap$1 = global_1.WeakMap;
+  var nativeWeakMap = typeof WeakMap$1 === 'function' && /native code/.test(inspectSource(WeakMap$1));
 
   var shared = createCommonjsModule(function (module) {
     (module.exports = function (key, value) {
@@ -253,13 +253,13 @@ this.google.maps.plugins.loader = (function (exports) {
     return keys[key] || (keys[key] = uid(key));
   };
 
-  var hiddenKeys = {};
+  var hiddenKeys$1 = {};
 
-  var WeakMap$1 = global_1.WeakMap;
-  var set, get, has$1;
+  var WeakMap = global_1.WeakMap;
+  var set$1, get, has;
 
   var enforce = function (it) {
-    return has$1(it) ? get(it) : set(it, {});
+    return has(it) ? get(it) : set$1(it, {});
   };
 
   var getterFor = function (TYPE) {
@@ -275,47 +275,47 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   if (nativeWeakMap) {
-    var store$1 = sharedStore.state || (sharedStore.state = new WeakMap$1());
-    var wmget = store$1.get;
-    var wmhas = store$1.has;
-    var wmset = store$1.set;
+    var store = sharedStore.state || (sharedStore.state = new WeakMap());
+    var wmget = store.get;
+    var wmhas = store.has;
+    var wmset = store.set;
 
-    set = function (it, metadata) {
+    set$1 = function (it, metadata) {
       metadata.facade = it;
-      wmset.call(store$1, it, metadata);
+      wmset.call(store, it, metadata);
       return metadata;
     };
 
     get = function (it) {
-      return wmget.call(store$1, it) || {};
+      return wmget.call(store, it) || {};
     };
 
-    has$1 = function (it) {
-      return wmhas.call(store$1, it);
+    has = function (it) {
+      return wmhas.call(store, it);
     };
   } else {
     var STATE = sharedKey('state');
-    hiddenKeys[STATE] = true;
+    hiddenKeys$1[STATE] = true;
 
-    set = function (it, metadata) {
+    set$1 = function (it, metadata) {
       metadata.facade = it;
       createNonEnumerableProperty(it, STATE, metadata);
       return metadata;
     };
 
     get = function (it) {
-      return has(it, STATE) ? it[STATE] : {};
+      return has$1(it, STATE) ? it[STATE] : {};
     };
 
-    has$1 = function (it) {
-      return has(it, STATE);
+    has = function (it) {
+      return has$1(it, STATE);
     };
   }
 
   var internalState = {
-    set: set,
+    set: set$1,
     get: get,
-    has: has$1,
+    has: has,
     enforce: enforce,
     getterFor: getterFor
   };
@@ -331,7 +331,7 @@ this.google.maps.plugins.loader = (function (exports) {
       var state;
 
       if (typeof value == 'function') {
-        if (typeof key == 'string' && !has(value, 'name')) {
+        if (typeof key == 'string' && !has$1(value, 'name')) {
           createNonEnumerableProperty(value, 'name', key);
         }
 
@@ -359,12 +359,12 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var path = global_1;
 
-  var aFunction = function (variable) {
+  var aFunction$1 = function (variable) {
     return typeof variable == 'function' ? variable : undefined;
   };
 
   var getBuiltIn = function (namespace, method) {
-    return arguments.length < 2 ? aFunction(path[namespace]) || aFunction(global_1[namespace]) : path[namespace] && path[namespace][method] || global_1[namespace] && global_1[namespace][method];
+    return arguments.length < 2 ? aFunction$1(path[namespace]) || aFunction$1(global_1[namespace]) : path[namespace] && path[namespace][method] || global_1[namespace] && global_1[namespace][method];
   };
 
   var ceil = Math.ceil;
@@ -375,24 +375,24 @@ this.google.maps.plugins.loader = (function (exports) {
     return isNaN(argument = +argument) ? 0 : (argument > 0 ? floor : ceil)(argument);
   };
 
-  var min = Math.min; // `ToLength` abstract operation
+  var min$1 = Math.min; // `ToLength` abstract operation
   // https://tc39.es/ecma262/#sec-tolength
 
   var toLength = function (argument) {
-    return argument > 0 ? min(toInteger(argument), 0x1FFFFFFFFFFFFF) : 0; // 2 ** 53 - 1 == 9007199254740991
+    return argument > 0 ? min$1(toInteger(argument), 0x1FFFFFFFFFFFFF) : 0; // 2 ** 53 - 1 == 9007199254740991
   };
 
   var max = Math.max;
-  var min$1 = Math.min; // Helper for a popular repeating case of the spec:
+  var min = Math.min; // Helper for a popular repeating case of the spec:
   // Let integer be ? ToInteger(index).
   // If integer < 0, let result be max((length + integer), 0); else let result be min(integer, length).
 
   var toAbsoluteIndex = function (index, length) {
     var integer = toInteger(index);
-    return integer < 0 ? max(integer + length, 0) : min$1(integer, length);
+    return integer < 0 ? max(integer + length, 0) : min(integer, length);
   };
 
-  var createMethod = function (IS_INCLUDES) {
+  var createMethod$1 = function (IS_INCLUDES) {
     return function ($this, el, fromIndex) {
       var O = toIndexedObject($this);
       var length = toLength(O.length);
@@ -414,10 +414,10 @@ this.google.maps.plugins.loader = (function (exports) {
   var arrayIncludes = {
     // `Array.prototype.includes` method
     // https://tc39.es/ecma262/#sec-array.prototype.includes
-    includes: createMethod(true),
+    includes: createMethod$1(true),
     // `Array.prototype.indexOf` method
     // https://tc39.es/ecma262/#sec-array.prototype.indexof
-    indexOf: createMethod(false)
+    indexOf: createMethod$1(false)
   };
 
   var indexOf = arrayIncludes.indexOf;
@@ -428,10 +428,10 @@ this.google.maps.plugins.loader = (function (exports) {
     var result = [];
     var key;
 
-    for (key in O) !has(hiddenKeys, key) && has(O, key) && result.push(key); // Don't enum bug & hidden keys
+    for (key in O) !has$1(hiddenKeys$1, key) && has$1(O, key) && result.push(key); // Don't enum bug & hidden keys
 
 
-    while (names.length > i) if (has(O, key = names[i++])) {
+    while (names.length > i) if (has$1(O, key = names[i++])) {
       ~indexOf(result, key) || result.push(key);
     }
 
@@ -441,20 +441,20 @@ this.google.maps.plugins.loader = (function (exports) {
   // IE8- don't enum bug keys
   var enumBugKeys = ['constructor', 'hasOwnProperty', 'isPrototypeOf', 'propertyIsEnumerable', 'toLocaleString', 'toString', 'valueOf'];
 
-  var hiddenKeys$1 = enumBugKeys.concat('length', 'prototype'); // `Object.getOwnPropertyNames` method
+  var hiddenKeys = enumBugKeys.concat('length', 'prototype'); // `Object.getOwnPropertyNames` method
   // https://tc39.es/ecma262/#sec-object.getownpropertynames
 
-  var f$3 = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
-    return objectKeysInternal(O, hiddenKeys$1);
+  var f$2 = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
+    return objectKeysInternal(O, hiddenKeys);
   };
 
   var objectGetOwnPropertyNames = {
-    f: f$3
+    f: f$2
   };
 
-  var f$4 = Object.getOwnPropertySymbols;
+  var f$1 = Object.getOwnPropertySymbols;
   var objectGetOwnPropertySymbols = {
-    f: f$4
+    f: f$1
   };
 
   var ownKeys = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
@@ -470,7 +470,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
     for (var i = 0; i < keys.length; i++) {
       var key = keys[i];
-      if (!has(target, key)) defineProperty(target, key, getOwnPropertyDescriptor(source, key));
+      if (!has$1(target, key)) defineProperty(target, key, getOwnPropertyDescriptor(source, key));
     }
   };
 
@@ -566,8 +566,8 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var engineUserAgent = getBuiltIn('navigator', 'userAgent') || '';
 
-  var process = global_1.process;
-  var versions = process && process.versions;
+  var process$3 = global_1.process;
+  var versions = process$3 && process$3.versions;
   var v8 = versions && versions.v8;
   var match, version;
 
@@ -601,8 +601,8 @@ this.google.maps.plugins.loader = (function (exports) {
   var createWellKnownSymbol = useSymbolAsUid ? Symbol$1 : Symbol$1 && Symbol$1.withoutSetter || uid;
 
   var wellKnownSymbol = function (name) {
-    if (!has(WellKnownSymbolsStore, name) || !(nativeSymbol || typeof WellKnownSymbolsStore[name] == 'string')) {
-      if (nativeSymbol && has(Symbol$1, name)) {
+    if (!has$1(WellKnownSymbolsStore, name) || !(nativeSymbol || typeof WellKnownSymbolsStore[name] == 'string')) {
+      if (nativeSymbol && has$1(Symbol$1, name)) {
         WellKnownSymbolsStore[name] = Symbol$1[name];
       } else {
         WellKnownSymbolsStore[name] = createWellKnownSymbol('Symbol.' + name);
@@ -612,7 +612,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return WellKnownSymbolsStore[name];
   };
 
-  var SPECIES = wellKnownSymbol('species'); // `ArraySpeciesCreate` abstract operation
+  var SPECIES$4 = wellKnownSymbol('species'); // `ArraySpeciesCreate` abstract operation
   // https://tc39.es/ecma262/#sec-arrayspeciescreate
 
   var arraySpeciesCreate = function (originalArray, length) {
@@ -622,7 +622,7 @@ this.google.maps.plugins.loader = (function (exports) {
       C = originalArray.constructor; // cross-realm fallback
 
       if (typeof C == 'function' && (C === Array || isArray(C.prototype))) C = undefined;else if (isObject(C)) {
-        C = C[SPECIES];
+        C = C[SPECIES$4];
         if (C === null) C = undefined;
       }
     }
@@ -630,7 +630,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return new (C === undefined ? Array : C)(length === 0 ? 0 : length);
   };
 
-  var SPECIES$1 = wellKnownSymbol('species');
+  var SPECIES$3 = wellKnownSymbol('species');
 
   var arrayMethodHasSpeciesSupport = function (METHOD_NAME) {
     // We can't use this feature detection in V8 since it causes
@@ -640,7 +640,7 @@ this.google.maps.plugins.loader = (function (exports) {
       var array = [];
       var constructor = array.constructor = {};
 
-      constructor[SPECIES$1] = function () {
+      constructor[SPECIES$3] = function () {
         return {
           foo: 1
         };
@@ -669,14 +669,14 @@ this.google.maps.plugins.loader = (function (exports) {
     return spreadable !== undefined ? !!spreadable : isArray(O);
   };
 
-  var FORCED = !IS_CONCAT_SPREADABLE_SUPPORT || !SPECIES_SUPPORT; // `Array.prototype.concat` method
+  var FORCED$1 = !IS_CONCAT_SPREADABLE_SUPPORT || !SPECIES_SUPPORT; // `Array.prototype.concat` method
   // https://tc39.es/ecma262/#sec-array.prototype.concat
   // with adding support of @@isConcatSpreadable and @@species
 
   _export({
     target: 'Array',
     proto: true,
-    forced: FORCED
+    forced: FORCED$1
   }, {
     // eslint-disable-next-line no-unused-vars -- required for `.length`
     concat: function concat(arg) {
@@ -716,13 +716,13 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var nativeJoin = [].join;
   var ES3_STRINGS = indexedObject != Object;
-  var STRICT_METHOD = arrayMethodIsStrict('join', ','); // `Array.prototype.join` method
+  var STRICT_METHOD$1 = arrayMethodIsStrict('join', ','); // `Array.prototype.join` method
   // https://tc39.es/ecma262/#sec-array.prototype.join
 
   _export({
     target: 'Array',
     proto: true,
-    forced: ES3_STRINGS || !STRICT_METHOD
+    forced: ES3_STRINGS || !STRICT_METHOD$1
   }, {
     join: function join(separator) {
       return nativeJoin.call(toIndexedObject(this), separator === undefined ? ',' : separator);
@@ -738,11 +738,11 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var defineProperty = objectDefineProperty.f;
-  var TO_STRING_TAG = wellKnownSymbol('toStringTag');
+  var TO_STRING_TAG$2 = wellKnownSymbol('toStringTag');
 
   var setToStringTag = function (it, TAG, STATIC) {
-    if (it && !has(it = STATIC ? it : it.prototype, TO_STRING_TAG)) {
-      defineProperty(it, TO_STRING_TAG, {
+    if (it && !has$1(it = STATIC ? it : it.prototype, TO_STRING_TAG$2)) {
+      defineProperty(it, TO_STRING_TAG$2, {
         configurable: true,
         value: TAG
       });
@@ -765,7 +765,7 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   };
 
-  var aFunction$1 = function (it) {
+  var aFunction = function (it) {
     if (typeof it != 'function') {
       throw TypeError(String(it) + ' is not a function');
     }
@@ -783,15 +783,15 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var iterators = {};
 
-  var ITERATOR = wellKnownSymbol('iterator');
+  var ITERATOR$2 = wellKnownSymbol('iterator');
   var ArrayPrototype = Array.prototype; // check on default Array iterator
 
   var isArrayIteratorMethod = function (it) {
-    return it !== undefined && (iterators.Array === it || ArrayPrototype[ITERATOR] === it);
+    return it !== undefined && (iterators.Array === it || ArrayPrototype[ITERATOR$2] === it);
   };
 
   var functionBindContext = function (fn, that, length) {
-    aFunction$1(fn);
+    aFunction(fn);
     if (that === undefined) return fn;
 
     switch (length) {
@@ -828,7 +828,7 @@ this.google.maps.plugins.loader = (function (exports) {
   test[TO_STRING_TAG$1] = 'z';
   var toStringTagSupport = String(test) === '[object z]';
 
-  var TO_STRING_TAG$2 = wellKnownSymbol('toStringTag'); // ES3 wrong here
+  var TO_STRING_TAG = wellKnownSymbol('toStringTag'); // ES3 wrong here
 
   var CORRECT_ARGUMENTS = classofRaw(function () {
     return arguments;
@@ -846,7 +846,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var classof = toStringTagSupport ? classofRaw : function (it) {
     var O, tag, result;
     return it === undefined ? 'Undefined' : it === null ? 'Null' // @@toStringTag case
-    : typeof (tag = tryGet(O = Object(it), TO_STRING_TAG$2)) == 'string' ? tag // builtinTag case
+    : typeof (tag = tryGet(O = Object(it), TO_STRING_TAG)) == 'string' ? tag // builtinTag case
     : CORRECT_ARGUMENTS ? classofRaw(O) // ES3 arguments fallback
     : (result = classofRaw(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : result;
   };
@@ -926,7 +926,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return new Result(false);
   };
 
-  var ITERATOR$2 = wellKnownSymbol('iterator');
+  var ITERATOR = wellKnownSymbol('iterator');
   var SAFE_CLOSING = false;
 
   try {
@@ -942,7 +942,7 @@ this.google.maps.plugins.loader = (function (exports) {
       }
     };
 
-    iteratorWithReturn[ITERATOR$2] = function () {
+    iteratorWithReturn[ITERATOR] = function () {
       return this;
     }; // eslint-disable-next-line no-throw-literal -- required for testing
 
@@ -961,7 +961,7 @@ this.google.maps.plugins.loader = (function (exports) {
     try {
       var object = {};
 
-      object[ITERATOR$2] = function () {
+      object[ITERATOR] = function () {
         return {
           next: function () {
             return {
@@ -979,13 +979,13 @@ this.google.maps.plugins.loader = (function (exports) {
     return ITERATION_SUPPORT;
   };
 
-  var SPECIES$3 = wellKnownSymbol('species'); // `SpeciesConstructor` abstract operation
+  var SPECIES$1 = wellKnownSymbol('species'); // `SpeciesConstructor` abstract operation
   // https://tc39.es/ecma262/#sec-speciesconstructor
 
   var speciesConstructor = function (O, defaultConstructor) {
     var C = anObject(O).constructor;
     var S;
-    return C === undefined || (S = anObject(C)[SPECIES$3]) == undefined ? defaultConstructor : aFunction$1(S);
+    return C === undefined || (S = anObject(C)[SPECIES$1]) == undefined ? defaultConstructor : aFunction(S);
   };
 
   var html = getBuiltIn('document', 'documentElement');
@@ -993,9 +993,9 @@ this.google.maps.plugins.loader = (function (exports) {
   var engineIsIos = /(iphone|ipod|ipad).*applewebkit/i.test(engineUserAgent);
 
   var location = global_1.location;
-  var set$1 = global_1.setImmediate;
+  var set = global_1.setImmediate;
   var clear = global_1.clearImmediate;
-  var process$1 = global_1.process;
+  var process$2 = global_1.process;
   var MessageChannel = global_1.MessageChannel;
   var Dispatch = global_1.Dispatch;
   var counter = 0;
@@ -1028,8 +1028,8 @@ this.google.maps.plugins.loader = (function (exports) {
   }; // Node.js 0.9+ & IE10+ has setImmediate, otherwise:
 
 
-  if (!set$1 || !clear) {
-    set$1 = function setImmediate(fn) {
+  if (!set || !clear) {
+    set = function setImmediate(fn) {
       var args = [];
       var i = 1;
 
@@ -1051,7 +1051,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
     if (engineIsNode) {
       defer = function (id) {
-        process$1.nextTick(runner(id));
+        process$2.nextTick(runner(id));
       }; // Sphere (JS game engine) Dispatch API
 
     } else if (Dispatch && Dispatch.now) {
@@ -1084,28 +1084,28 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   }
 
-  var task = {
-    set: set$1,
+  var task$1 = {
+    set: set,
     clear: clear
   };
 
   var engineIsWebosWebkit = /web0s(?!.*chrome)/i.test(engineUserAgent);
 
-  var getOwnPropertyDescriptor$2 = objectGetOwnPropertyDescriptor.f;
-  var macrotask = task.set;
+  var getOwnPropertyDescriptor = objectGetOwnPropertyDescriptor.f;
+  var macrotask = task$1.set;
   var MutationObserver = global_1.MutationObserver || global_1.WebKitMutationObserver;
   var document$2 = global_1.document;
-  var process$2 = global_1.process;
+  var process$1 = global_1.process;
   var Promise$1 = global_1.Promise; // Node.js 11 shows ExperimentalWarning on getting `queueMicrotask`
 
-  var queueMicrotaskDescriptor = getOwnPropertyDescriptor$2(global_1, 'queueMicrotask');
+  var queueMicrotaskDescriptor = getOwnPropertyDescriptor(global_1, 'queueMicrotask');
   var queueMicrotask = queueMicrotaskDescriptor && queueMicrotaskDescriptor.value;
-  var flush, head, last, notify, toggle, node, promise, then; // modern engines have queueMicrotask method
+  var flush, head, last, notify$1, toggle, node, promise, then; // modern engines have queueMicrotask method
 
   if (!queueMicrotask) {
     flush = function () {
       var parent, fn;
-      if (engineIsNode && (parent = process$2.domain)) parent.exit();
+      if (engineIsNode && (parent = process$1.domain)) parent.exit();
 
       while (head) {
         fn = head.fn;
@@ -1114,7 +1114,7 @@ this.google.maps.plugins.loader = (function (exports) {
         try {
           fn();
         } catch (error) {
-          if (head) notify();else last = undefined;
+          if (head) notify$1();else last = undefined;
           throw error;
         }
       }
@@ -1132,7 +1132,7 @@ this.google.maps.plugins.loader = (function (exports) {
         characterData: true
       });
 
-      notify = function () {
+      notify$1 = function () {
         node.data = toggle = !toggle;
       }; // environments with maybe non-completely correct, but existent Promise
 
@@ -1141,13 +1141,13 @@ this.google.maps.plugins.loader = (function (exports) {
       promise = Promise$1.resolve(undefined);
       then = promise.then;
 
-      notify = function () {
+      notify$1 = function () {
         then.call(promise, flush);
       }; // Node.js without promises
 
     } else if (engineIsNode) {
-      notify = function () {
-        process$2.nextTick(flush);
+      notify$1 = function () {
+        process$1.nextTick(flush);
       }; // for other environments - macrotask based on:
       // - setImmediate
       // - MessageChannel
@@ -1156,7 +1156,7 @@ this.google.maps.plugins.loader = (function (exports) {
       // - setTimeout
 
     } else {
-      notify = function () {
+      notify$1 = function () {
         // strange IE + webpack dev server bug - use .call(global)
         macrotask.call(global_1, flush);
       };
@@ -1172,7 +1172,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
     if (!head) {
       head = task;
-      notify();
+      notify$1();
     }
 
     last = task;
@@ -1185,23 +1185,23 @@ this.google.maps.plugins.loader = (function (exports) {
       resolve = $$resolve;
       reject = $$reject;
     });
-    this.resolve = aFunction$1(resolve);
-    this.reject = aFunction$1(reject);
+    this.resolve = aFunction(resolve);
+    this.reject = aFunction(reject);
   }; // 25.4.1.5 NewPromiseCapability(C)
 
 
-  var f$5 = function (C) {
+  var f = function (C) {
     return new PromiseCapability(C);
   };
 
-  var newPromiseCapability = {
-    f: f$5
+  var newPromiseCapability$1 = {
+    f: f
   };
 
   var promiseResolve = function (C, x) {
     anObject(C);
     if (isObject(x) && x.constructor === C) return x;
-    var promiseCapability = newPromiseCapability.f(C);
+    var promiseCapability = newPromiseCapability$1.f(C);
     var resolve = promiseCapability.resolve;
     resolve(x);
     return promiseCapability.promise;
@@ -1229,20 +1229,20 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   };
 
-  var task$1 = task.set;
-  var SPECIES$4 = wellKnownSymbol('species');
+  var task = task$1.set;
+  var SPECIES = wellKnownSymbol('species');
   var PROMISE = 'Promise';
   var getInternalState = internalState.get;
   var setInternalState = internalState.set;
   var getInternalPromiseState = internalState.getterFor(PROMISE);
   var PromiseConstructor = nativePromiseConstructor;
   var TypeError$1 = global_1.TypeError;
-  var document$3 = global_1.document;
-  var process$3 = global_1.process;
+  var document$1 = global_1.document;
+  var process = global_1.process;
   var $fetch = getBuiltIn('fetch');
-  var newPromiseCapability$1 = newPromiseCapability.f;
-  var newGenericPromiseCapability = newPromiseCapability$1;
-  var DISPATCH_EVENT = !!(document$3 && document$3.createEvent && global_1.dispatchEvent);
+  var newPromiseCapability = newPromiseCapability$1.f;
+  var newGenericPromiseCapability = newPromiseCapability;
+  var DISPATCH_EVENT = !!(document$1 && document$1.createEvent && global_1.dispatchEvent);
   var NATIVE_REJECTION_EVENT = typeof PromiseRejectionEvent == 'function';
   var UNHANDLED_REJECTION = 'unhandledrejection';
   var REJECTION_HANDLED = 'rejectionhandled';
@@ -1252,7 +1252,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var HANDLED = 1;
   var UNHANDLED = 2;
   var Internal, OwnPromiseCapability, PromiseWrapper, nativeThen;
-  var FORCED$1 = isForced_1(PROMISE, function () {
+  var FORCED = isForced_1(PROMISE, function () {
     var GLOBAL_CORE_JS_PROMISE = inspectSource(PromiseConstructor) !== String(PromiseConstructor);
 
     if (!GLOBAL_CORE_JS_PROMISE) {
@@ -1279,12 +1279,12 @@ this.google.maps.plugins.loader = (function (exports) {
     };
 
     var constructor = promise.constructor = {};
-    constructor[SPECIES$4] = FakePromise;
+    constructor[SPECIES] = FakePromise;
     return !(promise.then(function () {
       /* empty */
     }) instanceof FakePromise);
   });
-  var INCORRECT_ITERATION = FORCED$1 || !checkCorrectnessOfIteration(function (iterable) {
+  var INCORRECT_ITERATION = FORCED || !checkCorrectnessOfIteration(function (iterable) {
     PromiseConstructor.all(iterable)['catch'](function () {
       /* empty */
     });
@@ -1295,7 +1295,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return isObject(it) && typeof (then = it.then) == 'function' ? then : false;
   };
 
-  var notify$1 = function (state, isReject) {
+  var notify = function (state, isReject) {
     if (state.notified) return;
     state.notified = true;
     var chain = state.reactions;
@@ -1351,7 +1351,7 @@ this.google.maps.plugins.loader = (function (exports) {
     var event, handler;
 
     if (DISPATCH_EVENT) {
-      event = document$3.createEvent('Event');
+      event = document$1.createEvent('Event');
       event.promise = promise;
       event.reason = reason;
       event.initEvent(name, false, true);
@@ -1365,7 +1365,7 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var onUnhandled = function (state) {
-    task$1.call(global_1, function () {
+    task.call(global_1, function () {
       var promise = state.facade;
       var value = state.value;
       var IS_UNHANDLED = isUnhandled(state);
@@ -1374,7 +1374,7 @@ this.google.maps.plugins.loader = (function (exports) {
       if (IS_UNHANDLED) {
         result = perform(function () {
           if (engineIsNode) {
-            process$3.emit('unhandledRejection', value, promise);
+            process.emit('unhandledRejection', value, promise);
           } else dispatchEvent(UNHANDLED_REJECTION, promise, value);
         }); // Browsers should not trigger `rejectionHandled` event if it was handled here, NodeJS - should
 
@@ -1389,11 +1389,11 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var onHandleUnhandled = function (state) {
-    task$1.call(global_1, function () {
+    task.call(global_1, function () {
       var promise = state.facade;
 
       if (engineIsNode) {
-        process$3.emit('rejectionHandled', promise);
+        process.emit('rejectionHandled', promise);
       } else dispatchEvent(REJECTION_HANDLED, promise, state.value);
     });
   };
@@ -1410,7 +1410,7 @@ this.google.maps.plugins.loader = (function (exports) {
     if (unwrap) state = unwrap;
     state.value = value;
     state.state = REJECTED;
-    notify$1(state, true);
+    notify(state, true);
   };
 
   var internalResolve = function (state, value, unwrap) {
@@ -1437,7 +1437,7 @@ this.google.maps.plugins.loader = (function (exports) {
       } else {
         state.value = value;
         state.state = FULFILLED;
-        notify$1(state, false);
+        notify(state, false);
       }
     } catch (error) {
       internalReject({
@@ -1447,11 +1447,11 @@ this.google.maps.plugins.loader = (function (exports) {
   }; // constructor polyfill
 
 
-  if (FORCED$1) {
+  if (FORCED) {
     // 25.4.3.1 Promise(executor)
     PromiseConstructor = function Promise(executor) {
       anInstance(this, PromiseConstructor, PROMISE);
-      aFunction$1(executor);
+      aFunction(executor);
       Internal.call(this);
       var state = getInternalState(this);
 
@@ -1481,13 +1481,13 @@ this.google.maps.plugins.loader = (function (exports) {
       // https://tc39.es/ecma262/#sec-promise.prototype.then
       then: function then(onFulfilled, onRejected) {
         var state = getInternalPromiseState(this);
-        var reaction = newPromiseCapability$1(speciesConstructor(this, PromiseConstructor));
+        var reaction = newPromiseCapability(speciesConstructor(this, PromiseConstructor));
         reaction.ok = typeof onFulfilled == 'function' ? onFulfilled : true;
         reaction.fail = typeof onRejected == 'function' && onRejected;
-        reaction.domain = engineIsNode ? process$3.domain : undefined;
+        reaction.domain = engineIsNode ? process.domain : undefined;
         state.parent = true;
         state.reactions.push(reaction);
-        if (state.state != PENDING) notify$1(state, false);
+        if (state.state != PENDING) notify(state, false);
         return reaction.promise;
       },
       // `Promise.prototype.catch` method
@@ -1505,7 +1505,7 @@ this.google.maps.plugins.loader = (function (exports) {
       this.reject = bind(internalReject, state);
     };
 
-    newPromiseCapability.f = newPromiseCapability$1 = function (C) {
+    newPromiseCapability$1.f = newPromiseCapability = function (C) {
       return C === PromiseConstructor || C === PromiseWrapper ? new OwnPromiseCapability(C) : newGenericPromiseCapability(C);
     };
 
@@ -1539,7 +1539,7 @@ this.google.maps.plugins.loader = (function (exports) {
   _export({
     global: true,
     wrap: true,
-    forced: FORCED$1
+    forced: FORCED
   }, {
     Promise: PromiseConstructor
   });
@@ -1550,12 +1550,12 @@ this.google.maps.plugins.loader = (function (exports) {
   _export({
     target: PROMISE,
     stat: true,
-    forced: FORCED$1
+    forced: FORCED
   }, {
     // `Promise.reject` method
     // https://tc39.es/ecma262/#sec-promise.reject
     reject: function reject(r) {
-      var capability = newPromiseCapability$1(this);
+      var capability = newPromiseCapability(this);
       capability.reject.call(undefined, r);
       return capability.promise;
     }
@@ -1563,7 +1563,7 @@ this.google.maps.plugins.loader = (function (exports) {
   _export({
     target: PROMISE,
     stat: true,
-    forced: FORCED$1
+    forced: FORCED
   }, {
     // `Promise.resolve` method
     // https://tc39.es/ecma262/#sec-promise.resolve
@@ -1580,11 +1580,11 @@ this.google.maps.plugins.loader = (function (exports) {
     // https://tc39.es/ecma262/#sec-promise.all
     all: function all(iterable) {
       var C = this;
-      var capability = newPromiseCapability$1(C);
+      var capability = newPromiseCapability(C);
       var resolve = capability.resolve;
       var reject = capability.reject;
       var result = perform(function () {
-        var $promiseResolve = aFunction$1(C.resolve);
+        var $promiseResolve = aFunction(C.resolve);
         var values = [];
         var counter = 0;
         var remaining = 1;
@@ -1609,10 +1609,10 @@ this.google.maps.plugins.loader = (function (exports) {
     // https://tc39.es/ecma262/#sec-promise.race
     race: function race(iterable) {
       var C = this;
-      var capability = newPromiseCapability$1(C);
+      var capability = newPromiseCapability(C);
       var reject = capability.reject;
       var result = perform(function () {
-        var $promiseResolve = aFunction$1(C.resolve);
+        var $promiseResolve = aFunction(C.resolve);
         iterate(iterable, function (promise) {
           $promiseResolve.call(C, promise).then(capability.resolve, reject);
         });
@@ -1675,7 +1675,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var push = [].push; // `Array.prototype.{ forEach, map, filter, some, every, find, findIndex, filterOut }` methods implementation
 
-  var createMethod$1 = function (TYPE) {
+  var createMethod = function (TYPE) {
     var IS_MAP = TYPE == 1;
     var IS_FILTER = TYPE == 2;
     var IS_SOME = TYPE == 3;
@@ -1734,35 +1734,35 @@ this.google.maps.plugins.loader = (function (exports) {
   var arrayIteration = {
     // `Array.prototype.forEach` method
     // https://tc39.es/ecma262/#sec-array.prototype.foreach
-    forEach: createMethod$1(0),
+    forEach: createMethod(0),
     // `Array.prototype.map` method
     // https://tc39.es/ecma262/#sec-array.prototype.map
-    map: createMethod$1(1),
+    map: createMethod(1),
     // `Array.prototype.filter` method
     // https://tc39.es/ecma262/#sec-array.prototype.filter
-    filter: createMethod$1(2),
+    filter: createMethod(2),
     // `Array.prototype.some` method
     // https://tc39.es/ecma262/#sec-array.prototype.some
-    some: createMethod$1(3),
+    some: createMethod(3),
     // `Array.prototype.every` method
     // https://tc39.es/ecma262/#sec-array.prototype.every
-    every: createMethod$1(4),
+    every: createMethod(4),
     // `Array.prototype.find` method
     // https://tc39.es/ecma262/#sec-array.prototype.find
-    find: createMethod$1(5),
+    find: createMethod(5),
     // `Array.prototype.findIndex` method
     // https://tc39.es/ecma262/#sec-array.prototype.findIndex
-    findIndex: createMethod$1(6),
+    findIndex: createMethod(6),
     // `Array.prototype.filterOut` method
     // https://github.com/tc39/proposal-array-filtering
-    filterOut: createMethod$1(7)
+    filterOut: createMethod(7)
   };
 
   var $forEach = arrayIteration.forEach;
-  var STRICT_METHOD$1 = arrayMethodIsStrict('forEach'); // `Array.prototype.forEach` method implementation
+  var STRICT_METHOD = arrayMethodIsStrict('forEach'); // `Array.prototype.forEach` method implementation
   // https://tc39.es/ecma262/#sec-array.prototype.foreach
 
-  var arrayForEach = !STRICT_METHOD$1 ? function forEach(callbackfn
+  var arrayForEach = !STRICT_METHOD ? function forEach(callbackfn
   /* , thisArg */
   ) {
     return $forEach(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
