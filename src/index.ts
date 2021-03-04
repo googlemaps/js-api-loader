@@ -473,8 +473,8 @@ export class Loader {
   private execute(): void {
     if (window.google && window.google.maps && window.google.maps.version) {
       console.warn(
-        "Aborted attempt to load Google Maps JS with @googlemaps/js-api-loader." +
-          "This may result in undesirable behavior as script parameters may not match."
+        "Google Maps already loaded outside @googlemaps/js-api-loader." +
+          "This may result in undesirable behavior as options and script parameters may not match."
       );
       this.callback();
     }
