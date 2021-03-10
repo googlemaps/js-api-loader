@@ -22,6 +22,7 @@ jobs:
       - run: npm i
       - run: npm run lint
       - run: npm test
+      - run: npm run docs
       - uses: codecov/codecov-action@v1
         with:
           fail_ci_if_error: true
