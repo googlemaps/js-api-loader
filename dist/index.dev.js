@@ -2047,6 +2047,7 @@ this.google.maps.plugins.loader = (function (exports) {
           this.done = false;
           this.loading = false;
           this.errors = [];
+          this.onerrorEvent = null;
         }
       }
     }, {
