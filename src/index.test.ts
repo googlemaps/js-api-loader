@@ -213,6 +213,27 @@ test("script onerror should not reset retry mechanism with parallel loaders", as
   expect(console.log).toHaveBeenCalledTimes(loader.retries);
 });
 
+test("resetIfRetryingFailed should clear state", async () => {
+  const loader = new Loader({ apiKey: "foo", retries: 0 });
+
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  console.log = jest.fn();
+
+  const rejection1 = expect(loader.load()).rejects.toBeInstanceOf(ErrorEvent);
+  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
+  jest.runAllTimers();
+
+  await Promise.all([rejection1]);
+  expect(loader["done"]).toBeTruthy();
+  expect(loader["loading"]).toBeFalsy();
+  expect(loader["errors"].length).toBe(1);
+
+  loader["resetIfRetryingFailed"]();
+  expect(loader["done"]).toBeFalsy();
+  expect(loader["loading"]).toBeFalsy();
+  expect(loader["onerrorEvent"]).toBe(null);
+});
+
 test("loader should not reset retry mechanism if successfully loaded", () => {
   const loader = new Loader({ apiKey: "foo", retries: 0 });
   const deleteScript = jest.spyOn(loader, "deleteScript");
