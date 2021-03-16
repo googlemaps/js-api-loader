@@ -432,6 +432,7 @@ export class Loader {
       this.done = false;
       this.loading = false;
       this.errors = [];
+      this.onerrorEvent = null;
     }
   }
 
