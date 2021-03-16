@@ -315,6 +315,10 @@ export class Loader {
     };
   }
 
+  private get failed(): boolean {
+    return this.done && !this.loading && this.errors.length >= this.retries +1
+  }
+
   /**
    * CreateUrl returns the Google Maps JavaScript API script url given the [[LoaderOptions]].
    *
@@ -425,14 +429,20 @@ export class Loader {
     }
   }
 
+  /**
+   * Reset the loader state.
+   */
+  private reset(): void {
+    this.deleteScript();
+    this.done = false;
+    this.loading = false;
+    this.errors = [];
+    this.onerrorEvent = null;
+  }
+
   private resetIfRetryingFailed(): void {
-    const possibleAttempts = this.retries + 1;
-    if (this.done && !this.loading && this.errors.length >= possibleAttempts) {
-      this.deleteScript();
-      this.done = false;
-      this.loading = false;
-      this.errors = [];
-      this.onerrorEvent = null;
+    if (this.failed) {
+      this.reset();
     }
   }
 

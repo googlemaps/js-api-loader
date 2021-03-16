@@ -213,25 +213,51 @@ test("script onerror should not reset retry mechanism with parallel loaders", as
   expect(console.log).toHaveBeenCalledTimes(loader.retries);
 });
 
-test("resetIfRetryingFailed should clear state", async () => {
+test("reset should clear state", async () => {
   const loader = new Loader({ apiKey: "foo", retries: 0 });
+  const deleteScript = jest.spyOn(loader, "deleteScript");
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  console.log = jest.fn();
+  loader["done"] = true;
+  loader["loading"] = false;
+  loader["errors"] = [new ErrorEvent("foo")];
 
-  const rejection1 = expect(loader.load()).rejects.toBeInstanceOf(ErrorEvent);
-  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
-  jest.runAllTimers();
+  loader["reset"]();
 
-  await Promise.all([rejection1]);
-  expect(loader["done"]).toBeTruthy();
-  expect(loader["loading"]).toBeFalsy();
-  expect(loader["errors"].length).toBe(1);
-
-  loader["resetIfRetryingFailed"]();
   expect(loader["done"]).toBeFalsy();
   expect(loader["loading"]).toBeFalsy();
   expect(loader["onerrorEvent"]).toBe(null);
+  expect(deleteScript).toHaveBeenCalledTimes(1);
+});
+
+test("failed gettershould be correct", async () => {
+  const loader = new Loader({ apiKey: "foo", retries: 0 });
+  
+  // initial
+  expect(loader["failed"]).toBeFalsy();
+
+  // not done
+  loader["done"] = false;
+  loader["loading"] = false;
+  loader["errors"] = [new ErrorEvent("foo")];
+  expect(loader["failed"]).toBeFalsy();
+
+  // still loading
+  loader["done"] = false;
+  loader["loading"] = true;
+  loader["errors"] = [new ErrorEvent("foo")];
+  expect(loader["failed"]).toBeFalsy();
+
+  // no errors
+  loader["done"] = true;
+  loader["loading"] = false;
+  loader["errors"] = [];
+  expect(loader["failed"]).toBeFalsy();
+
+  // done with errors
+  loader["done"] = true;
+  loader["loading"] = false;
+  loader["errors"] = [new ErrorEvent("foo")];
+  expect(loader["failed"]).toBeTruthy();
 });
 
 test("loader should not reset retry mechanism if successfully loaded", () => {
