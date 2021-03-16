@@ -316,7 +316,7 @@ export class Loader {
   }
 
   private get failed(): boolean {
-    return this.done && !this.loading && this.errors.length >= this.retries +1
+    return this.done && !this.loading && this.errors.length >= this.retries + 1;
   }
 
   /**

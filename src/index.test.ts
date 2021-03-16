@@ -213,7 +213,7 @@ test("script onerror should not reset retry mechanism with parallel loaders", as
   expect(console.log).toHaveBeenCalledTimes(loader.retries);
 });
 
-test("reset should clear state", async () => {
+test("reset should clear state", () => {
   const loader = new Loader({ apiKey: "foo", retries: 0 });
   const deleteScript = jest.spyOn(loader, "deleteScript");
 
@@ -229,9 +229,9 @@ test("reset should clear state", async () => {
   expect(deleteScript).toHaveBeenCalledTimes(1);
 });
 
-test("failed gettershould be correct", async () => {
+test("failed getter should be correct", () => {
   const loader = new Loader({ apiKey: "foo", retries: 0 });
-  
+
   // initial
   expect(loader["failed"]).toBeFalsy();
 
