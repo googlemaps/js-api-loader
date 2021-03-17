@@ -1914,6 +1914,11 @@ this.google.maps.plugins.loader = (function (exports) {
           url: this.url
         };
       }
+    }, {
+      key: "failed",
+      get: function get() {
+        return this.done && !this.loading && this.errors.length >= this.retries + 1;
+      }
       /**
        * CreateUrl returns the Google Maps JavaScript API script url given the [[LoaderOptions]].
        *
@@ -2037,17 +2042,24 @@ this.google.maps.plugins.loader = (function (exports) {
           script.remove();
         }
       }
+      /**
+       * Reset the loader state.
+       */
+
+    }, {
+      key: "reset",
+      value: function reset() {
+        this.deleteScript();
+        this.done = false;
+        this.loading = false;
+        this.errors = [];
+        this.onerrorEvent = null;
+      }
     }, {
       key: "resetIfRetryingFailed",
       value: function resetIfRetryingFailed() {
-        var possibleAttempts = this.retries + 1;
-
-        if (this.done && !this.loading && this.errors.length >= possibleAttempts) {
-          this.deleteScript();
-          this.done = false;
-          this.loading = false;
-          this.errors = [];
-          this.onerrorEvent = null;
+        if (this.failed) {
+          this.reset();
         }
       }
     }, {

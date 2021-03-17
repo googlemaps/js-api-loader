@@ -129,6 +129,9 @@ class Loader {
             url: this.url,
         };
     }
+    get failed() {
+        return this.done && !this.loading && this.errors.length >= this.retries + 1;
+    }
     /**
      * CreateUrl returns the Google Maps JavaScript API script url given the [[LoaderOptions]].
      *
@@ -221,14 +224,19 @@ class Loader {
             script.remove();
         }
     }
+    /**
+     * Reset the loader state.
+     */
+    reset() {
+        this.deleteScript();
+        this.done = false;
+        this.loading = false;
+        this.errors = [];
+        this.onerrorEvent = null;
+    }
     resetIfRetryingFailed() {
-        const possibleAttempts = this.retries + 1;
-        if (this.done && !this.loading && this.errors.length >= possibleAttempts) {
-            this.deleteScript();
-            this.done = false;
-            this.loading = false;
-            this.errors = [];
-            this.onerrorEvent = null;
+        if (this.failed) {
+            this.reset();
         }
     }
     loadErrorCallback(e) {

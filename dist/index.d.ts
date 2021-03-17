@@ -239,6 +239,7 @@ export declare class Loader {
      */
     constructor({ apiKey, channel, client, id, libraries, language, region, version, mapIds, nonce, retries, url, }: LoaderOptions);
     get options(): LoaderOptions;
+    private get failed();
     /**
      * CreateUrl returns the Google Maps JavaScript API script url given the [[LoaderOptions]].
      *
@@ -264,6 +265,10 @@ export declare class Loader {
      */
     private setScript;
     deleteScript(): void;
+    /**
+     * Reset the loader state.
+     */
+    private reset;
     private resetIfRetryingFailed;
     private loadErrorCallback;
     private setCallback;
