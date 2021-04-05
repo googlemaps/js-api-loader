@@ -37,9 +37,9 @@ this.google.maps.plugins.loader = (function (exports) {
   }; // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 
 
-  var global_1 =
-  /* global globalThis -- safe */
-  check(typeof globalThis == 'object' && globalThis) || check(typeof window == 'object' && window) || check(typeof self == 'object' && self) || check(typeof commonjsGlobal == 'object' && commonjsGlobal) || // eslint-disable-next-line no-new-func -- fallback
+  var global_1 = // eslint-disable-next-line es/no-global-this -- safe
+  check(typeof globalThis == 'object' && globalThis) || check(typeof window == 'object' && window) || // eslint-disable-next-line no-restricted-globals -- safe
+  check(typeof self == 'object' && self) || check(typeof commonjsGlobal == 'object' && commonjsGlobal) || // eslint-disable-next-line no-new-func -- fallback
   function () {
     return this;
   }() || Function('return this')();
@@ -53,6 +53,7 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var descriptors = !fails(function () {
+    // eslint-disable-next-line es/no-object-defineproperty -- required for testing
     return Object.defineProperty({}, 1, {
       get: function () {
         return 7;
@@ -60,10 +61,11 @@ this.google.maps.plugins.loader = (function (exports) {
     })[1] != 7;
   });
 
-  var nativePropertyIsEnumerable = {}.propertyIsEnumerable;
+  var $propertyIsEnumerable = {}.propertyIsEnumerable; // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+
   var getOwnPropertyDescriptor$2 = Object.getOwnPropertyDescriptor; // Nashorn ~ JDK8 bug
 
-  var NASHORN_BUG = getOwnPropertyDescriptor$2 && !nativePropertyIsEnumerable.call({
+  var NASHORN_BUG = getOwnPropertyDescriptor$2 && !$propertyIsEnumerable.call({
     1: 2
   }, 1); // `Object.prototype.propertyIsEnumerable` method implementation
   // https://tc39.es/ecma262/#sec-object.prototype.propertyisenumerable
@@ -71,7 +73,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var f$5 = NASHORN_BUG ? function propertyIsEnumerable(V) {
     var descriptor = getOwnPropertyDescriptor$2(this, V);
     return !!descriptor && descriptor.enumerable;
-  } : nativePropertyIsEnumerable;
+  } : $propertyIsEnumerable;
   var objectPropertyIsEnumerable = {
     f: f$5
   };
@@ -144,6 +146,7 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var ie8DomDefine = !descriptors && !fails(function () {
+    // eslint-disable-next-line es/no-object-defineproperty -- requied for testing
     return Object.defineProperty(documentCreateElement('div'), 'a', {
       get: function () {
         return 7;
@@ -151,14 +154,14 @@ this.google.maps.plugins.loader = (function (exports) {
     }).a != 7;
   });
 
-  var nativeGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor; // `Object.getOwnPropertyDescriptor` method
+  var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor; // `Object.getOwnPropertyDescriptor` method
   // https://tc39.es/ecma262/#sec-object.getownpropertydescriptor
 
-  var f$4 = descriptors ? nativeGetOwnPropertyDescriptor : function getOwnPropertyDescriptor(O, P) {
+  var f$4 = descriptors ? $getOwnPropertyDescriptor : function getOwnPropertyDescriptor(O, P) {
     O = toIndexedObject(O);
     P = toPrimitive(P, true);
     if (ie8DomDefine) try {
-      return nativeGetOwnPropertyDescriptor(O, P);
+      return $getOwnPropertyDescriptor(O, P);
     } catch (error) {
       /* empty */
     }
@@ -176,15 +179,15 @@ this.google.maps.plugins.loader = (function (exports) {
     return it;
   };
 
-  var nativeDefineProperty = Object.defineProperty; // `Object.defineProperty` method
+  var $defineProperty = Object.defineProperty; // `Object.defineProperty` method
   // https://tc39.es/ecma262/#sec-object.defineproperty
 
-  var f$3 = descriptors ? nativeDefineProperty : function defineProperty(O, P, Attributes) {
+  var f$3 = descriptors ? $defineProperty : function defineProperty(O, P, Attributes) {
     anObject(O);
     P = toPrimitive(P, true);
     anObject(Attributes);
     if (ie8DomDefine) try {
-      return nativeDefineProperty(O, P, Attributes);
+      return $defineProperty(O, P, Attributes);
     } catch (error) {
       /* empty */
     }
@@ -234,7 +237,7 @@ this.google.maps.plugins.loader = (function (exports) {
     (module.exports = function (key, value) {
       return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.9.1',
+      version: '3.10.0',
       mode: 'global',
       copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
     });
@@ -443,6 +446,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var hiddenKeys = enumBugKeys.concat('length', 'prototype'); // `Object.getOwnPropertyNames` method
   // https://tc39.es/ecma262/#sec-object.getownpropertynames
+  // eslint-disable-next-line es/no-object-getownpropertynames -- safe
 
   var f$2 = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
     return objectKeysInternal(O, hiddenKeys);
@@ -452,6 +456,7 @@ this.google.maps.plugins.loader = (function (exports) {
     f: f$2
   };
 
+  // eslint-disable-next-line es/no-object-getownpropertysymbols -- safe
   var f$1 = Object.getOwnPropertySymbols;
   var objectGetOwnPropertySymbols = {
     f: f$1
@@ -546,6 +551,7 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   // https://tc39.es/ecma262/#sec-isarray
+  // eslint-disable-next-line es/no-array-isarray -- safe
 
   var isArray = Array.isArray || function isArray(arg) {
     return classofRaw(arg) == 'Array';
@@ -586,15 +592,15 @@ this.google.maps.plugins.loader = (function (exports) {
   var engineV8Version = version && +version;
 
   var nativeSymbol = !!Object.getOwnPropertySymbols && !fails(function () {
-    /* global Symbol -- required for testing */
+    // eslint-disable-next-line es/no-symbol -- required for testing
     return !Symbol.sham && ( // Chrome 38 Symbol has incorrect toString conversion
     // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
     engineIsNode ? engineV8Version === 38 : engineV8Version > 37 && engineV8Version < 41);
   });
 
-  var useSymbolAsUid = nativeSymbol
-  /* global Symbol -- safe */
-  && !Symbol.sham && typeof Symbol.iterator == 'symbol';
+  /* eslint-disable es/no-symbol -- required for testing */
+
+  var useSymbolAsUid = nativeSymbol && !Symbol.sham && typeof Symbol.iterator == 'symbol';
 
   var WellKnownSymbolsStore = shared('wks');
   var Symbol$1 = global_1.Symbol;
@@ -944,7 +950,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
     iteratorWithReturn[ITERATOR] = function () {
       return this;
-    }; // eslint-disable-next-line no-throw-literal -- required for testing
+    }; // eslint-disable-next-line es/no-array-from, no-throw-literal -- required for testing
 
 
     Array.from(iteratorWithReturn, function () {
@@ -1765,7 +1771,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var arrayForEach = !STRICT_METHOD ? function forEach(callbackfn
   /* , thisArg */
   ) {
-    return $forEach(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+    return $forEach(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined); // eslint-disable-next-line es/no-array-prototype-foreach -- safe
   } : [].forEach;
 
   for (var COLLECTION_NAME in domIterables) {
