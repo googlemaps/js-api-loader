@@ -237,7 +237,7 @@ this.google.maps.plugins.loader = (function (exports) {
     (module.exports = function (key, value) {
       return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.10.0',
+      version: '3.10.1',
       mode: 'global',
       copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
     });
@@ -996,7 +996,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var html = getBuiltIn('document', 'documentElement');
 
-  var engineIsIos = /(iphone|ipod|ipad).*applewebkit/i.test(engineUserAgent);
+  var engineIsIos = /(?:iphone|ipod|ipad).*applewebkit/i.test(engineUserAgent);
 
   var location = global_1.location;
   var set = global_1.setImmediate;
