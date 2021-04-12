@@ -735,6 +735,49 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   });
 
+  var TO_STRING_TAG$2 = wellKnownSymbol('toStringTag');
+  var test = {};
+  test[TO_STRING_TAG$2] = 'z';
+  var toStringTagSupport = String(test) === '[object z]';
+
+  var TO_STRING_TAG$1 = wellKnownSymbol('toStringTag'); // ES3 wrong here
+
+  var CORRECT_ARGUMENTS = classofRaw(function () {
+    return arguments;
+  }()) == 'Arguments'; // fallback for IE11 Script Access Denied error
+
+  var tryGet = function (it, key) {
+    try {
+      return it[key];
+    } catch (error) {
+      /* empty */
+    }
+  }; // getting tag from ES6+ `Object.prototype.toString`
+
+
+  var classof = toStringTagSupport ? classofRaw : function (it) {
+    var O, tag, result;
+    return it === undefined ? 'Undefined' : it === null ? 'Null' // @@toStringTag case
+    : typeof (tag = tryGet(O = Object(it), TO_STRING_TAG$1)) == 'string' ? tag // builtinTag case
+    : CORRECT_ARGUMENTS ? classofRaw(O) // ES3 arguments fallback
+    : (result = classofRaw(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : result;
+  };
+
+  // https://tc39.es/ecma262/#sec-object.prototype.tostring
+
+
+  var objectToString = toStringTagSupport ? {}.toString : function toString() {
+    return '[object ' + classof(this) + ']';
+  };
+
+  // https://tc39.es/ecma262/#sec-object.prototype.tostring
+
+  if (!toStringTagSupport) {
+    redefine(Object.prototype, 'toString', objectToString, {
+      unsafe: true
+    });
+  }
+
   var nativePromiseConstructor = global_1.Promise;
 
   var redefineAll = function (target, src, options) {
@@ -744,11 +787,11 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var defineProperty = objectDefineProperty.f;
-  var TO_STRING_TAG$2 = wellKnownSymbol('toStringTag');
+  var TO_STRING_TAG = wellKnownSymbol('toStringTag');
 
   var setToStringTag = function (it, TAG, STATIC) {
-    if (it && !has$1(it = STATIC ? it : it.prototype, TO_STRING_TAG$2)) {
-      defineProperty(it, TO_STRING_TAG$2, {
+    if (it && !has$1(it = STATIC ? it : it.prototype, TO_STRING_TAG)) {
+      defineProperty(it, TO_STRING_TAG, {
         configurable: true,
         value: TAG
       });
@@ -827,34 +870,6 @@ this.google.maps.plugins.loader = (function (exports) {
     {
       return fn.apply(that, arguments);
     };
-  };
-
-  var TO_STRING_TAG$1 = wellKnownSymbol('toStringTag');
-  var test = {};
-  test[TO_STRING_TAG$1] = 'z';
-  var toStringTagSupport = String(test) === '[object z]';
-
-  var TO_STRING_TAG = wellKnownSymbol('toStringTag'); // ES3 wrong here
-
-  var CORRECT_ARGUMENTS = classofRaw(function () {
-    return arguments;
-  }()) == 'Arguments'; // fallback for IE11 Script Access Denied error
-
-  var tryGet = function (it, key) {
-    try {
-      return it[key];
-    } catch (error) {
-      /* empty */
-    }
-  }; // getting tag from ES6+ `Object.prototype.toString`
-
-
-  var classof = toStringTagSupport ? classofRaw : function (it) {
-    var O, tag, result;
-    return it === undefined ? 'Undefined' : it === null ? 'Null' // @@toStringTag case
-    : typeof (tag = tryGet(O = Object(it), TO_STRING_TAG)) == 'string' ? tag // builtinTag case
-    : CORRECT_ARGUMENTS ? classofRaw(O) // ES3 arguments fallback
-    : (result = classofRaw(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : result;
   };
 
   var ITERATOR$1 = wellKnownSymbol('iterator');
@@ -1627,21 +1642,6 @@ this.google.maps.plugins.loader = (function (exports) {
       return capability.promise;
     }
   });
-
-  // https://tc39.es/ecma262/#sec-object.prototype.tostring
-
-
-  var objectToString = toStringTagSupport ? {}.toString : function toString() {
-    return '[object ' + classof(this) + ']';
-  };
-
-  // https://tc39.es/ecma262/#sec-object.prototype.tostring
-
-  if (!toStringTagSupport) {
-    redefine(Object.prototype, 'toString', objectToString, {
-      unsafe: true
-    });
-  }
 
   // iterable DOM collections
   // flag - `iterable` interface - 'entries', 'keys', 'values', 'forEach' methods
