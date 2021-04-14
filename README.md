@@ -16,15 +16,21 @@ A previous version of the package was available at [@googlemaps/loader](https://
 
 Available via npm as the package [@googlemaps/js-api-loader](https://www.npmjs.com/package/@googlemaps/js-api-loader).
 
-`npm i @googlemaps/js-api-loader`
+```sh
+npm i @googlemaps/js-api-loader
+```
 
 or
 
-`yarn add @googlemaps/js-api-loader`
+```sh
+yarn add @googlemaps/js-api-loader
+```
 
 Alternatively you may add the umd package directly to the html document using the unpkg link.
 
-`<script src="https://unpkg.com/@googlemaps/js-api-loader@1.0.0/dist/index.min.js"></script>`
+```html
+<script src="https://unpkg.com/@googlemaps/js-api-loader@1.0.0/dist/index.min.js"></script>
+```
 
 When adding via unpkg, the loader can be accessed at `google.maps.plugins.loader.Loader`.
 
@@ -35,7 +41,7 @@ The reference documentation can be found at this [link](https://googlemaps.githu
 
 ## Example
 
-``` javascript
+```javascript
 import { Loader } from '@googlemaps/js-api-loader';
 
 const loader = new Loader({
@@ -53,8 +59,10 @@ const mapOptions = {
 };
 
 ```
+
 Using a promise for when the script has loaded.
-``` javascript
+
+```javascript
 // Promise
 loader
   .load()
@@ -67,7 +75,8 @@ loader
 ```
 
 Alternatively, if you want to use a callback.
-``` javascript
+
+```javascript
 // Callback
 loader.loadCallback(e => {
   if (e) {
@@ -76,7 +85,6 @@ loader.loadCallback(e => {
     new google.maps.Map(document.getElementById("map"), mapOptions);
   }
 });
-
 ```
 
 View the package in action [here](https://googlemaps.github.io/js-api-loader/examples/index.html).
