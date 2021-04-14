@@ -62,7 +62,7 @@ const mapOptions = {
 
 Using a promise for when the script has loaded.
 
-``` javascript
+```javascript
 // Promise
 loader
   .load()
