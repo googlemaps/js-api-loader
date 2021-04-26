@@ -131,10 +131,16 @@ this.google.maps.plugins.loader = (function (exports) {
     throw TypeError("Can't convert object to primitive value");
   };
 
+  // https://tc39.es/ecma262/#sec-toobject
+
+  var toObject = function (argument) {
+    return Object(requireObjectCoercible(argument));
+  };
+
   var hasOwnProperty = {}.hasOwnProperty;
 
-  var has$1 = function (it, key) {
-    return hasOwnProperty.call(it, key);
+  var has$1 = function hasOwn(it, key) {
+    return hasOwnProperty.call(toObject(it), key);
   };
 
   var document$3 = global_1.document; // typeof document.createElement is 'object' in old IE
@@ -237,7 +243,7 @@ this.google.maps.plugins.loader = (function (exports) {
     (module.exports = function (key, value) {
       return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.10.1',
+      version: '3.11.0',
       mode: 'global',
       copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
     });
@@ -258,6 +264,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var hiddenKeys$1 = {};
 
+  var OBJECT_ALREADY_INITIALIZED = 'Object already initialized';
   var WeakMap = global_1.WeakMap;
   var set$1, get, has;
 
@@ -284,6 +291,7 @@ this.google.maps.plugins.loader = (function (exports) {
     var wmset = store.set;
 
     set$1 = function (it, metadata) {
+      if (wmhas.call(store, it)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
       metadata.facade = it;
       wmset.call(store, it, metadata);
       return metadata;
@@ -301,6 +309,7 @@ this.google.maps.plugins.loader = (function (exports) {
     hiddenKeys$1[STATE] = true;
 
     set$1 = function (it, metadata) {
+      if (has$1(it, STATE)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
       metadata.facade = it;
       createNonEnumerableProperty(it, STATE, metadata);
       return metadata;
@@ -555,12 +564,6 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var isArray = Array.isArray || function isArray(arg) {
     return classofRaw(arg) == 'Array';
-  };
-
-  // https://tc39.es/ecma262/#sec-toobject
-
-  var toObject = function (argument) {
-    return Object(requireObjectCoercible(argument));
   };
 
   var createProperty = function (object, key, value) {
