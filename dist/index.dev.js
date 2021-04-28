@@ -2111,16 +2111,18 @@ this.google.maps.plugins.loader = (function (exports) {
     }, {
       key: "execute",
       value: function execute() {
-        if (window.google && window.google.maps && window.google.maps.version) {
-          console.warn("Google Maps already loaded outside @googlemaps/js-api-loader." + "This may result in undesirable behavior as options and script parameters may not match.");
-          this.callback();
-        }
-
         this.resetIfRetryingFailed();
 
         if (this.done) {
           this.callback();
         } else {
+          // short circuit and warn if google.maps is already loaded
+          if (window.google && window.google.maps && window.google.maps.version) {
+            console.warn("Google Maps already loaded outside @googlemaps/js-api-loader." + "This may result in undesirable behavior as options and script parameters may not match.");
+            this.callback();
+            return;
+          }
+
           if (this.loading) ; else {
             this.loading = true;
             this.setCallback();
