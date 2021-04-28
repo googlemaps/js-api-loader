@@ -329,6 +329,16 @@ test("loader should resolve immediately when google.maps defined", async () => {
   expect(console.warn).toHaveBeenCalledTimes(1);
 });
 
+test("loader should not warn if done and google.maps is defined", async () => {
+  const loader = new Loader({ apiKey: "foo" });
+  loader["done"] = true;
+  window.google = { maps: { version: "3.*.*" } as any };
+  console.warn = jest.fn();
+  await expect(loader.loadPromise()).resolves.toBeUndefined();
+  delete window.google;
+  expect(console.warn).toHaveBeenCalledTimes(0);
+});
+
 test("deleteScript removes script tag from head", () => {
   const loader = new Loader({ apiKey: "foo" });
   loader["setScript"]();
