@@ -243,7 +243,7 @@ this.google.maps.plugins.loader = (function (exports) {
     (module.exports = function (key, value) {
       return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.11.0',
+      version: '3.11.1',
       mode: 'global',
       copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
     });
@@ -789,6 +789,42 @@ this.google.maps.plugins.loader = (function (exports) {
     return target;
   };
 
+  var aPossiblePrototype = function (it) {
+    if (!isObject(it) && it !== null) {
+      throw TypeError("Can't set " + String(it) + ' as a prototype');
+    }
+
+    return it;
+  };
+
+  /* eslint-disable no-proto -- safe */
+  // `Object.setPrototypeOf` method
+  // https://tc39.es/ecma262/#sec-object.setprototypeof
+  // Works with __proto__ only. Old v8 can't work with null proto objects.
+  // eslint-disable-next-line es/no-object-setprototypeof -- safe
+
+  var objectSetPrototypeOf = Object.setPrototypeOf || ('__proto__' in {} ? function () {
+    var CORRECT_SETTER = false;
+    var test = {};
+    var setter;
+
+    try {
+      // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+      setter = Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set;
+      setter.call(test, []);
+      CORRECT_SETTER = test instanceof Array;
+    } catch (error) {
+      /* empty */
+    }
+
+    return function setPrototypeOf(O, proto) {
+      anObject(O);
+      aPossiblePrototype(proto);
+      if (CORRECT_SETTER) setter.call(O, proto);else O.__proto__ = proto;
+      return O;
+    };
+  }() : undefined);
+
   var defineProperty = objectDefineProperty.f;
   var TO_STRING_TAG = wellKnownSymbol('toStringTag');
 
@@ -1259,11 +1295,11 @@ this.google.maps.plugins.loader = (function (exports) {
   var getInternalState = internalState.get;
   var setInternalState = internalState.set;
   var getInternalPromiseState = internalState.getterFor(PROMISE);
+  var NativePromisePrototype = nativePromiseConstructor && nativePromiseConstructor.prototype;
   var PromiseConstructor = nativePromiseConstructor;
   var TypeError$1 = global_1.TypeError;
   var document$1 = global_1.document;
   var process = global_1.process;
-  var $fetch = getBuiltIn('fetch');
   var newPromiseCapability = newPromiseCapability$1.f;
   var newGenericPromiseCapability = newPromiseCapability;
   var DISPATCH_EVENT = !!(document$1 && document$1.createEvent && global_1.dispatchEvent);
@@ -1533,30 +1569,28 @@ this.google.maps.plugins.loader = (function (exports) {
       return C === PromiseConstructor || C === PromiseWrapper ? new OwnPromiseCapability(C) : newGenericPromiseCapability(C);
     };
 
-    if (typeof nativePromiseConstructor == 'function') {
-      nativeThen = nativePromiseConstructor.prototype.then; // wrap native Promise#then for native async functions
+    if (typeof nativePromiseConstructor == 'function' && NativePromisePrototype !== Object.prototype) {
+      nativeThen = NativePromisePrototype.then; // make `Promise#then` return a polyfilled `Promise` for native promise-based APIs
 
-      redefine(nativePromiseConstructor.prototype, 'then', function then(onFulfilled, onRejected) {
+      redefine(NativePromisePrototype, 'then', function then(onFulfilled, onRejected) {
         var that = this;
         return new PromiseConstructor(function (resolve, reject) {
           nativeThen.call(that, resolve, reject);
         }).then(onFulfilled, onRejected); // https://github.com/zloirock/core-js/issues/640
       }, {
         unsafe: true
-      }); // wrap fetch result
+      }); // make `.constructor === Promise` work for native promise-based APIs
 
-      if (typeof $fetch == 'function') _export({
-        global: true,
-        enumerable: true,
-        forced: true
-      }, {
-        // eslint-disable-next-line no-unused-vars -- required for `.length`
-        fetch: function fetch(input
-        /* , init */
-        ) {
-          return promiseResolve(PromiseConstructor, $fetch.apply(global_1, arguments));
-        }
-      });
+      try {
+        delete NativePromisePrototype.constructor;
+      } catch (error) {
+        /* empty */
+      } // make `instanceof Promise` work for native promise-based APIs
+
+
+      if (objectSetPrototypeOf) {
+        objectSetPrototypeOf(NativePromisePrototype, PromiseConstructor.prototype);
+      }
     }
   }
 
