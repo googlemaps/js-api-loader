@@ -243,7 +243,7 @@ this.google.maps.plugins.loader = (function (exports) {
     (module.exports = function (key, value) {
       return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.11.1',
+      version: '3.12.1',
       mode: 'global',
       copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
     });
@@ -284,7 +284,7 @@ this.google.maps.plugins.loader = (function (exports) {
     };
   };
 
-  if (nativeWeakMap) {
+  if (nativeWeakMap || sharedStore.state) {
     var store = sharedStore.state || (sharedStore.state = new WeakMap());
     var wmget = store.get;
     var wmhas = store.has;
@@ -571,8 +571,6 @@ this.google.maps.plugins.loader = (function (exports) {
     if (propertyKey in object) objectDefineProperty.f(object, propertyKey, createPropertyDescriptor(0, value));else object[propertyKey] = value;
   };
 
-  var engineIsNode = classofRaw(global_1.process) == 'process';
-
   var engineUserAgent = getBuiltIn('navigator', 'userAgent') || '';
 
   var process$3 = global_1.process;
@@ -582,7 +580,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   if (v8) {
     match = v8.split('.');
-    version = match[0] + match[1];
+    version = match[0] < 4 ? 1 : match[0] + match[1];
   } else if (engineUserAgent) {
     match = engineUserAgent.match(/Edge\/(\d+)/);
 
@@ -594,11 +592,13 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var engineV8Version = version && +version;
 
+  /* eslint-disable es/no-symbol -- required for testing */
+  // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
+
   var nativeSymbol = !!Object.getOwnPropertySymbols && !fails(function () {
-    // eslint-disable-next-line es/no-symbol -- required for testing
-    return !Symbol.sham && ( // Chrome 38 Symbol has incorrect toString conversion
+    return !String(Symbol()) || // Chrome 38 Symbol has incorrect toString conversion
     // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
-    engineIsNode ? engineV8Version === 38 : engineV8Version > 37 && engineV8Version < 41);
+    !Symbol.sham && engineV8Version && engineV8Version < 41;
   });
 
   /* eslint-disable es/no-symbol -- required for testing */
@@ -1052,6 +1052,8 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var engineIsIos = /(?:iphone|ipod|ipad).*applewebkit/i.test(engineUserAgent);
 
+  var engineIsNode = classofRaw(global_1.process) == 'process';
+
   var location = global_1.location;
   var set = global_1.setImmediate;
   var clear = global_1.clearImmediate;
@@ -1198,7 +1200,9 @@ this.google.maps.plugins.loader = (function (exports) {
 
     } else if (Promise$1 && Promise$1.resolve) {
       // Promise.resolve without an argument throws an error in LG WebOS 2
-      promise = Promise$1.resolve(undefined);
+      promise = Promise$1.resolve(undefined); // workaround of WebKit ~ iOS Safari 10.1 bug
+
+      promise.constructor = Promise$1;
       then = promise.then;
 
       notify$1 = function () {
@@ -1289,6 +1293,8 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   };
 
+  var engineIsBrowser = typeof window == 'object';
+
   var task = task$1.set;
   var SPECIES = wellKnownSymbol('species');
   var PROMISE = 'Promise';
@@ -1297,6 +1303,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var getInternalPromiseState = internalState.getterFor(PROMISE);
   var NativePromisePrototype = nativePromiseConstructor && nativePromiseConstructor.prototype;
   var PromiseConstructor = nativePromiseConstructor;
+  var PromiseConstructorPrototype = NativePromisePrototype;
   var TypeError$1 = global_1.TypeError;
   var document$1 = global_1.document;
   var process = global_1.process;
@@ -1311,24 +1318,22 @@ this.google.maps.plugins.loader = (function (exports) {
   var REJECTED = 2;
   var HANDLED = 1;
   var UNHANDLED = 2;
+  var SUBCLASSING = false;
   var Internal, OwnPromiseCapability, PromiseWrapper, nativeThen;
   var FORCED = isForced_1(PROMISE, function () {
-    var GLOBAL_CORE_JS_PROMISE = inspectSource(PromiseConstructor) !== String(PromiseConstructor);
+    var GLOBAL_CORE_JS_PROMISE = inspectSource(PromiseConstructor) !== String(PromiseConstructor); // V8 6.6 (Node 10 and Chrome 66) have a bug with resolving custom thenables
+    // https://bugs.chromium.org/p/chromium/issues/detail?id=830565
+    // We can't detect it synchronously, so just check versions
 
-    if (!GLOBAL_CORE_JS_PROMISE) {
-      // V8 6.6 (Node 10 and Chrome 66) have a bug with resolving custom thenables
-      // https://bugs.chromium.org/p/chromium/issues/detail?id=830565
-      // We can't detect it synchronously, so just check versions
-      if (engineV8Version === 66) return true; // Unhandled rejections tracking support, NodeJS Promise without it fails @@species test
-
-      if (!engineIsNode && !NATIVE_REJECTION_EVENT) return true;
-    } // We need Promise#finally in the pure version for preventing prototype pollution
+    if (!GLOBAL_CORE_JS_PROMISE && engineV8Version === 66) return true; // We need Promise#finally in the pure version for preventing prototype pollution
     // deoptimization and performance degradation
     // https://github.com/zloirock/core-js/issues/679
 
     if (engineV8Version >= 51 && /native code/.test(PromiseConstructor)) return false; // Detect correctness of subclassing with @@species support
 
-    var promise = PromiseConstructor.resolve(1);
+    var promise = new PromiseConstructor(function (resolve) {
+      resolve(1);
+    });
 
     var FakePromise = function (exec) {
       exec(function () {
@@ -1340,9 +1345,12 @@ this.google.maps.plugins.loader = (function (exports) {
 
     var constructor = promise.constructor = {};
     constructor[SPECIES] = FakePromise;
-    return !(promise.then(function () {
+    SUBCLASSING = promise.then(function () {
       /* empty */
-    }) instanceof FakePromise);
+    }) instanceof FakePromise;
+    if (!SUBCLASSING) return true; // Unhandled rejections tracking support, NodeJS Promise without it fails @@species test
+
+    return !GLOBAL_CORE_JS_PROMISE && engineIsBrowser && !NATIVE_REJECTION_EVENT;
   });
   var INCORRECT_ITERATION = FORCED || !checkCorrectnessOfIteration(function (iterable) {
     PromiseConstructor.all(iterable)['catch'](function () {
@@ -1520,8 +1528,9 @@ this.google.maps.plugins.loader = (function (exports) {
       } catch (error) {
         internalReject(state, error);
       }
-    }; // eslint-disable-next-line no-unused-vars -- required for `.length`
+    };
 
+    PromiseConstructorPrototype = PromiseConstructor.prototype; // eslint-disable-next-line no-unused-vars -- required for `.length`
 
     Internal = function Promise(executor) {
       setInternalState(this, {
@@ -1536,7 +1545,7 @@ this.google.maps.plugins.loader = (function (exports) {
       });
     };
 
-    Internal.prototype = redefineAll(PromiseConstructor.prototype, {
+    Internal.prototype = redefineAll(PromiseConstructorPrototype, {
       // `Promise.prototype.then` method
       // https://tc39.es/ecma262/#sec-promise.prototype.then
       then: function then(onFulfilled, onRejected) {
@@ -1570,16 +1579,24 @@ this.google.maps.plugins.loader = (function (exports) {
     };
 
     if (typeof nativePromiseConstructor == 'function' && NativePromisePrototype !== Object.prototype) {
-      nativeThen = NativePromisePrototype.then; // make `Promise#then` return a polyfilled `Promise` for native promise-based APIs
+      nativeThen = NativePromisePrototype.then;
 
-      redefine(NativePromisePrototype, 'then', function then(onFulfilled, onRejected) {
-        var that = this;
-        return new PromiseConstructor(function (resolve, reject) {
-          nativeThen.call(that, resolve, reject);
-        }).then(onFulfilled, onRejected); // https://github.com/zloirock/core-js/issues/640
-      }, {
-        unsafe: true
-      }); // make `.constructor === Promise` work for native promise-based APIs
+      if (!SUBCLASSING) {
+        // make `Promise#then` return a polyfilled `Promise` for native promise-based APIs
+        redefine(NativePromisePrototype, 'then', function then(onFulfilled, onRejected) {
+          var that = this;
+          return new PromiseConstructor(function (resolve, reject) {
+            nativeThen.call(that, resolve, reject);
+          }).then(onFulfilled, onRejected); // https://github.com/zloirock/core-js/issues/640
+        }, {
+          unsafe: true
+        }); // makes sure that native promise-based APIs `Promise#catch` properly works with patched `Promise#then`
+
+        redefine(NativePromisePrototype, 'catch', PromiseConstructorPrototype['catch'], {
+          unsafe: true
+        });
+      } // make `.constructor === Promise` work for native promise-based APIs
+
 
       try {
         delete NativePromisePrototype.constructor;
@@ -1589,7 +1606,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
 
       if (objectSetPrototypeOf) {
-        objectSetPrototypeOf(NativePromisePrototype, PromiseConstructor.prototype);
+        objectSetPrototypeOf(NativePromisePrototype, PromiseConstructorPrototype);
       }
     }
   }
