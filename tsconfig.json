@@ -7,7 +7,7 @@
     "sourceMap": true,
     "esModuleInterop": true,
     "lib": ["DOM", "ESNext"],
-    "target": "ES6",
+    "target": "ES5",
     "moduleResolution": "node"
   },
   "include": ["src/**/*"]
