@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+/// <reference types="google.maps" />
 /**
  * @ignore
  */
@@ -167,7 +168,7 @@ export interface LoaderOptions {
  *   libraries: ["places"]
  * });
  *
- * loader.load().then(() => {
+ * loader.load().then((google) => {
  *   const map = new google.maps.Map(...)
  * })
  * ```
@@ -249,13 +250,13 @@ export declare class Loader {
     /**
      * Load the Google Maps JavaScript API script and return a Promise.
      */
-    load(): Promise<void>;
+    load(): Promise<typeof google>;
     /**
      * Load the Google Maps JavaScript API script and return a Promise.
      *
      * @ignore
      */
-    loadPromise(): Promise<void>;
+    loadPromise(): Promise<typeof google>;
     /**
      * Load the Google Maps JavaScript API script with a callback.
      */

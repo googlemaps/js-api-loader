@@ -1894,7 +1894,7 @@ this.google.maps.plugins.loader = (function (exports) {
    *   libraries: ["places"]
    * });
    *
-   * loader.load().then(() => {
+   * loader.load().then((google) => {
    *   const map = new google.maps.Map(...)
    * })
    * ```
@@ -2051,7 +2051,7 @@ this.google.maps.plugins.loader = (function (exports) {
         return new Promise(function (resolve, reject) {
           _this.loadCallback(function (err) {
             if (!err) {
-              resolve();
+              resolve(window.google);
             } else {
               reject(err);
             }
