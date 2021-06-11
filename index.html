@@ -70,7 +70,6 @@
 					<h2>Description</h2>
 				</a>
 				<p>Load the Google Maps JavaScript API script dynamically. This takes inspiration from the <a href="https://www.npmjs.com/package/google-maps">google-maps</a> npm package but updates it with ES6, Promises, and TypeScript.</p>
-				<p>A previous version of the package was available at <a href="https://www.npmjs.com/package/@googlemaps/loader">@googlemaps/loader</a> but was renamed to the package <a href="https://www.npmjs.com/package/@googlemaps/js-api-loader">@googlemaps/js-api-loader</a> here.</p>
 				<a href="#install" id="install" style="color: inherit; text-decoration: none;">
 					<h2>Install</h2>
 				</a>
@@ -112,7 +111,7 @@
 				<pre><code class="language-javascript"><span style="color: #008000">// Promise</span>
 <span style="color: #001080">loader</span>
 <span style="color: #000000">  .</span><span style="color: #795E26">load</span><span style="color: #000000">()</span>
-<span style="color: #000000">  .</span><span style="color: #795E26">then</span><span style="color: #000000">(() </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
+<span style="color: #000000">  .</span><span style="color: #795E26">then</span><span style="color: #000000">((</span><span style="color: #001080">google</span><span style="color: #000000">) </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
 <span style="color: #000000">    </span><span style="color: #0000FF">new</span><span style="color: #000000"> </span><span style="color: #001080">google</span><span style="color: #000000">.</span><span style="color: #001080">maps</span><span style="color: #000000">.</span><span style="color: #795E26">Map</span><span style="color: #000000">(</span><span style="color: #001080">document</span><span style="color: #000000">.</span><span style="color: #795E26">getElementById</span><span style="color: #000000">(</span><span style="color: #A31515">&quot;map&quot;</span><span style="color: #000000">), </span><span style="color: #001080">mapOptions</span><span style="color: #000000">);</span>
 <span style="color: #000000">  })</span>
 <span style="color: #000000">  .</span><span style="color: #795E26">catch</span><span style="color: #000000">(</span><span style="color: #001080">e</span><span style="color: #000000"> </span><span style="color: #0000FF">=&gt;</span><span style="color: #000000"> {</span>
