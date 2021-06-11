@@ -292,8 +292,9 @@ test("loader should resolve immediately when successfully loaded", async () => {
   // use await/async pattern since the promise resolves without trigger
   const loader = new Loader({ apiKey: "foo", retries: 0 });
   loader["done"] = true;
-
-  await expect(loader.loadPromise()).resolves.toBeUndefined();
+  // TODO causes warning
+  window.google = { maps: { version: "3.*.*" } as any };
+  await expect(loader.loadPromise()).resolves.toBeDefined();
 });
 
 test("loader should resolve immediately when failed loading", async () => {
@@ -324,7 +325,7 @@ test("loader should resolve immediately when google.maps defined", async () => {
   const loader = new Loader({ apiKey: "foo" });
   window.google = { maps: { version: "3.*.*" } as any };
   console.warn = jest.fn();
-  await expect(loader.loadPromise()).resolves.toBeUndefined();
+  await expect(loader.loadPromise()).resolves.toBeDefined();
   delete window.google;
   expect(console.warn).toHaveBeenCalledTimes(1);
 });
@@ -334,7 +335,7 @@ test("loader should not warn if done and google.maps is defined", async () => {
   loader["done"] = true;
   window.google = { maps: { version: "3.*.*" } as any };
   console.warn = jest.fn();
-  await expect(loader.loadPromise()).resolves.toBeUndefined();
+  await expect(loader.loadPromise()).resolves.toBeDefined();
   delete window.google;
   expect(console.warn).toHaveBeenCalledTimes(0);
 });
