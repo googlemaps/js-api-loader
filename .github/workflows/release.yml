@@ -17,6 +17,7 @@ on:
   push:
     branches:
       - master
+      - next
 jobs:
   build:
     runs-on: ubuntu-latest
