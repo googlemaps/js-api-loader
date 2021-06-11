@@ -61,7 +61,7 @@
       // Promise
       loader
         .load()
-        .then(() => {
+        .then((google) => {
           new google.maps.Map(document.getElementById("map"), mapOptions);
         })
         .catch((e) => {

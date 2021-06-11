@@ -180,7 +180,7 @@ export interface LoaderOptions {
  *   libraries: ["places"]
  * });
  *
- * loader.load().then(() => {
+ * loader.load().then((google) => {
  *   const map = new google.maps.Map(...)
  * })
  * ```
@@ -367,7 +367,7 @@ export class Loader {
   /**
    * Load the Google Maps JavaScript API script and return a Promise.
    */
-  load(): Promise<void> {
+  load(): Promise<typeof google> {
     return this.loadPromise();
   }
 
@@ -376,11 +376,11 @@ export class Loader {
    *
    * @ignore
    */
-  loadPromise(): Promise<void> {
+  loadPromise(): Promise<typeof google> {
     return new Promise((resolve, reject) => {
       this.loadCallback((err: Event) => {
         if (!err) {
-          resolve();
+          resolve(window.google);
         } else {
           reject(err);
         }
