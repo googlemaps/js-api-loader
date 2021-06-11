@@ -67,7 +67,7 @@ Using a promise for when the script has loaded.
 // Promise
 loader
   .load()
-  .then(() => {
+  .then((google) => {
     new google.maps.Map(document.getElementById("map"), mapOptions);
   })
   .catch(e => {
