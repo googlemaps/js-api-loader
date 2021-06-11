@@ -11,8 +11,6 @@
 ## Description
 Load the Google Maps JavaScript API script dynamically. This takes inspiration from the [google-maps](https://www.npmjs.com/package/google-maps) npm package but updates it with ES6, Promises, and TypeScript.
 
-A previous version of the package was available at [@googlemaps/loader](https://www.npmjs.com/package/@googlemaps/loader) but was renamed to the package [@googlemaps/js-api-loader](https://www.npmjs.com/package/@googlemaps/js-api-loader) here.
-
 ## Install
 
 Available via npm as the package [@googlemaps/js-api-loader](https://www.npmjs.com/package/@googlemaps/js-api-loader).
