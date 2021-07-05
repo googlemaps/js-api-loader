@@ -243,7 +243,7 @@ this.google.maps.plugins.loader = (function (exports) {
     (module.exports = function (key, value) {
       return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.15.1',
+      version: '3.15.2',
       mode: 'global',
       copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
     });
@@ -1324,7 +1324,8 @@ this.google.maps.plugins.loader = (function (exports) {
   var SUBCLASSING = false;
   var Internal, OwnPromiseCapability, PromiseWrapper, nativeThen;
   var FORCED = isForced_1(PROMISE, function () {
-    var GLOBAL_CORE_JS_PROMISE = inspectSource(PromiseConstructor) !== String(PromiseConstructor); // V8 6.6 (Node 10 and Chrome 66) have a bug with resolving custom thenables
+    var PROMISE_CONSTRUCTOR_SOURCE = inspectSource(PromiseConstructor);
+    var GLOBAL_CORE_JS_PROMISE = PROMISE_CONSTRUCTOR_SOURCE !== String(PromiseConstructor); // V8 6.6 (Node 10 and Chrome 66) have a bug with resolving custom thenables
     // https://bugs.chromium.org/p/chromium/issues/detail?id=830565
     // We can't detect it synchronously, so just check versions
 
@@ -1332,7 +1333,7 @@ this.google.maps.plugins.loader = (function (exports) {
     // deoptimization and performance degradation
     // https://github.com/zloirock/core-js/issues/679
 
-    if (engineV8Version >= 51 && /native code/.test(PromiseConstructor)) return false; // Detect correctness of subclassing with @@species support
+    if (engineV8Version >= 51 && /native code/.test(PROMISE_CONSTRUCTOR_SOURCE)) return false; // Detect correctness of subclassing with @@species support
 
     var promise = new PromiseConstructor(function (resolve) {
       resolve(1);
