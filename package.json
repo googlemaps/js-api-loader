@@ -40,7 +40,7 @@
     "@types/selenium-webdriver": "^4.0.9",
     "@typescript-eslint/eslint-plugin": ">=2.25.0",
     "@typescript-eslint/parser": ">=2.25.0",
-    "chromedriver": "^91.0.0",
+    "chromedriver": "^92.0.0",
     "core-js": "^3.6.4",
     "eslint": "^7.21.0",
     "eslint-plugin-jest": "^24.0.0",
