@@ -118,18 +118,96 @@ this.google.maps.plugins.loader = (function (exports) {
     return typeof it === 'object' ? it !== null : typeof it === 'function';
   };
 
-  // https://tc39.es/ecma262/#sec-toprimitive
-  // instead of the ES6 spec version, we didn't implement @@toPrimitive case
-  // and the second argument - flag - preferred type is a string
+  var aFunction$1 = function (variable) {
+    return typeof variable == 'function' ? variable : undefined;
+  };
 
-  var toPrimitive = function (input, PREFERRED_STRING) {
-    if (!isObject(input)) return input;
+  var getBuiltIn = function (namespace, method) {
+    return arguments.length < 2 ? aFunction$1(global_1[namespace]) : global_1[namespace] && global_1[namespace][method];
+  };
+
+  var engineUserAgent = getBuiltIn('navigator', 'userAgent') || '';
+
+  var process$3 = global_1.process;
+  var Deno = global_1.Deno;
+  var versions = process$3 && process$3.versions || Deno && Deno.version;
+  var v8 = versions && versions.v8;
+  var match, version;
+
+  if (v8) {
+    match = v8.split('.');
+    version = match[0] < 4 ? 1 : match[0] + match[1];
+  } else if (engineUserAgent) {
+    match = engineUserAgent.match(/Edge\/(\d+)/);
+
+    if (!match || match[1] >= 74) {
+      match = engineUserAgent.match(/Chrome\/(\d+)/);
+      if (match) version = match[1];
+    }
+  }
+
+  var engineV8Version = version && +version;
+
+  /* eslint-disable es/no-symbol -- required for testing */
+  // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
+
+  var nativeSymbol = !!Object.getOwnPropertySymbols && !fails(function () {
+    var symbol = Symbol(); // Chrome 38 Symbol has incorrect toString conversion
+    // `get-own-property-symbols` polyfill symbols converted to object are not Symbol instances
+
+    return !String(symbol) || !(Object(symbol) instanceof Symbol) || // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
+    !Symbol.sham && engineV8Version && engineV8Version < 41;
+  });
+
+  /* eslint-disable es/no-symbol -- required for testing */
+
+  var useSymbolAsUid = nativeSymbol && !Symbol.sham && typeof Symbol.iterator == 'symbol';
+
+  var isSymbol = useSymbolAsUid ? function (it) {
+    return typeof it == 'symbol';
+  } : function (it) {
+    var $Symbol = getBuiltIn('Symbol');
+    return typeof $Symbol == 'function' && Object(it) instanceof $Symbol;
+  };
+
+  // https://tc39.es/ecma262/#sec-ordinarytoprimitive
+
+  var ordinaryToPrimitive = function (input, pref) {
     var fn, val;
-    if (PREFERRED_STRING && typeof (fn = input.toString) == 'function' && !isObject(val = fn.call(input))) return val;
+    if (pref === 'string' && typeof (fn = input.toString) == 'function' && !isObject(val = fn.call(input))) return val;
     if (typeof (fn = input.valueOf) == 'function' && !isObject(val = fn.call(input))) return val;
-    if (!PREFERRED_STRING && typeof (fn = input.toString) == 'function' && !isObject(val = fn.call(input))) return val;
+    if (pref !== 'string' && typeof (fn = input.toString) == 'function' && !isObject(val = fn.call(input))) return val;
     throw TypeError("Can't convert object to primitive value");
   };
+
+  var setGlobal = function (key, value) {
+    try {
+      // eslint-disable-next-line es/no-object-defineproperty -- safe
+      Object.defineProperty(global_1, key, {
+        value: value,
+        configurable: true,
+        writable: true
+      });
+    } catch (error) {
+      global_1[key] = value;
+    }
+
+    return value;
+  };
+
+  var SHARED = '__core-js_shared__';
+  var store$1 = global_1[SHARED] || setGlobal(SHARED, {});
+  var sharedStore = store$1;
+
+  var shared = createCommonjsModule(function (module) {
+    (module.exports = function (key, value) {
+      return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
+    })('versions', []).push({
+      version: '3.16.1',
+      mode: 'global',
+      copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
+    });
+  });
 
   // https://tc39.es/ecma262/#sec-toobject
 
@@ -141,6 +219,55 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var has$1 = Object.hasOwn || function hasOwn(it, key) {
     return hasOwnProperty.call(toObject(it), key);
+  };
+
+  var id = 0;
+  var postfix = Math.random();
+
+  var uid = function (key) {
+    return 'Symbol(' + String(key === undefined ? '' : key) + ')_' + (++id + postfix).toString(36);
+  };
+
+  var WellKnownSymbolsStore = shared('wks');
+  var Symbol$1 = global_1.Symbol;
+  var createWellKnownSymbol = useSymbolAsUid ? Symbol$1 : Symbol$1 && Symbol$1.withoutSetter || uid;
+
+  var wellKnownSymbol = function (name) {
+    if (!has$1(WellKnownSymbolsStore, name) || !(nativeSymbol || typeof WellKnownSymbolsStore[name] == 'string')) {
+      if (nativeSymbol && has$1(Symbol$1, name)) {
+        WellKnownSymbolsStore[name] = Symbol$1[name];
+      } else {
+        WellKnownSymbolsStore[name] = createWellKnownSymbol('Symbol.' + name);
+      }
+    }
+
+    return WellKnownSymbolsStore[name];
+  };
+
+  var TO_PRIMITIVE = wellKnownSymbol('toPrimitive'); // `ToPrimitive` abstract operation
+  // https://tc39.es/ecma262/#sec-toprimitive
+
+  var toPrimitive = function (input, pref) {
+    if (!isObject(input) || isSymbol(input)) return input;
+    var exoticToPrim = input[TO_PRIMITIVE];
+    var result;
+
+    if (exoticToPrim !== undefined) {
+      if (pref === undefined) pref = 'default';
+      result = exoticToPrim.call(input, pref);
+      if (!isObject(result) || isSymbol(result)) return result;
+      throw TypeError("Can't convert object to primitive value");
+    }
+
+    if (pref === undefined) pref = 'number';
+    return ordinaryToPrimitive(input, pref);
+  };
+
+  // https://tc39.es/ecma262/#sec-topropertykey
+
+  var toPropertyKey = function (argument) {
+    var key = toPrimitive(argument, 'string');
+    return isSymbol(key) ? key : String(key);
   };
 
   var document$3 = global_1.document; // typeof document.createElement is 'object' in old IE
@@ -165,7 +292,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var f$4 = descriptors ? $getOwnPropertyDescriptor : function getOwnPropertyDescriptor(O, P) {
     O = toIndexedObject(O);
-    P = toPrimitive(P, true);
+    P = toPropertyKey(P);
     if (ie8DomDefine) try {
       return $getOwnPropertyDescriptor(O, P);
     } catch (error) {
@@ -190,7 +317,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var f$3 = descriptors ? $defineProperty : function defineProperty(O, P, Attributes) {
     anObject(O);
-    P = toPrimitive(P, true);
+    P = toPropertyKey(P);
     anObject(Attributes);
     if (ie8DomDefine) try {
       return $defineProperty(O, P, Attributes);
@@ -212,20 +339,6 @@ this.google.maps.plugins.loader = (function (exports) {
     return object;
   };
 
-  var setGlobal = function (key, value) {
-    try {
-      createNonEnumerableProperty(global_1, key, value);
-    } catch (error) {
-      global_1[key] = value;
-    }
-
-    return value;
-  };
-
-  var SHARED = '__core-js_shared__';
-  var store$1 = global_1[SHARED] || setGlobal(SHARED, {});
-  var sharedStore = store$1;
-
   var functionToString = Function.toString; // this helper broken in `core-js@3.4.1-3.4.4`, so we can't use `shared` helper
 
   if (typeof sharedStore.inspectSource != 'function') {
@@ -238,23 +351,6 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var WeakMap$1 = global_1.WeakMap;
   var nativeWeakMap = typeof WeakMap$1 === 'function' && /native code/.test(inspectSource(WeakMap$1));
-
-  var shared = createCommonjsModule(function (module) {
-    (module.exports = function (key, value) {
-      return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
-    })('versions', []).push({
-      version: '3.15.2',
-      mode: 'global',
-      copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
-    });
-  });
-
-  var id = 0;
-  var postfix = Math.random();
-
-  var uid = function (key) {
-    return 'Symbol(' + String(key === undefined ? '' : key) + ')_' + (++id + postfix).toString(36);
-  };
 
   var keys = shared('keys');
 
@@ -368,16 +464,6 @@ this.google.maps.plugins.loader = (function (exports) {
       return typeof this == 'function' && getInternalState(this).source || inspectSource(this);
     });
   });
-
-  var path = global_1;
-
-  var aFunction$1 = function (variable) {
-    return typeof variable == 'function' ? variable : undefined;
-  };
-
-  var getBuiltIn = function (namespace, method) {
-    return arguments.length < 2 ? aFunction$1(path[namespace]) || aFunction$1(global_1[namespace]) : path[namespace] && path[namespace][method] || global_1[namespace] && global_1[namespace][method];
-  };
 
   var ceil = Math.ceil;
   var floor = Math.floor; // `ToInteger` abstract operation
@@ -567,66 +653,14 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var createProperty = function (object, key, value) {
-    var propertyKey = toPrimitive(key);
+    var propertyKey = toPropertyKey(key);
     if (propertyKey in object) objectDefineProperty.f(object, propertyKey, createPropertyDescriptor(0, value));else object[propertyKey] = value;
   };
 
-  var engineUserAgent = getBuiltIn('navigator', 'userAgent') || '';
-
-  var process$3 = global_1.process;
-  var versions = process$3 && process$3.versions;
-  var v8 = versions && versions.v8;
-  var match, version;
-
-  if (v8) {
-    match = v8.split('.');
-    version = match[0] < 4 ? 1 : match[0] + match[1];
-  } else if (engineUserAgent) {
-    match = engineUserAgent.match(/Edge\/(\d+)/);
-
-    if (!match || match[1] >= 74) {
-      match = engineUserAgent.match(/Chrome\/(\d+)/);
-      if (match) version = match[1];
-    }
-  }
-
-  var engineV8Version = version && +version;
-
-  /* eslint-disable es/no-symbol -- required for testing */
-  // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
-
-  var nativeSymbol = !!Object.getOwnPropertySymbols && !fails(function () {
-    var symbol = Symbol(); // Chrome 38 Symbol has incorrect toString conversion
-    // `get-own-property-symbols` polyfill symbols converted to object are not Symbol instances
-
-    return !String(symbol) || !(Object(symbol) instanceof Symbol) || // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
-    !Symbol.sham && engineV8Version && engineV8Version < 41;
-  });
-
-  /* eslint-disable es/no-symbol -- required for testing */
-
-  var useSymbolAsUid = nativeSymbol && !Symbol.sham && typeof Symbol.iterator == 'symbol';
-
-  var WellKnownSymbolsStore = shared('wks');
-  var Symbol$1 = global_1.Symbol;
-  var createWellKnownSymbol = useSymbolAsUid ? Symbol$1 : Symbol$1 && Symbol$1.withoutSetter || uid;
-
-  var wellKnownSymbol = function (name) {
-    if (!has$1(WellKnownSymbolsStore, name) || !(nativeSymbol || typeof WellKnownSymbolsStore[name] == 'string')) {
-      if (nativeSymbol && has$1(Symbol$1, name)) {
-        WellKnownSymbolsStore[name] = Symbol$1[name];
-      } else {
-        WellKnownSymbolsStore[name] = createWellKnownSymbol('Symbol.' + name);
-      }
-    }
-
-    return WellKnownSymbolsStore[name];
-  };
-
-  var SPECIES$4 = wellKnownSymbol('species'); // `ArraySpeciesCreate` abstract operation
+  var SPECIES$4 = wellKnownSymbol('species'); // a part of `ArraySpeciesCreate` abstract operation
   // https://tc39.es/ecma262/#sec-arrayspeciescreate
 
-  var arraySpeciesCreate = function (originalArray, length) {
+  var arraySpeciesConstructor = function (originalArray) {
     var C;
 
     if (isArray(originalArray)) {
@@ -638,7 +672,13 @@ this.google.maps.plugins.loader = (function (exports) {
       }
     }
 
-    return new (C === undefined ? Array : C)(length === 0 ? 0 : length);
+    return C === undefined ? Array : C;
+  };
+
+  // https://tc39.es/ecma262/#sec-arrayspeciescreate
+
+  var arraySpeciesCreate = function (originalArray, length) {
+    return new (arraySpeciesConstructor(originalArray))(length === 0 ? 0 : length);
   };
 
   var SPECIES$3 = wellKnownSymbol('species');
@@ -1056,7 +1096,6 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var engineIsNode = classofRaw(global_1.process) == 'process';
 
-  var location = global_1.location;
   var set = global_1.setImmediate;
   var clear = global_1.clearImmediate;
   var process$2 = global_1.process;
@@ -1065,7 +1104,14 @@ this.google.maps.plugins.loader = (function (exports) {
   var counter = 0;
   var queue = {};
   var ONREADYSTATECHANGE = 'onreadystatechange';
-  var defer, channel, port;
+  var location, defer, channel, port;
+
+  try {
+    // Deno throws a ReferenceError on `location` access without `--location` flag
+    location = global_1.location;
+  } catch (error) {
+    /* empty */
+  }
 
   var run = function (id) {
     // eslint-disable-next-line no-prototype-builtins -- safe
@@ -1088,16 +1134,17 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var post = function (id) {
     // old engines have not location.origin
-    global_1.postMessage(id + '', location.protocol + '//' + location.host);
+    global_1.postMessage(String(id), location.protocol + '//' + location.host);
   }; // Node.js 0.9+ & IE10+ has setImmediate, otherwise:
 
 
   if (!set || !clear) {
     set = function setImmediate(fn) {
       var args = [];
+      var argumentsLength = arguments.length;
       var i = 1;
 
-      while (arguments.length > i) args.push(arguments[i++]);
+      while (argumentsLength > i) args.push(arguments[i++]);
 
       queue[++counter] = function () {
         // eslint-disable-next-line no-new-func -- spec requirement
@@ -1153,6 +1200,8 @@ this.google.maps.plugins.loader = (function (exports) {
     clear: clear
   };
 
+  var engineIsIosPebble = /iphone|ipod|ipad/i.test(engineUserAgent) && global_1.Pebble !== undefined;
+
   var engineIsWebosWebkit = /web0s(?!.*chrome)/i.test(engineUserAgent);
 
   var getOwnPropertyDescriptor = objectGetOwnPropertyDescriptor.f;
@@ -1200,7 +1249,7 @@ this.google.maps.plugins.loader = (function (exports) {
         node.data = toggle = !toggle;
       }; // environments with maybe non-completely correct, but existent Promise
 
-    } else if (Promise$1 && Promise$1.resolve) {
+    } else if (!engineIsIosPebble && Promise$1 && Promise$1.resolve) {
       // Promise.resolve without an argument throws an error in LG WebOS 2
       promise = Promise$1.resolve(undefined); // workaround of WebKit ~ iOS Safari 10.1 bug
 
@@ -1737,7 +1786,7 @@ this.google.maps.plugins.loader = (function (exports) {
     TouchList: 0
   };
 
-  var push = [].push; // `Array.prototype.{ forEach, map, filter, some, every, find, findIndex, filterOut }` methods implementation
+  var push = [].push; // `Array.prototype.{ forEach, map, filter, some, every, find, findIndex, filterReject }` methods implementation
 
   var createMethod = function (TYPE) {
     var IS_MAP = TYPE == 1;
@@ -1745,7 +1794,7 @@ this.google.maps.plugins.loader = (function (exports) {
     var IS_SOME = TYPE == 3;
     var IS_EVERY = TYPE == 4;
     var IS_FIND_INDEX = TYPE == 6;
-    var IS_FILTER_OUT = TYPE == 7;
+    var IS_FILTER_REJECT = TYPE == 7;
     var NO_HOLES = TYPE == 5 || IS_FIND_INDEX;
     return function ($this, callbackfn, that, specificCreate) {
       var O = toObject($this);
@@ -1754,7 +1803,7 @@ this.google.maps.plugins.loader = (function (exports) {
       var length = toLength(self.length);
       var index = 0;
       var create = specificCreate || arraySpeciesCreate;
-      var target = IS_MAP ? create($this, length) : IS_FILTER || IS_FILTER_OUT ? create($this, 0) : undefined;
+      var target = IS_MAP ? create($this, length) : IS_FILTER || IS_FILTER_REJECT ? create($this, 0) : undefined;
       var value, result;
 
       for (; length > index; index++) if (NO_HOLES || index in self) {
@@ -1786,7 +1835,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
               case 7:
                 push.call(target, value);
-              // filterOut
+              // filterReject
             }
         }
       }
@@ -1817,9 +1866,9 @@ this.google.maps.plugins.loader = (function (exports) {
     // `Array.prototype.findIndex` method
     // https://tc39.es/ecma262/#sec-array.prototype.findIndex
     findIndex: createMethod(6),
-    // `Array.prototype.filterOut` method
+    // `Array.prototype.filterReject` method
     // https://github.com/tc39/proposal-array-filtering
-    filterOut: createMethod(7)
+    filterReject: createMethod(7)
   };
 
   var $forEach = arrayIteration.forEach;
