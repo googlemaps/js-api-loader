@@ -378,11 +378,11 @@ export class Loader {
    */
   loadPromise(): Promise<typeof google> {
     return new Promise((resolve, reject) => {
-      this.loadCallback((err: Event) => {
+      this.loadCallback((err: ErrorEvent) => {
         if (!err) {
           resolve(window.google);
         } else {
-          reject(err);
+          reject(err.error);
         }
       });
     });
