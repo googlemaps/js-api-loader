@@ -118,9 +118,11 @@ test("loadCallback callback should fire", () => {
 test("script onerror should reject promise", async () => {
   const loader = new Loader({ apiKey: "foo", retries: 0 });
 
-  const rejection = expect(loader.load()).rejects.toBeInstanceOf(ErrorEvent);
+  const rejection = expect(loader.load()).rejects.toBeInstanceOf(Error);
 
-  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
+  loader["loadErrorCallback"](
+    new ErrorEvent("ErrorEvent(", { error: new Error("") })
+  );
 
   await rejection;
   expect(loader["done"]).toBeTruthy();
@@ -132,16 +134,20 @@ test("script onerror should reject promise with multiple loaders", async () => {
   const loader = new Loader({ apiKey: "foo", retries: 0 });
   const extraLoader = new Loader({ apiKey: "foo", retries: 0 });
 
-  let rejection = expect(loader.load()).rejects.toBeInstanceOf(ErrorEvent);
-  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
+  let rejection = expect(loader.load()).rejects.toBeInstanceOf(Error);
+  loader["loadErrorCallback"](
+    new ErrorEvent("ErrorEvent(", { error: new Error("") })
+  );
 
   await rejection;
   expect(loader["done"]).toBeTruthy();
   expect(loader["loading"]).toBeFalsy();
   expect(loader["onerrorEvent"]).toBeInstanceOf(ErrorEvent);
 
-  rejection = expect(extraLoader.load()).rejects.toBeInstanceOf(ErrorEvent);
-  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
+  rejection = expect(extraLoader.load()).rejects.toBeInstanceOf(Error);
+  loader["loadErrorCallback"](
+    new ErrorEvent("ErrorEvent(", { error: new Error("") })
+  );
 
   await rejection;
   expect(extraLoader["done"]).toBeTruthy();
@@ -151,12 +157,16 @@ test("script onerror should reject promise with multiple loaders", async () => {
 test("script onerror should retry", async () => {
   const loader = new Loader({ apiKey: "foo", retries: 1 });
   const deleteScript = jest.spyOn(loader, "deleteScript");
-  const rejection = expect(loader.load()).rejects.toBeInstanceOf(ErrorEvent);
+  const rejection = expect(loader.load()).rejects.toBeInstanceOf(Error);
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   console.log = jest.fn();
 
-  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
-  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
+  loader["loadErrorCallback"](
+    new ErrorEvent("ErrorEvent(", { error: new Error("") })
+  );
+  loader["loadErrorCallback"](
+    new ErrorEvent("ErrorEvent(", { error: new Error("") })
+  );
   jest.runAllTimers();
 
   await rejection;
@@ -173,19 +183,27 @@ test("script onerror should reset retry mechanism with next loader", async () =>
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   console.log = jest.fn();
 
-  let rejection = expect(loader.load()).rejects.toBeInstanceOf(ErrorEvent);
-  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
-  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
+  let rejection = expect(loader.load()).rejects.toBeInstanceOf(Error);
+  loader["loadErrorCallback"](
+    new ErrorEvent("ErrorEvent(", { error: new Error("") })
+  );
+  loader["loadErrorCallback"](
+    new ErrorEvent("ErrorEvent(", { error: new Error("") })
+  );
   jest.runAllTimers();
   await rejection;
 
-  rejection = expect(loader.load()).rejects.toBeInstanceOf(ErrorEvent);
+  rejection = expect(loader.load()).rejects.toBeInstanceOf(Error);
   expect(loader["done"]).toBeFalsy();
   expect(loader["loading"]).toBeTruthy();
   expect(loader["errors"].length).toBe(0);
 
-  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
-  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
+  loader["loadErrorCallback"](
+    new ErrorEvent("ErrorEvent(", { error: new Error("") })
+  );
+  loader["loadErrorCallback"](
+    new ErrorEvent("ErrorEvent(", { error: new Error("") })
+  );
   jest.runAllTimers();
 
   await rejection;
@@ -199,10 +217,14 @@ test("script onerror should not reset retry mechanism with parallel loaders", as
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   console.log = jest.fn();
 
-  const rejection1 = expect(loader.load()).rejects.toBeInstanceOf(ErrorEvent);
-  const rejection2 = expect(loader.load()).rejects.toBeInstanceOf(ErrorEvent);
-  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
-  loader["loadErrorCallback"](document.createEvent("ErrorEvent"));
+  const rejection1 = expect(loader.load()).rejects.toBeInstanceOf(Error);
+  const rejection2 = expect(loader.load()).rejects.toBeInstanceOf(Error);
+  loader["loadErrorCallback"](
+    new ErrorEvent("ErrorEvent(", { error: new Error("") })
+  );
+  loader["loadErrorCallback"](
+    new ErrorEvent("ErrorEvent(", { error: new Error("") })
+  );
   jest.runAllTimers();
 
   await Promise.all([rejection1, rejection2]);
@@ -301,7 +323,9 @@ test("loader should resolve immediately when failed loading", async () => {
   // use await/async pattern since the promise rejects without trigger
   const loader = new Loader({ apiKey: "foo", retries: 0 });
   loader["done"] = true;
-  loader["onerrorEvent"] = document.createEvent("ErrorEvent");
+  loader["onerrorEvent"] = new ErrorEvent("ErrorEvent(", {
+    error: new Error(""),
+  });
 
   await expect(loader.loadPromise()).rejects.toBeDefined();
 });

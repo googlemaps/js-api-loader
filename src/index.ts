@@ -241,10 +241,10 @@ export class Loader {
   url: string;
 
   private CALLBACK = "__googleMapsCallback";
-  private callbacks: ((e: Event) => void)[] = [];
+  private callbacks: ((e: ErrorEvent) => void)[] = [];
   private done = false;
   private loading = false;
-  private onerrorEvent: Event;
+  private onerrorEvent: ErrorEvent;
   private static instance: Loader;
   private errors: ErrorEvent[] = [];
 
@@ -378,11 +378,11 @@ export class Loader {
    */
   loadPromise(): Promise<typeof google> {
     return new Promise((resolve, reject) => {
-      this.loadCallback((err: Event) => {
+      this.loadCallback((err: ErrorEvent) => {
         if (!err) {
           resolve(window.google);
         } else {
-          reject(err);
+          reject(err.error);
         }
       });
     });
@@ -391,7 +391,7 @@ export class Loader {
   /**
    * Load the Google Maps JavaScript API script with a callback.
    */
-  loadCallback(fn: (e: Event) => void): void {
+  loadCallback(fn: (e: ErrorEvent) => void): void {
     this.callbacks.push(fn);
     this.execute();
   }
