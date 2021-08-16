@@ -184,7 +184,7 @@ class Loader {
                     resolve(window.google);
                 }
                 else {
-                    reject(err);
+                    reject(err.error);
                 }
             });
         });

@@ -260,7 +260,7 @@ export declare class Loader {
     /**
      * Load the Google Maps JavaScript API script with a callback.
      */
-    loadCallback(fn: (e: Event) => void): void;
+    loadCallback(fn: (e: ErrorEvent) => void): void;
     /**
      * Set the script on document.
      */

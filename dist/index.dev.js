@@ -2103,7 +2103,7 @@ this.google.maps.plugins.loader = (function (exports) {
             if (!err) {
               resolve(window.google);
             } else {
-              reject(err);
+              reject(err.error);
             }
           });
         });
