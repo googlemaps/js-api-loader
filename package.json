@@ -36,7 +36,7 @@
     "@babel/runtime-corejs3": "^7.9.2",
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@types/google.maps": "^3.43.0",
-    "@types/jest": "^26.0.10",
+    "@types/jest": "^27.0.1",
     "@types/selenium-webdriver": "^4.0.9",
     "@typescript-eslint/eslint-plugin": ">=2.25.0",
     "@typescript-eslint/parser": ">=2.25.0",
