@@ -203,7 +203,7 @@ this.google.maps.plugins.loader = (function (exports) {
     (module.exports = function (key, value) {
       return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.16.1',
+      version: '3.16.2',
       mode: 'global',
       copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
     });
@@ -1092,7 +1092,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var html = getBuiltIn('document', 'documentElement');
 
-  var engineIsIos = /(?:iphone|ipod|ipad).*applewebkit/i.test(engineUserAgent);
+  var engineIsIos = /(?:ipad|iphone|ipod).*applewebkit/i.test(engineUserAgent);
 
   var engineIsNode = classofRaw(global_1.process) == 'process';
 
@@ -1200,7 +1200,7 @@ this.google.maps.plugins.loader = (function (exports) {
     clear: clear
   };
 
-  var engineIsIosPebble = /iphone|ipod|ipad/i.test(engineUserAgent) && global_1.Pebble !== undefined;
+  var engineIsIosPebble = /ipad|iphone|ipod/i.test(engineUserAgent) && global_1.Pebble !== undefined;
 
   var engineIsWebosWebkit = /web0s(?!.*chrome)/i.test(engineUserAgent);
 
