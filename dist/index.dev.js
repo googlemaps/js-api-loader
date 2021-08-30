@@ -203,7 +203,7 @@ this.google.maps.plugins.loader = (function (exports) {
     (module.exports = function (key, value) {
       return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.16.2',
+      version: '3.16.4',
       mode: 'global',
       copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
     });
@@ -959,12 +959,38 @@ this.google.maps.plugins.loader = (function (exports) {
     if (it != undefined) return it[ITERATOR$1] || it['@@iterator'] || iterators[classof(it)];
   };
 
-  var iteratorClose = function (iterator) {
-    var returnMethod = iterator['return'];
+  var getIterator = function (it, usingIterator) {
+    var iteratorMethod = arguments.length < 2 ? getIteratorMethod(it) : usingIterator;
 
-    if (returnMethod !== undefined) {
-      return anObject(returnMethod.call(iterator)).value;
+    if (typeof iteratorMethod != 'function') {
+      throw TypeError(String(it) + ' is not iterable');
     }
+
+    return anObject(iteratorMethod.call(it));
+  };
+
+  var iteratorClose = function (iterator, kind, value) {
+    var innerResult, innerError;
+    anObject(iterator);
+
+    try {
+      innerResult = iterator['return'];
+
+      if (innerResult === undefined) {
+        if (kind === 'throw') throw value;
+        return value;
+      }
+
+      innerResult = innerResult.call(iterator);
+    } catch (error) {
+      innerError = true;
+      innerResult = error;
+    }
+
+    if (kind === 'throw') throw value;
+    if (innerError) throw innerResult;
+    anObject(innerResult);
+    return value;
   };
 
   var Result = function (stopped, result) {
@@ -981,7 +1007,7 @@ this.google.maps.plugins.loader = (function (exports) {
     var iterator, iterFn, index, length, result, next, step;
 
     var stop = function (condition) {
-      if (iterator) iteratorClose(iterator);
+      if (iterator) iteratorClose(iterator, 'return', condition);
       return new Result(true, condition);
     };
 
@@ -1009,7 +1035,7 @@ this.google.maps.plugins.loader = (function (exports) {
         return new Result(false);
       }
 
-      iterator = iterFn.call(iterable);
+      iterator = getIterator(iterable, iterFn);
     }
 
     next = iterator.next;
@@ -1018,8 +1044,7 @@ this.google.maps.plugins.loader = (function (exports) {
       try {
         result = callFn(step.value);
       } catch (error) {
-        iteratorClose(iterator);
-        throw error;
+        iteratorClose(iterator, 'throw', error);
       }
 
       if (typeof result == 'object' && result && result instanceof Result) return result;
