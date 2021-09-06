@@ -203,7 +203,7 @@ this.google.maps.plugins.loader = (function (exports) {
     (module.exports = function (key, value) {
       return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.16.4',
+      version: '3.17.2',
       mode: 'global',
       copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
     });
@@ -1007,7 +1007,7 @@ this.google.maps.plugins.loader = (function (exports) {
     var iterator, iterFn, index, length, result, next, step;
 
     var stop = function (condition) {
-      if (iterator) iteratorClose(iterator, 'return', condition);
+      if (iterator) iteratorClose(iterator, 'normal', condition);
       return new Result(true, condition);
     };
 
