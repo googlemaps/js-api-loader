@@ -148,7 +148,8 @@ export interface LoaderOptions {
    */
   region?: string;
   /**
-   * (Beta) You can add multiple Map IDs to your map using the map_ids paramenter in
+   * @deprecated Passing `map_ids` is no longer required in the script tag.
+   *  You can add multiple Map IDs to your map using the map_ids paramenter in
    * your bootstrap request.
    */
   mapIds?: string[];
