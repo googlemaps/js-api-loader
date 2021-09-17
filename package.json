@@ -24,10 +24,10 @@
     "dist/*"
   ],
   "scripts": {
-    "docs": "typedoc src/index.ts",
+    "docs": "typedoc src/index.ts && cp -r dist docs/dist && cp -r examples docs/examples",
     "format": "prettier *.json *.js src/* e2e/* examples/* --write && eslint src/* --fix",
     "lint": "eslint src/*",
-    "prepare": "rollup -c",
+    "prepare": "rm -rf dist && rollup -c",
     "test": "jest src/*",
     "test:e2e": "jest e2e/*"
   },
