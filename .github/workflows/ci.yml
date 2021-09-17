@@ -1,4 +1,4 @@
-# Copyright 2020 Google LLC
+# Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,9 +20,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: npm i
+      - run: npm run build
       - run: npm run lint
       - run: npm test
-      - run: npm run docs
       - uses: codecov/codecov-action@v1
-        with:
-          fail_ci_if_error: true

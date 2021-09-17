@@ -1,4 +1,4 @@
-# Copyright 2020 Google LLC
+# Copyright 2021 Google LLC
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: "Release"
+name: Release
 on:
   push:
     branches:
-      - master
-      - next
+      - main
+concurrency: release
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -26,28 +26,20 @@ jobs:
       - name: Test
         run: |
           npm i
+          npm run build
+          npm run lint
           npm test
       - name: Release
         uses: cycjimmy/semantic-release-action@v2
         with:
           extra_plugins: |
-            "@semantic-release/commit-analyzer"
-            "@semantic-release/release-notes-generator"
-            "@semantic-release/git
-            "@semantic-release/github
-            "@semantic-release/npm
+            @semantic-release/commit-analyzer
+            semantic-release-interval
+            @semantic-release/release-notes-generator
+            @semantic-release/git
+            @semantic-release/github
+            @semantic-release/npm
+            @googlemaps/semantic-release-config
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_WOMBAT_TOKEN }}
-      - run: |        
-          npm i
-          npm run docs
-          cp -r dist docs/dist
-          cp -r examples docs/examples
-      - uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./docs
-          user_name: 'googlemaps-bot'
-          user_email: 'googlemaps-bot@users.noreply.github.com'
-          commit_message: ${{ github.event.head_commit.message }}
