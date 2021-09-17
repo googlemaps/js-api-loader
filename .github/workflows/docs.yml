@@ -22,8 +22,6 @@ jobs:
       - run: |
           npm i
           npm run docs
-          cp -r dist docs/dist
-          cp -r examples docs/examples
       - uses: peaceiris/actions-gh-pages@v3
         if: github.ref == 'refs/heads/main'
         with:
