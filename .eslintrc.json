@@ -1,21 +1,26 @@
 {
-    "extends": ["eslint:recommended", "plugin:prettier/recommended", "plugin:@typescript-eslint/recommended"],
-    "parser": "@typescript-eslint/parser",
-    "parserOptions": {
-      "ecmaVersion": 11,
-      "sourceType": "module"
-    },
-    "plugins": ["@typescript-eslint", "jest"],
-    "rules": {
-      "no-var": 2,
-      "prefer-arrow-callback": 2,
-      "@typescript-eslint/ban-ts-comment": 0,
-      "@typescript-eslint/ban-types": 1,
-      "@typescript-eslint/no-empty-function": 1
-    },
-    "env": {
-      "browser": true,
-      "es6": true,
-      "jest/globals": true
-    }
-  }
+  "extends": [
+    "eslint:recommended",
+    "plugin:prettier/recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "parserOptions": {
+    "ecmaVersion": 11,
+    "sourceType": "module"
+  },
+  "plugins": ["@typescript-eslint", "jest"],
+  "rules": {
+    "no-var": 2,
+    "prefer-arrow-callback": 2,
+    "@typescript-eslint/ban-ts-comment": 0,
+    "@typescript-eslint/ban-types": 1,
+    "@typescript-eslint/no-empty-function": 1
+  },
+  "env": {
+    "browser": true,
+    "es6": true,
+    "jest/globals": true
+  },
+  "globals": { "google": "readonly" }
+}
