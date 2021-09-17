@@ -26,7 +26,6 @@ jobs:
       - name: Test
         run: |
           npm i
-          npm run build
           npm run lint
           npm test
       - name: Release
