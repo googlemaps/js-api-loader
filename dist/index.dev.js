@@ -203,7 +203,7 @@ this.google.maps.plugins.loader = (function (exports) {
     (module.exports = function (key, value) {
       return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.17.2',
+      version: '3.17.3',
       mode: 'global',
       copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
     });
@@ -1811,6 +1811,10 @@ this.google.maps.plugins.loader = (function (exports) {
     TouchList: 0
   };
 
+  var classList = documentCreateElement('span').classList;
+  var DOMTokenListPrototype = classList && classList.constructor && classList.constructor.prototype;
+  var domTokenListPrototype = DOMTokenListPrototype === Object.prototype ? undefined : DOMTokenListPrototype;
+
   var push = [].push; // `Array.prototype.{ forEach, map, filter, some, every, find, findIndex, filterReject }` methods implementation
 
   var createMethod = function (TYPE) {
@@ -1906,16 +1910,20 @@ this.google.maps.plugins.loader = (function (exports) {
     return $forEach(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined); // eslint-disable-next-line es/no-array-prototype-foreach -- safe
   } : [].forEach;
 
-  for (var COLLECTION_NAME in domIterables) {
-    var Collection = global_1[COLLECTION_NAME];
-    var CollectionPrototype = Collection && Collection.prototype; // some Chrome versions have non-configurable methods on DOMTokenList
-
+  var handlePrototype = function (CollectionPrototype) {
+    // some Chrome versions have non-configurable methods on DOMTokenList
     if (CollectionPrototype && CollectionPrototype.forEach !== arrayForEach) try {
       createNonEnumerableProperty(CollectionPrototype, 'forEach', arrayForEach);
     } catch (error) {
       CollectionPrototype.forEach = arrayForEach;
     }
+  };
+
+  for (var COLLECTION_NAME in domIterables) {
+    handlePrototype(global_1[COLLECTION_NAME] && global_1[COLLECTION_NAME].prototype);
   }
+
+  handlePrototype(domTokenListPrototype);
 
   var fastDeepEqual = function equal(a, b) {
     if (a === b) return true;
