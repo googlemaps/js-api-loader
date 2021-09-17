@@ -3,7 +3,7 @@
 [![npm](https://img.shields.io/npm/v/@googlemaps/js-api-loader)](https://www.npmjs.com/package/@googlemaps/js-api-loader)
 ![Build](https://github.com/googlemaps/js-api-loader/workflows/Build/badge.svg)
 ![Release](https://github.com/googlemaps/js-api-loader/workflows/Release/badge.svg)
-[![codecov](https://codecov.io/gh/googlemaps/js-api-loader/branch/master/graph/badge.svg)](https://codecov.io/gh/googlemaps/js-api-loader)
+[![codecov](https://codecov.io/gh/googlemaps/js-api-loader/branch/main/graph/badge.svg)](https://codecov.io/gh/googlemaps/js-api-loader)
 ![GitHub contributors](https://img.shields.io/github/contributors/googlemaps/js-api-loader?color=green)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Discord](https://img.shields.io/discord/676948200904589322?color=6A7EC2&logo=discord&logoColor=ffffff)](https://discord.gg/jRteCzP)
@@ -98,4 +98,4 @@ If you find a bug, or have a feature suggestion, please [log an issue][issues]. 
 contribute, please read [How to Contribute][contrib].
 
 [issues]: https://github.com/googlemaps/js-api-loader/issues
-[contrib]: https://github.com/googlemaps/js-api-loader/blob/master/CONTRIBUTING.md
+[contrib]: https://github.com/googlemaps/js-api-loader/blob/main/CONTRIBUTING.md
