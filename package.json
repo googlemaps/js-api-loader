@@ -48,7 +48,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "geckodriver": "^2.0.0",
     "jest": "^26.6.3",
-    "ier": "^2.0.4",
+    "prettier": "^2.0.4",
     "rollup": "^2.4.0",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-commonjs": "^10.1.0",
