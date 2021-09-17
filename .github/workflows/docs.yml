@@ -12,34 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Release
-on:
-  push:
-    branches:
-      - main
-      - master
-concurrency: release
+name: Docs
+on: [push, pull_request]
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Test
-        run: |
+      - run: |
           npm i
-          npm run lint
-          npm test
-      - name: Release
-        uses: cycjimmy/semantic-release-action@v2
+          npm run docs
+      - uses: peaceiris/actions-gh-pages@v3
+        if: github.ref == 'refs/heads/main'
         with:
-          extra_plugins: |
-            @semantic-release/commit-analyzer
-            semantic-release-interval
-            @semantic-release/release-notes-generator
-            @semantic-release/git
-            @semantic-release/github
-            @semantic-release/npm
-            @googlemaps/semantic-release-config
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_WOMBAT_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
+          user_name: 'googlemaps-bot'
+          user_email: 'googlemaps-bot@users.noreply.github.com'
+          commit_message: ${{ github.event.head_commit.message }}
