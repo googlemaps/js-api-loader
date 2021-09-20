@@ -20,5 +20,4 @@ module.exports = {
   name: "@googlemaps/js-api-loader",
   excludePrivate: true,
   excludeExternals: true,
-  toc: ["Loader", "LoaderOptions"],
 };
