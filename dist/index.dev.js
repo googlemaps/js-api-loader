@@ -114,16 +114,22 @@ this.google.maps.plugins.loader = (function (exports) {
     return indexedObject(requireObjectCoercible(it));
   };
 
-  var isObject = function (it) {
-    return typeof it === 'object' ? it !== null : typeof it === 'function';
+  // `isCallable` abstract operation
+  // https://tc39.es/ecma262/#sec-iscallable
+  var isCallable = function (argument) {
+    return typeof argument === 'function';
   };
 
-  var aFunction$1 = function (variable) {
-    return typeof variable == 'function' ? variable : undefined;
+  var isObject = function (it) {
+    return typeof it === 'object' ? it !== null : isCallable(it);
+  };
+
+  var aFunction = function (argument) {
+    return isCallable(argument) ? argument : undefined;
   };
 
   var getBuiltIn = function (namespace, method) {
-    return arguments.length < 2 ? aFunction$1(global_1[namespace]) : global_1[namespace] && global_1[namespace][method];
+    return arguments.length < 2 ? aFunction(global_1[namespace]) : global_1[namespace] && global_1[namespace][method];
   };
 
   var engineUserAgent = getBuiltIn('navigator', 'userAgent') || '';
@@ -167,16 +173,36 @@ this.google.maps.plugins.loader = (function (exports) {
     return typeof it == 'symbol';
   } : function (it) {
     var $Symbol = getBuiltIn('Symbol');
-    return typeof $Symbol == 'function' && Object(it) instanceof $Symbol;
+    return isCallable($Symbol) && Object(it) instanceof $Symbol;
+  };
+
+  var tryToString = function (argument) {
+    try {
+      return String(argument);
+    } catch (error) {
+      return 'Object';
+    }
+  };
+
+  var aCallable = function (argument) {
+    if (isCallable(argument)) return argument;
+    throw TypeError(tryToString(argument) + ' is not a function');
+  };
+
+  // https://tc39.es/ecma262/#sec-getmethod
+
+  var getMethod = function (V, P) {
+    var func = V[P];
+    return func == null ? undefined : aCallable(func);
   };
 
   // https://tc39.es/ecma262/#sec-ordinarytoprimitive
 
   var ordinaryToPrimitive = function (input, pref) {
     var fn, val;
-    if (pref === 'string' && typeof (fn = input.toString) == 'function' && !isObject(val = fn.call(input))) return val;
-    if (typeof (fn = input.valueOf) == 'function' && !isObject(val = fn.call(input))) return val;
-    if (pref !== 'string' && typeof (fn = input.toString) == 'function' && !isObject(val = fn.call(input))) return val;
+    if (pref === 'string' && isCallable(fn = input.toString) && !isObject(val = fn.call(input))) return val;
+    if (isCallable(fn = input.valueOf) && !isObject(val = fn.call(input))) return val;
+    if (pref !== 'string' && isCallable(fn = input.toString) && !isObject(val = fn.call(input))) return val;
     throw TypeError("Can't convert object to primitive value");
   };
 
@@ -203,7 +229,7 @@ this.google.maps.plugins.loader = (function (exports) {
     (module.exports = function (key, value) {
       return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.17.3',
+      version: '3.18.0',
       mode: 'global',
       copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
     });
@@ -249,10 +275,10 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var toPrimitive = function (input, pref) {
     if (!isObject(input) || isSymbol(input)) return input;
-    var exoticToPrim = input[TO_PRIMITIVE];
+    var exoticToPrim = getMethod(input, TO_PRIMITIVE);
     var result;
 
-    if (exoticToPrim !== undefined) {
+    if (exoticToPrim) {
       if (pref === undefined) pref = 'default';
       result = exoticToPrim.call(input, pref);
       if (!isObject(result) || isSymbol(result)) return result;
@@ -272,10 +298,10 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var document$3 = global_1.document; // typeof document.createElement is 'object' in old IE
 
-  var EXISTS = isObject(document$3) && isObject(document$3.createElement);
+  var EXISTS$1 = isObject(document$3) && isObject(document$3.createElement);
 
   var documentCreateElement = function (it) {
-    return EXISTS ? document$3.createElement(it) : {};
+    return EXISTS$1 ? document$3.createElement(it) : {};
   };
 
   var ie8DomDefine = !descriptors && !fails(function () {
@@ -304,12 +330,9 @@ this.google.maps.plugins.loader = (function (exports) {
     f: f$4
   };
 
-  var anObject = function (it) {
-    if (!isObject(it)) {
-      throw TypeError(String(it) + ' is not an object');
-    }
-
-    return it;
+  var anObject = function (argument) {
+    if (isObject(argument)) return argument;
+    throw TypeError(String(argument) + ' is not an object');
   };
 
   var $defineProperty = Object.defineProperty; // `Object.defineProperty` method
@@ -341,7 +364,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var functionToString = Function.toString; // this helper broken in `core-js@3.4.1-3.4.4`, so we can't use `shared` helper
 
-  if (typeof sharedStore.inspectSource != 'function') {
+  if (!isCallable(sharedStore.inspectSource)) {
     sharedStore.inspectSource = function (it) {
       return functionToString.call(it);
     };
@@ -350,7 +373,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var inspectSource = sharedStore.inspectSource;
 
   var WeakMap$1 = global_1.WeakMap;
-  var nativeWeakMap = typeof WeakMap$1 === 'function' && /native code/.test(inspectSource(WeakMap$1));
+  var nativeWeakMap = isCallable(WeakMap$1) && /native code/.test(inspectSource(WeakMap$1));
 
   var keys = shared('keys');
 
@@ -428,7 +451,24 @@ this.google.maps.plugins.loader = (function (exports) {
     getterFor: getterFor
   };
 
+  var FunctionPrototype = Function.prototype; // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+
+  var getDescriptor = descriptors && Object.getOwnPropertyDescriptor;
+  var EXISTS = has$1(FunctionPrototype, 'name'); // additional protection from minified / mangled / dropped function names
+
+  var PROPER = EXISTS && function something() {
+    /* empty */
+  }.name === 'something';
+
+  var CONFIGURABLE = EXISTS && (!descriptors || descriptors && getDescriptor(FunctionPrototype, 'name').configurable);
+  var functionName = {
+    EXISTS: EXISTS,
+    PROPER: PROPER,
+    CONFIGURABLE: CONFIGURABLE
+  };
+
   var redefine = createCommonjsModule(function (module) {
+    var CONFIGURABLE_FUNCTION_NAME = functionName.CONFIGURABLE;
     var getInternalState = internalState.get;
     var enforceInternalState = internalState.enforce;
     var TEMPLATE = String(String).split('String');
@@ -436,17 +476,22 @@ this.google.maps.plugins.loader = (function (exports) {
       var unsafe = options ? !!options.unsafe : false;
       var simple = options ? !!options.enumerable : false;
       var noTargetGet = options ? !!options.noTargetGet : false;
+      var name = options && options.name !== undefined ? options.name : key;
       var state;
 
-      if (typeof value == 'function') {
-        if (typeof key == 'string' && !has$1(value, 'name')) {
-          createNonEnumerableProperty(value, 'name', key);
+      if (isCallable(value)) {
+        if (String(name).slice(0, 7) === 'Symbol(') {
+          name = '[' + String(name).replace(/^Symbol\(([^)]*)\)/, '$1') + ']';
+        }
+
+        if (!has$1(value, 'name') || CONFIGURABLE_FUNCTION_NAME && value.name !== name) {
+          createNonEnumerableProperty(value, 'name', name);
         }
 
         state = enforceInternalState(value);
 
         if (!state.source) {
-          state.source = TEMPLATE.join(typeof key == 'string' ? key : '');
+          state.source = TEMPLATE.join(typeof name == 'string' ? name : '');
         }
       }
 
@@ -461,7 +506,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
       if (simple) O[key] = value;else createNonEnumerableProperty(O, key, value); // add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
     })(Function.prototype, 'toString', function toString() {
-      return typeof this == 'function' && getInternalState(this).source || inspectSource(this);
+      return isCallable(this) && getInternalState(this).source || inspectSource(this);
     });
   });
 
@@ -578,7 +623,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var isForced = function (feature, detection) {
     var value = data[normalize(feature)];
-    return value == POLYFILL ? true : value == NATIVE ? false : typeof detection == 'function' ? fails(detection) : !!detection;
+    return value == POLYFILL ? true : value == NATIVE ? false : isCallable(detection) ? fails(detection) : !!detection;
   };
 
   var normalize = isForced.normalize = function (string) {
@@ -604,6 +649,7 @@ this.google.maps.plugins.loader = (function (exports) {
     options.sham        - add a flag to not completely full polyfills
     options.enumerable  - export as enumerable property
     options.noTargetGet - prevent calling a getter on target
+    options.name        - the .name of the function if it does not match the key
   */
 
   var _export = function (options, source) {
@@ -648,14 +694,84 @@ this.google.maps.plugins.loader = (function (exports) {
   // https://tc39.es/ecma262/#sec-isarray
   // eslint-disable-next-line es/no-array-isarray -- safe
 
-  var isArray = Array.isArray || function isArray(arg) {
-    return classofRaw(arg) == 'Array';
+  var isArray = Array.isArray || function isArray(argument) {
+    return classofRaw(argument) == 'Array';
   };
 
   var createProperty = function (object, key, value) {
     var propertyKey = toPropertyKey(key);
     if (propertyKey in object) objectDefineProperty.f(object, propertyKey, createPropertyDescriptor(0, value));else object[propertyKey] = value;
   };
+
+  var TO_STRING_TAG$2 = wellKnownSymbol('toStringTag');
+  var test = {};
+  test[TO_STRING_TAG$2] = 'z';
+  var toStringTagSupport = String(test) === '[object z]';
+
+  var TO_STRING_TAG$1 = wellKnownSymbol('toStringTag'); // ES3 wrong here
+
+  var CORRECT_ARGUMENTS = classofRaw(function () {
+    return arguments;
+  }()) == 'Arguments'; // fallback for IE11 Script Access Denied error
+
+  var tryGet = function (it, key) {
+    try {
+      return it[key];
+    } catch (error) {
+      /* empty */
+    }
+  }; // getting tag from ES6+ `Object.prototype.toString`
+
+
+  var classof = toStringTagSupport ? classofRaw : function (it) {
+    var O, tag, result;
+    return it === undefined ? 'Undefined' : it === null ? 'Null' // @@toStringTag case
+    : typeof (tag = tryGet(O = Object(it), TO_STRING_TAG$1)) == 'string' ? tag // builtinTag case
+    : CORRECT_ARGUMENTS ? classofRaw(O) // ES3 arguments fallback
+    : (result = classofRaw(O)) == 'Object' && isCallable(O.callee) ? 'Arguments' : result;
+  };
+
+  var empty = [];
+  var construct = getBuiltIn('Reflect', 'construct');
+  var constructorRegExp = /^\s*(?:class|function)\b/;
+  var exec = constructorRegExp.exec;
+  var INCORRECT_TO_STRING = !constructorRegExp.exec(function () {
+    /* empty */
+  });
+
+  var isConstructorModern = function (argument) {
+    if (!isCallable(argument)) return false;
+
+    try {
+      construct(Object, empty, argument);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
+  var isConstructorLegacy = function (argument) {
+    if (!isCallable(argument)) return false;
+
+    switch (classof(argument)) {
+      case 'AsyncFunction':
+      case 'GeneratorFunction':
+      case 'AsyncGeneratorFunction':
+        return false;
+      // we can't check .prototype since constructors produced by .bind haven't it
+    }
+
+    return INCORRECT_TO_STRING || !!exec.call(constructorRegExp, inspectSource(argument));
+  }; // `IsConstructor` abstract operation
+  // https://tc39.es/ecma262/#sec-isconstructor
+
+
+  var isConstructor = !construct || fails(function () {
+    var called;
+    return isConstructorModern(isConstructorModern.call) || !isConstructorModern(Object) || !isConstructorModern(function () {
+      called = true;
+    }) || called;
+  }) ? isConstructorLegacy : isConstructorModern;
 
   var SPECIES$4 = wellKnownSymbol('species'); // a part of `ArraySpeciesCreate` abstract operation
   // https://tc39.es/ecma262/#sec-arrayspeciescreate
@@ -666,7 +782,7 @@ this.google.maps.plugins.loader = (function (exports) {
     if (isArray(originalArray)) {
       C = originalArray.constructor; // cross-realm fallback
 
-      if (typeof C == 'function' && (C === Array || isArray(C.prototype))) C = undefined;else if (isObject(C)) {
+      if (isConstructor(C) && (C === Array || isArray(C.prototype))) C = undefined;else if (isObject(C)) {
         C = C[SPECIES$4];
         if (C === null) C = undefined;
       }
@@ -780,34 +896,6 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   });
 
-  var TO_STRING_TAG$2 = wellKnownSymbol('toStringTag');
-  var test = {};
-  test[TO_STRING_TAG$2] = 'z';
-  var toStringTagSupport = String(test) === '[object z]';
-
-  var TO_STRING_TAG$1 = wellKnownSymbol('toStringTag'); // ES3 wrong here
-
-  var CORRECT_ARGUMENTS = classofRaw(function () {
-    return arguments;
-  }()) == 'Arguments'; // fallback for IE11 Script Access Denied error
-
-  var tryGet = function (it, key) {
-    try {
-      return it[key];
-    } catch (error) {
-      /* empty */
-    }
-  }; // getting tag from ES6+ `Object.prototype.toString`
-
-
-  var classof = toStringTagSupport ? classofRaw : function (it) {
-    var O, tag, result;
-    return it === undefined ? 'Undefined' : it === null ? 'Null' // @@toStringTag case
-    : typeof (tag = tryGet(O = Object(it), TO_STRING_TAG$1)) == 'string' ? tag // builtinTag case
-    : CORRECT_ARGUMENTS ? classofRaw(O) // ES3 arguments fallback
-    : (result = classofRaw(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : result;
-  };
-
   // https://tc39.es/ecma262/#sec-object.prototype.tostring
 
 
@@ -831,12 +919,9 @@ this.google.maps.plugins.loader = (function (exports) {
     return target;
   };
 
-  var aPossiblePrototype = function (it) {
-    if (!isObject(it) && it !== null) {
-      throw TypeError("Can't set " + String(it) + ' as a prototype');
-    }
-
-    return it;
+  var aPossiblePrototype = function (argument) {
+    if (typeof argument === 'object' || isCallable(argument)) return argument;
+    throw TypeError("Can't set " + String(argument) + ' as a prototype');
   };
 
   /* eslint-disable no-proto -- safe */
@@ -895,20 +980,9 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   };
 
-  var aFunction = function (it) {
-    if (typeof it != 'function') {
-      throw TypeError(String(it) + ' is not a function');
-    }
-
-    return it;
-  };
-
   var anInstance = function (it, Constructor, name) {
-    if (!(it instanceof Constructor)) {
-      throw TypeError('Incorrect ' + (name ? name + ' ' : '') + 'invocation');
-    }
-
-    return it;
+    if (it instanceof Constructor) return it;
+    throw TypeError('Incorrect ' + (name ? name + ' ' : '') + 'invocation');
   };
 
   var iterators = {};
@@ -921,7 +995,7 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var functionBindContext = function (fn, that, length) {
-    aFunction(fn);
+    aCallable(fn);
     if (that === undefined) return fn;
 
     switch (length) {
@@ -956,17 +1030,13 @@ this.google.maps.plugins.loader = (function (exports) {
   var ITERATOR$1 = wellKnownSymbol('iterator');
 
   var getIteratorMethod = function (it) {
-    if (it != undefined) return it[ITERATOR$1] || it['@@iterator'] || iterators[classof(it)];
+    if (it != undefined) return getMethod(it, ITERATOR$1) || getMethod(it, '@@iterator') || iterators[classof(it)];
   };
 
-  var getIterator = function (it, usingIterator) {
-    var iteratorMethod = arguments.length < 2 ? getIteratorMethod(it) : usingIterator;
-
-    if (typeof iteratorMethod != 'function') {
-      throw TypeError(String(it) + ' is not iterable');
-    }
-
-    return anObject(iteratorMethod.call(it));
+  var getIterator = function (argument, usingIterator) {
+    var iteratorMethod = arguments.length < 2 ? getIteratorMethod(argument) : usingIterator;
+    if (aCallable(iteratorMethod)) return anObject(iteratorMethod.call(argument));
+    throw TypeError(String(argument) + ' is not iterable');
   };
 
   var iteratorClose = function (iterator, kind, value) {
@@ -974,9 +1044,9 @@ this.google.maps.plugins.loader = (function (exports) {
     anObject(iterator);
 
     try {
-      innerResult = iterator['return'];
+      innerResult = getMethod(iterator, 'return');
 
-      if (innerResult === undefined) {
+      if (!innerResult) {
         if (kind === 'throw') throw value;
         return value;
       }
@@ -1024,7 +1094,7 @@ this.google.maps.plugins.loader = (function (exports) {
       iterator = iterable;
     } else {
       iterFn = getIteratorMethod(iterable);
-      if (typeof iterFn != 'function') throw TypeError('Target is not iterable'); // optimisation for array iterators
+      if (!iterFn) throw TypeError(String(iterable) + ' is not iterable'); // optimisation for array iterators
 
       if (isArrayIteratorMethod(iterFn)) {
         for (index = 0, length = toLength(iterable.length); length > index; index++) {
@@ -1106,13 +1176,18 @@ this.google.maps.plugins.loader = (function (exports) {
     return ITERATION_SUPPORT;
   };
 
+  var aConstructor = function (argument) {
+    if (isConstructor(argument)) return argument;
+    throw TypeError(tryToString(argument) + ' is not a constructor');
+  };
+
   var SPECIES$1 = wellKnownSymbol('species'); // `SpeciesConstructor` abstract operation
   // https://tc39.es/ecma262/#sec-speciesconstructor
 
   var speciesConstructor = function (O, defaultConstructor) {
     var C = anObject(O).constructor;
     var S;
-    return C === undefined || (S = anObject(C)[SPECIES$1]) == undefined ? defaultConstructor : aFunction(S);
+    return C === undefined || (S = anObject(C)[SPECIES$1]) == undefined ? defaultConstructor : aConstructor(S);
   };
 
   var html = getBuiltIn('document', 'documentElement');
@@ -1173,7 +1248,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
       queue[++counter] = function () {
         // eslint-disable-next-line no-new-func -- spec requirement
-        (typeof fn == 'function' ? fn : Function(fn)).apply(undefined, args);
+        (isCallable(fn) ? fn : Function(fn)).apply(undefined, args);
       };
 
       defer(counter);
@@ -1202,7 +1277,7 @@ this.google.maps.plugins.loader = (function (exports) {
       channel.port1.onmessage = listener;
       defer = functionBindContext(port.postMessage, port, 1); // Browsers with postMessage, skip WebWorkers
       // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
-    } else if (global_1.addEventListener && typeof postMessage == 'function' && !global_1.importScripts && location && location.protocol !== 'file:' && !fails(post)) {
+    } else if (global_1.addEventListener && isCallable(global_1.postMessage) && !global_1.importScripts && location && location.protocol !== 'file:' && !fails(post)) {
       defer = post;
       global_1.addEventListener('message', listener, false); // IE8-
     } else if (ONREADYSTATECHANGE in documentCreateElement('script')) {
@@ -1325,8 +1400,8 @@ this.google.maps.plugins.loader = (function (exports) {
       resolve = $$resolve;
       reject = $$reject;
     });
-    this.resolve = aFunction(resolve);
-    this.reject = aFunction(reject);
+    this.resolve = aCallable(resolve);
+    this.reject = aCallable(reject);
   }; // `NewPromiseCapability` abstract operation
   // https://tc39.es/ecma262/#sec-newpromisecapability
 
@@ -1387,7 +1462,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var newPromiseCapability = newPromiseCapability$1.f;
   var newGenericPromiseCapability = newPromiseCapability;
   var DISPATCH_EVENT = !!(document$1 && document$1.createEvent && global_1.dispatchEvent);
-  var NATIVE_REJECTION_EVENT = typeof PromiseRejectionEvent == 'function';
+  var NATIVE_REJECTION_EVENT = isCallable(global_1.PromiseRejectionEvent);
   var UNHANDLED_REJECTION = 'unhandledrejection';
   var REJECTION_HANDLED = 'rejectionhandled';
   var PENDING = 0;
@@ -1438,7 +1513,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var isThenable = function (it) {
     var then;
-    return isObject(it) && typeof (then = it.then) == 'function' ? then : false;
+    return isObject(it) && isCallable(then = it.then) ? then : false;
   };
 
   var notify = function (state, isReject) {
@@ -1597,7 +1672,7 @@ this.google.maps.plugins.loader = (function (exports) {
     // 25.4.3.1 Promise(executor)
     PromiseConstructor = function Promise(executor) {
       anInstance(this, PromiseConstructor, PROMISE);
-      aFunction(executor);
+      aCallable(executor);
       Internal.call(this);
       var state = getInternalState(this);
 
@@ -1629,8 +1704,8 @@ this.google.maps.plugins.loader = (function (exports) {
       then: function then(onFulfilled, onRejected) {
         var state = getInternalPromiseState(this);
         var reaction = newPromiseCapability(speciesConstructor(this, PromiseConstructor));
-        reaction.ok = typeof onFulfilled == 'function' ? onFulfilled : true;
-        reaction.fail = typeof onRejected == 'function' && onRejected;
+        reaction.ok = isCallable(onFulfilled) ? onFulfilled : true;
+        reaction.fail = isCallable(onRejected) && onRejected;
         reaction.domain = engineIsNode ? process.domain : undefined;
         state.parent = true;
         state.reactions.push(reaction);
@@ -1656,7 +1731,7 @@ this.google.maps.plugins.loader = (function (exports) {
       return C === PromiseConstructor || C === PromiseWrapper ? new OwnPromiseCapability(C) : newGenericPromiseCapability(C);
     };
 
-    if (typeof nativePromiseConstructor == 'function' && NativePromisePrototype !== Object.prototype) {
+    if (isCallable(nativePromiseConstructor) && NativePromisePrototype !== Object.prototype) {
       nativeThen = NativePromisePrototype.then;
 
       if (!SUBCLASSING) {
@@ -1737,7 +1812,7 @@ this.google.maps.plugins.loader = (function (exports) {
       var resolve = capability.resolve;
       var reject = capability.reject;
       var result = perform(function () {
-        var $promiseResolve = aFunction(C.resolve);
+        var $promiseResolve = aCallable(C.resolve);
         var values = [];
         var counter = 0;
         var remaining = 1;
@@ -1765,7 +1840,7 @@ this.google.maps.plugins.loader = (function (exports) {
       var capability = newPromiseCapability(C);
       var reject = capability.reject;
       var result = perform(function () {
-        var $promiseResolve = aFunction(C.resolve);
+        var $promiseResolve = aCallable(C.resolve);
         iterate(iterable, function (promise) {
           $promiseResolve.call(C, promise).then(capability.resolve, reject);
         });
