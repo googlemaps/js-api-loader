@@ -2354,4 +2354,4 @@ this.google.maps.plugins.loader = (function (exports) {
 
   return exports;
 
-}({}));
+})({});
