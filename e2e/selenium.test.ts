@@ -128,5 +128,5 @@ it("loader should reject on auth failure", async () => {
       }
     }, "Invalid API key")
     // @ts-ignore-next-line
-  ).resolves.toEqual(google.maps.plugins.loader.GM_AUTH_FAILURE_MESSAGE);
+  ).resolves.toEqual("Google Maps authentication failed.");
 });
