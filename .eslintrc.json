@@ -25,7 +25,7 @@
         "files": ["*.ts", "*.tsx"],
         "rules": {
           "@typescript-eslint/explicit-member-accessibility": [
-            "error", {
+            1, {
             "accessibility": "explicit",
             "overrides": {
               "accessors": "explicit",
