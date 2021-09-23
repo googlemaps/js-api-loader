@@ -188,56 +188,56 @@ export class Loader {
   /**
    * See [[LoaderOptions.version]]
    */
-  version: string;
+  public readonly version: string;
   /**
    * See [[LoaderOptions.apiKey]]
    */
-  apiKey: string;
+  public readonly apiKey: string;
   /**
    * See [[LoaderOptions.channel]]
    */
-  channel: string;
+  public readonly channel: string;
   /**
    * See [[LoaderOptions.client]]
    */
-  client: string;
+  public readonly client: string;
   /**
    * See [[LoaderOptions.id]]
    */
-  id: string;
+  public readonly id: string;
   /**
    * See [[LoaderOptions.libraries]]
    */
-  libraries: Libraries;
+  public readonly libraries: Libraries;
   /**
    * See [[LoaderOptions.language]]
    */
-  language: string;
+  public readonly language: string;
 
   /**
    * See [[LoaderOptions.region]]
    */
-  region: string;
+  public readonly region: string;
 
   /**
    * See [[LoaderOptions.mapIds]]
    */
-  mapIds: string[];
+  public readonly mapIds: string[];
 
   /**
    * See [[LoaderOptions.nonce]]
    */
-  nonce: string | null;
+  public readonly nonce: string | null;
 
   /**
    * See [[LoaderOptions.retries]]
    */
-  retries: number;
+  public readonly retries: number;
 
   /**
    * See [[LoaderOptions.url]]
    */
-  url: string;
+  public readonly url: string;
 
   private CALLBACK = "__googleMapsCallback";
   private callbacks: ((e: ErrorEvent) => void)[] = [];
@@ -298,7 +298,7 @@ export class Loader {
     Loader.instance = this;
   }
 
-  get options(): LoaderOptions {
+  public get options(): LoaderOptions {
     return {
       version: this.version,
       apiKey: this.apiKey,
@@ -323,7 +323,7 @@ export class Loader {
    *
    * @ignore
    */
-  createUrl(): string {
+  public createUrl(): string {
     let url = this.url;
 
     url += `?callback=${this.CALLBACK}`;
@@ -366,7 +366,7 @@ export class Loader {
   /**
    * Load the Google Maps JavaScript API script and return a Promise.
    */
-  load(): Promise<typeof google> {
+  public load(): Promise<typeof google> {
     return this.loadPromise();
   }
 
@@ -375,7 +375,7 @@ export class Loader {
    *
    * @ignore
    */
-  loadPromise(): Promise<typeof google> {
+  public loadPromise(): Promise<typeof google> {
     return new Promise((resolve, reject) => {
       this.loadCallback((err: ErrorEvent) => {
         if (!err) {
@@ -390,7 +390,7 @@ export class Loader {
   /**
    * Load the Google Maps JavaScript API script with a callback.
    */
-  loadCallback(fn: (e: ErrorEvent) => void): void {
+  public loadCallback(fn: (e: ErrorEvent) => void): void {
     this.callbacks.push(fn);
     this.execute();
   }
@@ -421,7 +421,7 @@ export class Loader {
     document.head.appendChild(script);
   }
 
-  deleteScript(): void {
+  public deleteScript(): void {
     const script = document.getElementById(this.id);
     if (script) {
       script.remove();

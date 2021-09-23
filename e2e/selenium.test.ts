@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+/* eslint  @typescript-eslint/ban-ts-ignore: 0 */
 import path from "path";
 import webdriver from "selenium-webdriver";
 
@@ -54,8 +54,10 @@ it("loader should load map and getCenter", async () => {
 
   await expect(
     driver.executeAsyncScript((apiKey: string) => {
+      /* eslint-disable no-undef */
       // @ts-ignore-next-line
       const callback = arguments[arguments.length - 1];
+      /* eslint-enable no-undef */
 
       // @ts-ignore-next-line
       const { expect } = window.jestLite.core;
