@@ -176,51 +176,51 @@ export declare class Loader {
     /**
      * See [[LoaderOptions.version]]
      */
-    version: string;
+    readonly version: string;
     /**
      * See [[LoaderOptions.apiKey]]
      */
-    apiKey: string;
+    readonly apiKey: string;
     /**
      * See [[LoaderOptions.channel]]
      */
-    channel: string;
+    readonly channel: string;
     /**
      * See [[LoaderOptions.client]]
      */
-    client: string;
+    readonly client: string;
     /**
      * See [[LoaderOptions.id]]
      */
-    id: string;
+    readonly id: string;
     /**
      * See [[LoaderOptions.libraries]]
      */
-    libraries: Libraries;
+    readonly libraries: Libraries;
     /**
      * See [[LoaderOptions.language]]
      */
-    language: string;
+    readonly language: string;
     /**
      * See [[LoaderOptions.region]]
      */
-    region: string;
+    readonly region: string;
     /**
      * See [[LoaderOptions.mapIds]]
      */
-    mapIds: string[];
+    readonly mapIds: string[];
     /**
      * See [[LoaderOptions.nonce]]
      */
-    nonce: string | null;
+    readonly nonce: string | null;
     /**
      * See [[LoaderOptions.retries]]
      */
-    retries: number;
+    readonly retries: number;
     /**
      * See [[LoaderOptions.url]]
      */
-    url: string;
+    readonly url: string;
     private CALLBACK;
     private callbacks;
     private done;
