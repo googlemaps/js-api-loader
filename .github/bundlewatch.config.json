@@ -3,5 +3,9 @@
     {
       "path": "dist/index.*.js"
     }
-  ]
+  ],
+  "ci": {
+    "trackBranches": ["main"],
+    "repoBranchBase": "main"
+  }
 }
