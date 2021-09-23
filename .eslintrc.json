@@ -15,8 +15,27 @@
     "prefer-arrow-callback": 2,
     "@typescript-eslint/ban-ts-comment": 0,
     "@typescript-eslint/ban-types": 1,
-    "@typescript-eslint/no-empty-function": 1
-  },
+    "@typescript-eslint/no-empty-function": 1,
+      // disable the rule for all files
+      "@typescript-eslint/explicit-member-accessibility": "off"
+    },
+  "overrides": [
+    {
+        // enable the rule specifically for TypeScript files
+        "files": ["*.ts", "*.tsx"],
+        "rules": {
+          "@typescript-eslint/explicit-member-accessibility": [
+            "error", {
+            "accessibility": "explicit",
+            "overrides": {
+              "accessors": "explicit",
+              "constructors": "no-public",
+              "methods": "explicit",
+              "properties": "explicit",
+              "parameterProperties": "explicit"
+            }}]
+        }
+    }],
   "env": {
     "browser": true,
     "node": true,

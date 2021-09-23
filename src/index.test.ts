@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+/* eslint @typescript-eslint/no-explicit-any: 0 */
 import { DEFAULT_ID, Loader, LoaderOptions } from ".";
 
 jest.useFakeTimers();
