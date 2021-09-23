@@ -91,3 +91,42 @@ it("loader should load map and getCenter", async () => {
     }, process.env.GOOGLE_MAPS_API_KEY)
   ).resolves.toEqual("(0, 0)");
 });
+
+it("loader should reject on auth failure", async () => {
+  jest.setTimeout(30000);
+  await driver.get("file://" + path.resolve(__dirname, "index.html"));
+
+  await expect(
+    driver.executeAsyncScript((apiKey: string) => {
+      /* eslint-disable no-undef */
+      // @ts-ignore-next-line
+      const callback = arguments[arguments.length - 1];
+      /* eslint-enable no-undef */
+
+      // @ts-ignore-next-line
+      const { expect } = window.jestLite.core;
+
+      const mapOptions = {
+        center: {
+          lat: 0,
+          lng: 0,
+        },
+        zoom: 4,
+      };
+
+      try {
+        // @ts-ignore-next-line
+        const loader = new google.maps.plugins.loader.Loader({
+          apiKey,
+        });
+
+        loader.load().catch((e: Error) => {
+          callback(e.message);
+        });
+      } catch (e) {
+        callback(e);
+      }
+    }, "Invalid API key")
+    // @ts-ignore-next-line
+  ).resolves.toEqual(google.maps.plugins.loader.GM_AUTH_FAILURE_MESSAGE);
+});

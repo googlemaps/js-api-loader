@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 /* eslint @typescript-eslint/no-explicit-any: 0 */
-import { DEFAULT_ID, Loader, LoaderOptions } from ".";
+import { AuthenticationError, DEFAULT_ID, Loader, LoaderOptions } from ".";
 
 jest.useFakeTimers();
 
 afterEach(() => {
   document.getElementsByTagName("html")[0].innerHTML = "";
   delete Loader["instance"];
+  /* eslint-disable-next-line */
+  // @ts-ignore
+  delete window.gm_authFailure;
 });
 
 test.each([
@@ -373,4 +376,62 @@ test("deleteScript removes script tag from head", () => {
   // should work without script existing
   loader.deleteScript();
   expect(document.head.childNodes.length).toBe(0);
+});
+
+test("gm_authFailure should reject promise", async () => {
+  const loader = new Loader({ apiKey: "foo", retries: 0 });
+
+  const promise = loader.load();
+
+  /* eslint-disable-next-line */
+  // @ts-ignore
+  window.gm_authFailure();
+
+  await expect(promise).rejects.toBeInstanceOf(AuthenticationError);
+  expect(loader["done"]).toBeTruthy();
+  expect(loader["loading"]).toBeFalsy();
+  expect(loader["errors"].length).toBe(1);
+});
+
+test("gm_authFailure should call existing global", async () => {
+  /* eslint-disable */
+  const gm_authFailure = jest.fn();
+  // @ts-ignore
+  window.gm_authFailure = gm_authFailure;
+
+  const loader = new Loader({ apiKey: "foo", retries: 0 });
+  const rejection = expect(loader.load()).rejects.toBeInstanceOf(Error);
+
+  // @ts-ignore
+  window.gm_authFailure();
+  /* eslint-enable */
+
+  await rejection;
+  expect(gm_authFailure).toHaveBeenCalledTimes(1);
+});
+
+test("loader should retry network failure and not retry authentication failure", async () => {
+  const loader = new Loader({ apiKey: "foo", retries: 10 });
+
+  const promise = loader.load();
+
+  // fake a network failure
+  loader["loadErrorCallback"](
+    new ErrorEvent("ErrorEvent(", { error: new Error("") })
+  );
+
+  // fake an authentication failure
+  /* eslint-disable-next-line */
+  // @ts-ignore
+  window.gm_authFailure();
+
+  await expect(promise).rejects.toBeInstanceOf(AuthenticationError);
+  expect(loader["done"]).toBeTruthy();
+  expect(loader["loading"]).toBeFalsy();
+  expect(loader["errors"].length).toBe(2);
+
+  // failed should be truthy even if number of retries not matched if AuthenticationError
+  /* eslint-disable-next-line */
+  // @ts-ignore
+  expect(loader.failed).toBeTruthy();
 });

@@ -1,17 +1,17 @@
 /**
  * Copyright 2019 Google LLC. All Rights Reserved.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at.
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at.
  *
  *      Http://www.apache.org/licenses/LICENSE-2.0.
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 
 import isEqual from "fast-deep-equal";
@@ -35,6 +35,33 @@ type Libraries = (
   | "visualization"
 )[];
 
+const GM_AUTH_FAILURE_MESSAGE = "Google Maps authentication failed.";
+const GM_AUTH_FAILURE_EVENT_TYPE = "gm_authFailure";
+/**
+ * AuthenticationError is thrown when the Google Maps API fails to authenticate
+ * and calls the `window.gm_authFailure` callback.
+ *
+ * See the console for more details on the failure.
+ *
+ *  ```typescript
+ * loader.load()
+ *   .then((google) => { // do something })
+ *   .catch((error) => {
+ *     if (error instanceof AuthenticationError) {
+ *       // fix key, restriction, etc
+ *     }
+ *     else {
+ *       // script error
+ *     }
+ * });
+ * ```
+ */
+export class AuthenticationError extends Error {
+  constructor(message = GM_AUTH_FAILURE_MESSAGE) {
+    super(message);
+    this.name = "AuthenticationError";
+  }
+}
 /**
  * The Google Maps JavaScript API
  * [documentation](https://developers.google.com/maps/documentation/javascript/tutorial)
@@ -44,7 +71,8 @@ type Libraries = (
  */
 export interface LoaderOptions {
   /**
-   * See https://developers.google.com/maps/documentation/javascript/get-api-key.
+   * See
+   * https://developers.google.com/maps/documentation/javascript/get-api-key.
    */
   apiKey: string;
   /**
@@ -52,7 +80,8 @@ export interface LoaderOptions {
    */
   channel?: string;
   /**
-   * @deprecated See https://developers.google.com/maps/premium/overview, use `apiKey` instead.
+   * @deprecated See https://developers.google.com/maps/premium/overview, use
+   * `apiKey` instead.
    */
   client?: string;
   /**
@@ -80,12 +109,13 @@ export interface LoaderOptions {
    * const loader = Loader({apiKey, version: '3.40'});
    * ```
    *
-   * If you do not explicitly specify a version, you will receive the
-   * weekly version by default.
+   * If you do not explicitly specify a version, you will receive the weekly
+   * version by default.
    */
   version?: string;
   /**
-   * The id of the script tag. Before adding a new script, the Loader will check for an existing one.
+   * The id of the script tag. Before adding a new script, the Loader will check
+   * for an existing one.
    */
   id?: string;
   /**
@@ -101,7 +131,9 @@ export interface LoaderOptions {
    * });
    * ```
    *
-   * Set the [list of libraries](https://developers.google.com/maps/documentation/javascript/libraries) for more options.
+   * Set the [list of
+   * libraries](https://developers.google.com/maps/documentation/javascript/libraries)
+   * for more options.
    */
   libraries?: Libraries;
   /**
@@ -166,8 +198,8 @@ export interface LoaderOptions {
 }
 
 /**
- * [[Loader]] makes it easier to add Google Maps JavaScript API to your application
- * dynamically using
+ * [[Loader]] makes it easier to add Google Maps JavaScript API to your
+ * application dynamically using
  * [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
  * It works by dynamically creating and appending a script node to the the
  * document head and wrapping the callback function so as to return a promise.
@@ -179,9 +211,12 @@ export interface LoaderOptions {
  *   libraries: ["places"]
  * });
  *
- * loader.load().then((google) => {
- *   const map = new google.maps.Map(...)
- * })
+ * loader.load()
+ *   .then((google) => { // do something })
+ *   .catch((error) => {
+ *     if (error instanceof AuthenticationError) { // fix key, restriction, etc }
+ *     else { // script error }
+ * });
  * ```
  */
 export class Loader {
@@ -240,7 +275,7 @@ export class Loader {
   public readonly url: string;
 
   private CALLBACK = "__googleMapsCallback";
-  private callbacks: ((e: ErrorEvent) => void)[] = [];
+  private callbacks: ((errorEvent: ErrorEvent) => void)[] = [];
   private done = false;
   private loading = false;
   private onerrorEvent: ErrorEvent;
@@ -315,11 +350,19 @@ export class Loader {
   }
 
   private get failed(): boolean {
-    return this.done && !this.loading && this.errors.length >= this.retries + 1;
+    return (
+      this.done &&
+      !this.loading &&
+      (this.errors.length >= this.retries + 1 ||
+        this.errors.some(
+          (errorEvent) => errorEvent.error instanceof AuthenticationError
+        ))
+    );
   }
 
   /**
-   * CreateUrl returns the Google Maps JavaScript API script url given the [[LoaderOptions]].
+   * CreateUrl returns the Google Maps JavaScript API script url given the
+   * [[LoaderOptions]].
    *
    * @ignore
    */
@@ -365,6 +408,21 @@ export class Loader {
 
   /**
    * Load the Google Maps JavaScript API script and return a Promise.
+   *
+   * ```typescript
+   * loader.load()
+   *   .then((google) => { // do something })
+   *   .catch((error) => {
+   *     if (error instanceof AuthenticationError) {
+   *       // fix key, restriction, etc
+   *     }
+   *     else {
+   *       // script error
+   *     }
+   * });
+   * ```
+   *
+   * See {@link AuthenticationError}.
    */
   public load(): Promise<typeof google> {
     return this.loadPromise();
@@ -377,11 +435,11 @@ export class Loader {
    */
   public loadPromise(): Promise<typeof google> {
     return new Promise((resolve, reject) => {
-      this.loadCallback((err: ErrorEvent) => {
-        if (!err) {
+      this.loadCallback((errorEvent: ErrorEvent) => {
+        if (!errorEvent) {
           resolve(window.google);
         } else {
-          reject(err.error);
+          reject(errorEvent.error);
         }
       });
     });
@@ -389,8 +447,21 @@ export class Loader {
 
   /**
    * Load the Google Maps JavaScript API script with a callback.
+   *
+   * ```typescript
+   * loader.loadCallback((errorEvent: ErrorEvent) => {
+   *   if (errorEvent.error instanceof AuthenticationError) {
+   *     // fix key, restriction, etc
+   *   }
+   *   else {
+   *     // script error
+   *   }
+   * });
+   * ```
+   *
+   * See {@link AuthenticationError}.
    */
-  public loadCallback(fn: (e: ErrorEvent) => void): void {
+  public loadCallback(fn: (errorEvent: ErrorEvent) => void): void {
     this.callbacks.push(fn);
     this.execute();
   }
@@ -400,7 +471,8 @@ export class Loader {
    */
   private setScript(): void {
     if (document.getElementById(this.id)) {
-      // TODO wrap onerror callback for cases where the script was loaded elsewhere
+      // TODO wrap onerror callback for cases where the script was loaded
+      // elsewhere
       this.callback();
       return;
     }
@@ -445,10 +517,13 @@ export class Loader {
     }
   }
 
-  private loadErrorCallback(e: ErrorEvent): void {
-    this.errors.push(e);
+  private loadErrorCallback(errorEvent: ErrorEvent): void {
+    this.errors.push(errorEvent);
 
-    if (this.errors.length <= this.retries) {
+    if (
+      errorEvent.type !== GM_AUTH_FAILURE_EVENT_TYPE &&
+      this.errors.length <= this.retries
+    ) {
       const delay = this.errors.length * 2 ** this.errors.length;
 
       console.log(
@@ -460,13 +535,31 @@ export class Loader {
         this.setScript();
       }, delay);
     } else {
-      this.onerrorEvent = e;
+      this.onerrorEvent = errorEvent;
       this.callback();
     }
   }
 
   private setCallback(): void {
     window.__googleMapsCallback = this.callback.bind(this);
+
+    /* eslint-disable */
+    // @ts-ignore
+    const oldGmAuthFailure = window.gm_authFailure as () => void;
+
+    // @ts-ignore
+    window.gm_authFailure = (): void => {
+      if (oldGmAuthFailure) {
+        oldGmAuthFailure();
+      }
+
+      this.loadErrorCallback(
+        new ErrorEvent(GM_AUTH_FAILURE_EVENT_TYPE, {
+          error: new AuthenticationError(),
+        })
+      );
+    };
+    /* eslint-enable */
   }
 
   private callback(): void {
