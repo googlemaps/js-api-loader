@@ -24,6 +24,8 @@ on:
 jobs:
   bundlewatch:
     runs-on: ubuntu-latest
+    env:
+      CI_BRANCH_BASE: main
     steps:
       - uses: actions/checkout@v2
       - uses: jackyef/bundlewatch-gh-action@b9753bc9b3ea458ff21069eaf6206e01e046f0b5
