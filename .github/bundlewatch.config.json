@@ -1,0 +1,7 @@
+{
+  "files": [
+    {
+      "path": "dist/index.*.js"
+    }
+  ]
+}
