@@ -24,10 +24,17 @@ on:
 jobs:
   bundlewatch:
     runs-on: ubuntu-latest
+    env:
+      CI_BRANCH_BASE: main
     steps:
       - uses: actions/checkout@v2
       - uses: jackyef/bundlewatch-gh-action@b9753bc9b3ea458ff21069eaf6206e01e046f0b5
         with:
           build-script: npm i
           bundlewatch-github-token: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
-          bundlewatch-config: .github/bundlewatch.config.json
+          bundlewatch-config: .github/bundlewatch.config.json        
+      - uses: cyrilwanner/bundlewatch-comment-action@abe70866e53643f0a395222b3069a9cb172ceb93
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          bundlewatch-github-token: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
+          
