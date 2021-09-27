@@ -114,7 +114,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return indexedObject(requireObjectCoercible(it));
   };
 
-  // `isCallable` abstract operation
+  // `IsCallable` abstract operation
   // https://tc39.es/ecma262/#sec-iscallable
   var isCallable = function (argument) {
     return typeof argument === 'function';
@@ -229,7 +229,7 @@ this.google.maps.plugins.loader = (function (exports) {
     (module.exports = function (key, value) {
       return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.18.0',
+      version: '3.18.1',
       mode: 'global',
       copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
     });
@@ -1995,7 +1995,9 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   for (var COLLECTION_NAME in domIterables) {
-    handlePrototype(global_1[COLLECTION_NAME] && global_1[COLLECTION_NAME].prototype);
+    if (domIterables[COLLECTION_NAME]) {
+      handlePrototype(global_1[COLLECTION_NAME] && global_1[COLLECTION_NAME].prototype);
+    }
   }
 
   handlePrototype(domTokenListPrototype);
