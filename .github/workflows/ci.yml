@@ -18,6 +18,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
       - uses: actions/checkout@v2
       - run: npm i
       - run: npm run lint
