@@ -229,7 +229,7 @@ this.google.maps.plugins.loader = (function (exports) {
     (module.exports = function (key, value) {
       return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.18.1',
+      version: '3.18.2',
       mode: 'global',
       copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
     });
@@ -241,9 +241,10 @@ this.google.maps.plugins.loader = (function (exports) {
     return Object(requireObjectCoercible(argument));
   };
 
-  var hasOwnProperty = {}.hasOwnProperty;
+  var hasOwnProperty = {}.hasOwnProperty; // `HasOwnProperty` abstract operation
+  // https://tc39.es/ecma262/#sec-hasownproperty
 
-  var has$1 = Object.hasOwn || function hasOwn(it, key) {
+  var hasOwnProperty_1 = Object.hasOwn || function hasOwn(it, key) {
     return hasOwnProperty.call(toObject(it), key);
   };
 
@@ -259,8 +260,8 @@ this.google.maps.plugins.loader = (function (exports) {
   var createWellKnownSymbol = useSymbolAsUid ? Symbol$1 : Symbol$1 && Symbol$1.withoutSetter || uid;
 
   var wellKnownSymbol = function (name) {
-    if (!has$1(WellKnownSymbolsStore, name) || !(nativeSymbol || typeof WellKnownSymbolsStore[name] == 'string')) {
-      if (nativeSymbol && has$1(Symbol$1, name)) {
+    if (!hasOwnProperty_1(WellKnownSymbolsStore, name) || !(nativeSymbol || typeof WellKnownSymbolsStore[name] == 'string')) {
+      if (nativeSymbol && hasOwnProperty_1(Symbol$1, name)) {
         WellKnownSymbolsStore[name] = Symbol$1[name];
       } else {
         WellKnownSymbolsStore[name] = createWellKnownSymbol('Symbol.' + name);
@@ -324,7 +325,7 @@ this.google.maps.plugins.loader = (function (exports) {
     } catch (error) {
       /* empty */
     }
-    if (has$1(O, P)) return createPropertyDescriptor(!objectPropertyIsEnumerable.f.call(O, P), O[P]);
+    if (hasOwnProperty_1(O, P)) return createPropertyDescriptor(!objectPropertyIsEnumerable.f.call(O, P), O[P]);
   };
   var objectGetOwnPropertyDescriptor = {
     f: f$4
@@ -428,18 +429,18 @@ this.google.maps.plugins.loader = (function (exports) {
     hiddenKeys$1[STATE] = true;
 
     set$1 = function (it, metadata) {
-      if (has$1(it, STATE)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
+      if (hasOwnProperty_1(it, STATE)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
       metadata.facade = it;
       createNonEnumerableProperty(it, STATE, metadata);
       return metadata;
     };
 
     get = function (it) {
-      return has$1(it, STATE) ? it[STATE] : {};
+      return hasOwnProperty_1(it, STATE) ? it[STATE] : {};
     };
 
     has = function (it) {
-      return has$1(it, STATE);
+      return hasOwnProperty_1(it, STATE);
     };
   }
 
@@ -454,7 +455,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var FunctionPrototype = Function.prototype; // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 
   var getDescriptor = descriptors && Object.getOwnPropertyDescriptor;
-  var EXISTS = has$1(FunctionPrototype, 'name'); // additional protection from minified / mangled / dropped function names
+  var EXISTS = hasOwnProperty_1(FunctionPrototype, 'name'); // additional protection from minified / mangled / dropped function names
 
   var PROPER = EXISTS && function something() {
     /* empty */
@@ -484,7 +485,7 @@ this.google.maps.plugins.loader = (function (exports) {
           name = '[' + String(name).replace(/^Symbol\(([^)]*)\)/, '$1') + ']';
         }
 
-        if (!has$1(value, 'name') || CONFIGURABLE_FUNCTION_NAME && value.name !== name) {
+        if (!hasOwnProperty_1(value, 'name') || CONFIGURABLE_FUNCTION_NAME && value.name !== name) {
           createNonEnumerableProperty(value, 'name', name);
         }
 
@@ -511,34 +512,42 @@ this.google.maps.plugins.loader = (function (exports) {
   });
 
   var ceil = Math.ceil;
-  var floor = Math.floor; // `ToInteger` abstract operation
-  // https://tc39.es/ecma262/#sec-tointeger
+  var floor = Math.floor; // `ToIntegerOrInfinity` abstract operation
+  // https://tc39.es/ecma262/#sec-tointegerorinfinity
 
-  var toInteger = function (argument) {
-    return isNaN(argument = +argument) ? 0 : (argument > 0 ? floor : ceil)(argument);
-  };
+  var toIntegerOrInfinity = function (argument) {
+    var number = +argument; // eslint-disable-next-line no-self-compare -- safe
 
-  var min$1 = Math.min; // `ToLength` abstract operation
-  // https://tc39.es/ecma262/#sec-tolength
-
-  var toLength = function (argument) {
-    return argument > 0 ? min$1(toInteger(argument), 0x1FFFFFFFFFFFFF) : 0; // 2 ** 53 - 1 == 9007199254740991
+    return number !== number || number === 0 ? 0 : (number > 0 ? floor : ceil)(number);
   };
 
   var max = Math.max;
-  var min = Math.min; // Helper for a popular repeating case of the spec:
+  var min$1 = Math.min; // Helper for a popular repeating case of the spec:
   // Let integer be ? ToInteger(index).
   // If integer < 0, let result be max((length + integer), 0); else let result be min(integer, length).
 
   var toAbsoluteIndex = function (index, length) {
-    var integer = toInteger(index);
-    return integer < 0 ? max(integer + length, 0) : min(integer, length);
+    var integer = toIntegerOrInfinity(index);
+    return integer < 0 ? max(integer + length, 0) : min$1(integer, length);
+  };
+
+  var min = Math.min; // `ToLength` abstract operation
+  // https://tc39.es/ecma262/#sec-tolength
+
+  var toLength = function (argument) {
+    return argument > 0 ? min(toIntegerOrInfinity(argument), 0x1FFFFFFFFFFFFF) : 0; // 2 ** 53 - 1 == 9007199254740991
+  };
+
+  // https://tc39.es/ecma262/#sec-lengthofarraylike
+
+  var lengthOfArrayLike = function (obj) {
+    return toLength(obj.length);
   };
 
   var createMethod$1 = function (IS_INCLUDES) {
     return function ($this, el, fromIndex) {
       var O = toIndexedObject($this);
-      var length = toLength(O.length);
+      var length = lengthOfArrayLike(O);
       var index = toAbsoluteIndex(fromIndex, length);
       var value; // Array#includes uses SameValueZero equality algorithm
       // eslint-disable-next-line no-self-compare -- NaN check
@@ -571,10 +580,10 @@ this.google.maps.plugins.loader = (function (exports) {
     var result = [];
     var key;
 
-    for (key in O) !has$1(hiddenKeys$1, key) && has$1(O, key) && result.push(key); // Don't enum bug & hidden keys
+    for (key in O) !hasOwnProperty_1(hiddenKeys$1, key) && hasOwnProperty_1(O, key) && result.push(key); // Don't enum bug & hidden keys
 
 
-    while (names.length > i) if (has$1(O, key = names[i++])) {
+    while (names.length > i) if (hasOwnProperty_1(O, key = names[i++])) {
       ~indexOf(result, key) || result.push(key);
     }
 
@@ -615,7 +624,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
     for (var i = 0; i < keys.length; i++) {
       var key = keys[i];
-      if (!has$1(target, key)) defineProperty(target, key, getOwnPropertyDescriptor(source, key));
+      if (!hasOwnProperty_1(target, key)) defineProperty(target, key, getOwnPropertyDescriptor(source, key));
     }
   };
 
@@ -856,7 +865,7 @@ this.google.maps.plugins.loader = (function (exports) {
         E = i === -1 ? O : arguments[i];
 
         if (isConcatSpreadable(E)) {
-          len = toLength(E.length);
+          len = lengthOfArrayLike(E);
           if (n + len > MAX_SAFE_INTEGER) throw TypeError(MAXIMUM_ALLOWED_INDEX_EXCEEDED);
 
           for (k = 0; k < len; k++, n++) if (k in E) createProperty(A, n, E[k]);
@@ -956,7 +965,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var TO_STRING_TAG = wellKnownSymbol('toStringTag');
 
   var setToStringTag = function (it, TAG, STATIC) {
-    if (it && !has$1(it = STATIC ? it : it.prototype, TO_STRING_TAG)) {
+    if (it && !hasOwnProperty_1(it = STATIC ? it : it.prototype, TO_STRING_TAG)) {
       defineProperty(it, TO_STRING_TAG, {
         configurable: true,
         value: TAG
@@ -1097,7 +1106,7 @@ this.google.maps.plugins.loader = (function (exports) {
       if (!iterFn) throw TypeError(String(iterable) + ' is not iterable'); // optimisation for array iterators
 
       if (isArrayIteratorMethod(iterFn)) {
-        for (index = 0, length = toLength(iterable.length); length > index; index++) {
+        for (index = 0, length = lengthOfArrayLike(iterable); length > index; index++) {
           result = callFn(iterable[index]);
           if (result && result instanceof Result) return result;
         }
@@ -1904,7 +1913,7 @@ this.google.maps.plugins.loader = (function (exports) {
       var O = toObject($this);
       var self = indexedObject(O);
       var boundFunction = functionBindContext(callbackfn, that, 3);
-      var length = toLength(self.length);
+      var length = lengthOfArrayLike(self);
       var index = 0;
       var create = specificCreate || arraySpeciesCreate;
       var target = IS_MAP ? create($this, length) : IS_FILTER || IS_FILTER_REJECT ? create($this, 0) : undefined;
