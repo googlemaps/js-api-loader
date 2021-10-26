@@ -61,6 +61,11 @@ this.google.maps.plugins.loader = (function (exports) {
     })[1] != 7;
   });
 
+  var call$2 = Function.prototype.call;
+  var functionCall = call$2.bind ? call$2.bind(call$2) : function () {
+    return call$2.apply(call$2, arguments);
+  };
+
   var $propertyIsEnumerable = {}.propertyIsEnumerable; // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 
   var getOwnPropertyDescriptor$2 = Object.getOwnPropertyDescriptor; // Nashorn ~ JDK8 bug
@@ -87,26 +92,41 @@ this.google.maps.plugins.loader = (function (exports) {
     };
   };
 
-  var toString = {}.toString;
-
-  var classofRaw = function (it) {
-    return toString.call(it).slice(8, -1);
+  var FunctionPrototype$2 = Function.prototype;
+  var bind$3 = FunctionPrototype$2.bind;
+  var call$1 = FunctionPrototype$2.call;
+  var callBind = bind$3 && bind$3.bind(call$1);
+  var functionUncurryThis = bind$3 ? function (fn) {
+    return fn && callBind(call$1, fn);
+  } : function (fn) {
+    return fn && function () {
+      return call$1.apply(fn, arguments);
+    };
   };
 
-  var split = ''.split; // fallback for non-array-like ES3 and non-enumerable old V8 strings
+  var toString$1 = functionUncurryThis({}.toString);
+  var stringSlice = functionUncurryThis(''.slice);
+
+  var classofRaw = function (it) {
+    return stringSlice(toString$1(it), 8, -1);
+  };
+
+  var Object$4 = global_1.Object;
+  var split = functionUncurryThis(''.split); // fallback for non-array-like ES3 and non-enumerable old V8 strings
 
   var indexedObject = fails(function () {
     // throws an error in rhino, see https://github.com/mozilla/rhino/issues/346
     // eslint-disable-next-line no-prototype-builtins -- safe
-    return !Object('z').propertyIsEnumerable(0);
+    return !Object$4('z').propertyIsEnumerable(0);
   }) ? function (it) {
-    return classofRaw(it) == 'String' ? split.call(it, '') : Object(it);
-  } : Object;
+    return classofRaw(it) == 'String' ? split(it, '') : Object$4(it);
+  } : Object$4;
 
-  // `RequireObjectCoercible` abstract operation
+  var TypeError$e = global_1.TypeError; // `RequireObjectCoercible` abstract operation
   // https://tc39.es/ecma262/#sec-requireobjectcoercible
+
   var requireObjectCoercible = function (it) {
-    if (it == undefined) throw TypeError("Can't call method on " + it);
+    if (it == undefined) throw TypeError$e("Can't call method on " + it);
     return it;
   };
 
@@ -117,11 +137,11 @@ this.google.maps.plugins.loader = (function (exports) {
   // `IsCallable` abstract operation
   // https://tc39.es/ecma262/#sec-iscallable
   var isCallable = function (argument) {
-    return typeof argument === 'function';
+    return typeof argument == 'function';
   };
 
   var isObject = function (it) {
-    return typeof it === 'object' ? it !== null : isCallable(it);
+    return typeof it == 'object' ? it !== null : isCallable(it);
   };
 
   var aFunction = function (argument) {
@@ -132,6 +152,8 @@ this.google.maps.plugins.loader = (function (exports) {
     return arguments.length < 2 ? aFunction(global_1[namespace]) : global_1[namespace] && global_1[namespace][method];
   };
 
+  var objectIsPrototypeOf = functionUncurryThis({}.isPrototypeOf);
+
   var engineUserAgent = getBuiltIn('navigator', 'userAgent') || '';
 
   var process$3 = global_1.process;
@@ -141,18 +163,24 @@ this.google.maps.plugins.loader = (function (exports) {
   var match, version;
 
   if (v8) {
-    match = v8.split('.');
-    version = match[0] < 4 ? 1 : match[0] + match[1];
-  } else if (engineUserAgent) {
+    match = v8.split('.'); // in old Chrome, versions of V8 isn't V8 = Chrome / 10
+    // but their correct versions are not interesting for us
+
+    version = match[0] > 0 && match[0] < 4 ? 1 : +(match[0] + match[1]);
+  } // BrowserFS NodeJS `process` polyfill incorrectly set `.v8` to `0.0`
+  // so check `userAgent` even if `.v8` exists, but 0
+
+
+  if (!version && engineUserAgent) {
     match = engineUserAgent.match(/Edge\/(\d+)/);
 
     if (!match || match[1] >= 74) {
       match = engineUserAgent.match(/Chrome\/(\d+)/);
-      if (match) version = match[1];
+      if (match) version = +match[1];
     }
   }
 
-  var engineV8Version = version && +version;
+  var engineV8Version = version;
 
   /* eslint-disable es/no-symbol -- required for testing */
   // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
@@ -169,24 +197,29 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var useSymbolAsUid = nativeSymbol && !Symbol.sham && typeof Symbol.iterator == 'symbol';
 
+  var Object$3 = global_1.Object;
   var isSymbol = useSymbolAsUid ? function (it) {
     return typeof it == 'symbol';
   } : function (it) {
     var $Symbol = getBuiltIn('Symbol');
-    return isCallable($Symbol) && Object(it) instanceof $Symbol;
+    return isCallable($Symbol) && objectIsPrototypeOf($Symbol.prototype, Object$3(it));
   };
+
+  var String$4 = global_1.String;
 
   var tryToString = function (argument) {
     try {
-      return String(argument);
+      return String$4(argument);
     } catch (error) {
       return 'Object';
     }
   };
 
+  var TypeError$d = global_1.TypeError; // `Assert: IsCallable(argument) is true`
+
   var aCallable = function (argument) {
     if (isCallable(argument)) return argument;
-    throw TypeError(tryToString(argument) + ' is not a function');
+    throw TypeError$d(tryToString(argument) + ' is not a function');
   };
 
   // https://tc39.es/ecma262/#sec-getmethod
@@ -196,20 +229,22 @@ this.google.maps.plugins.loader = (function (exports) {
     return func == null ? undefined : aCallable(func);
   };
 
+  var TypeError$c = global_1.TypeError; // `OrdinaryToPrimitive` abstract operation
   // https://tc39.es/ecma262/#sec-ordinarytoprimitive
 
   var ordinaryToPrimitive = function (input, pref) {
     var fn, val;
-    if (pref === 'string' && isCallable(fn = input.toString) && !isObject(val = fn.call(input))) return val;
-    if (isCallable(fn = input.valueOf) && !isObject(val = fn.call(input))) return val;
-    if (pref !== 'string' && isCallable(fn = input.toString) && !isObject(val = fn.call(input))) return val;
-    throw TypeError("Can't convert object to primitive value");
+    if (pref === 'string' && isCallable(fn = input.toString) && !isObject(val = functionCall(fn, input))) return val;
+    if (isCallable(fn = input.valueOf) && !isObject(val = functionCall(fn, input))) return val;
+    if (pref !== 'string' && isCallable(fn = input.toString) && !isObject(val = functionCall(fn, input))) return val;
+    throw TypeError$c("Can't convert object to primitive value");
   };
+
+  var defineProperty$1 = Object.defineProperty;
 
   var setGlobal = function (key, value) {
     try {
-      // eslint-disable-next-line es/no-object-defineproperty -- safe
-      Object.defineProperty(global_1, key, {
+      defineProperty$1(global_1, key, {
         value: value,
         configurable: true,
         writable: true
@@ -229,48 +264,56 @@ this.google.maps.plugins.loader = (function (exports) {
     (module.exports = function (key, value) {
       return sharedStore[key] || (sharedStore[key] = value !== undefined ? value : {});
     })('versions', []).push({
-      version: '3.18.3',
+      version: '3.19.0',
       mode: 'global',
       copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
     });
   });
 
+  var Object$2 = global_1.Object; // `ToObject` abstract operation
   // https://tc39.es/ecma262/#sec-toobject
 
   var toObject = function (argument) {
-    return Object(requireObjectCoercible(argument));
+    return Object$2(requireObjectCoercible(argument));
   };
 
-  var hasOwnProperty = {}.hasOwnProperty; // `HasOwnProperty` abstract operation
+  var hasOwnProperty = functionUncurryThis({}.hasOwnProperty); // `HasOwnProperty` abstract operation
   // https://tc39.es/ecma262/#sec-hasownproperty
 
   var hasOwnProperty_1 = Object.hasOwn || function hasOwn(it, key) {
-    return hasOwnProperty.call(toObject(it), key);
+    return hasOwnProperty(toObject(it), key);
   };
 
   var id = 0;
   var postfix = Math.random();
+  var toString = functionUncurryThis(1.0.toString);
 
   var uid = function (key) {
-    return 'Symbol(' + String(key === undefined ? '' : key) + ')_' + (++id + postfix).toString(36);
+    return 'Symbol(' + (key === undefined ? '' : key) + ')_' + toString(++id + postfix, 36);
   };
 
   var WellKnownSymbolsStore = shared('wks');
   var Symbol$1 = global_1.Symbol;
+  var symbolFor = Symbol$1 && Symbol$1['for'];
   var createWellKnownSymbol = useSymbolAsUid ? Symbol$1 : Symbol$1 && Symbol$1.withoutSetter || uid;
 
   var wellKnownSymbol = function (name) {
     if (!hasOwnProperty_1(WellKnownSymbolsStore, name) || !(nativeSymbol || typeof WellKnownSymbolsStore[name] == 'string')) {
+      var description = 'Symbol.' + name;
+
       if (nativeSymbol && hasOwnProperty_1(Symbol$1, name)) {
         WellKnownSymbolsStore[name] = Symbol$1[name];
+      } else if (useSymbolAsUid && symbolFor) {
+        WellKnownSymbolsStore[name] = symbolFor(description);
       } else {
-        WellKnownSymbolsStore[name] = createWellKnownSymbol('Symbol.' + name);
+        WellKnownSymbolsStore[name] = createWellKnownSymbol(description);
       }
     }
 
     return WellKnownSymbolsStore[name];
   };
 
+  var TypeError$b = global_1.TypeError;
   var TO_PRIMITIVE = wellKnownSymbol('toPrimitive'); // `ToPrimitive` abstract operation
   // https://tc39.es/ecma262/#sec-toprimitive
 
@@ -281,9 +324,9 @@ this.google.maps.plugins.loader = (function (exports) {
 
     if (exoticToPrim) {
       if (pref === undefined) pref = 'default';
-      result = exoticToPrim.call(input, pref);
+      result = functionCall(exoticToPrim, input, pref);
       if (!isObject(result) || isSymbol(result)) return result;
-      throw TypeError("Can't convert object to primitive value");
+      throw TypeError$b("Can't convert object to primitive value");
     }
 
     if (pref === undefined) pref = 'number';
@@ -294,7 +337,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var toPropertyKey = function (argument) {
     var key = toPrimitive(argument, 'string');
-    return isSymbol(key) ? key : String(key);
+    return isSymbol(key) ? key : key + '';
   };
 
   var document$3 = global_1.document; // typeof document.createElement is 'object' in old IE
@@ -325,16 +368,21 @@ this.google.maps.plugins.loader = (function (exports) {
     } catch (error) {
       /* empty */
     }
-    if (hasOwnProperty_1(O, P)) return createPropertyDescriptor(!objectPropertyIsEnumerable.f.call(O, P), O[P]);
+    if (hasOwnProperty_1(O, P)) return createPropertyDescriptor(!functionCall(objectPropertyIsEnumerable.f, O, P), O[P]);
   };
   var objectGetOwnPropertyDescriptor = {
     f: f$4
   };
 
+  var String$3 = global_1.String;
+  var TypeError$a = global_1.TypeError; // `Assert: Type(argument) is Object`
+
   var anObject = function (argument) {
     if (isObject(argument)) return argument;
-    throw TypeError(String(argument) + ' is not an object');
+    throw TypeError$a(String$3(argument) + ' is not an object');
   };
+
+  var TypeError$9 = global_1.TypeError; // eslint-disable-next-line es/no-object-defineproperty -- safe
 
   var $defineProperty = Object.defineProperty; // `Object.defineProperty` method
   // https://tc39.es/ecma262/#sec-object.defineproperty
@@ -348,7 +396,7 @@ this.google.maps.plugins.loader = (function (exports) {
     } catch (error) {
       /* empty */
     }
-    if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported');
+    if ('get' in Attributes || 'set' in Attributes) throw TypeError$9('Accessors not supported');
     if ('value' in Attributes) O[P] = Attributes.value;
     return O;
   };
@@ -363,11 +411,11 @@ this.google.maps.plugins.loader = (function (exports) {
     return object;
   };
 
-  var functionToString = Function.toString; // this helper broken in `core-js@3.4.1-3.4.4`, so we can't use `shared` helper
+  var functionToString = functionUncurryThis(Function.toString); // this helper broken in `core-js@3.4.1-3.4.4`, so we can't use `shared` helper
 
   if (!isCallable(sharedStore.inspectSource)) {
     sharedStore.inspectSource = function (it) {
-      return functionToString.call(it);
+      return functionToString(it);
     };
   }
 
@@ -385,6 +433,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var hiddenKeys$1 = {};
 
   var OBJECT_ALREADY_INITIALIZED = 'Object already initialized';
+  var TypeError$8 = global_1.TypeError;
   var WeakMap = global_1.WeakMap;
   var set$1, get, has;
 
@@ -397,7 +446,7 @@ this.google.maps.plugins.loader = (function (exports) {
       var state;
 
       if (!isObject(it) || (state = get(it)).type !== TYPE) {
-        throw TypeError('Incompatible receiver, ' + TYPE + ' required');
+        throw TypeError$8('Incompatible receiver, ' + TYPE + ' required');
       }
 
       return state;
@@ -406,30 +455,30 @@ this.google.maps.plugins.loader = (function (exports) {
 
   if (nativeWeakMap || sharedStore.state) {
     var store = sharedStore.state || (sharedStore.state = new WeakMap());
-    var wmget = store.get;
-    var wmhas = store.has;
-    var wmset = store.set;
+    var wmget = functionUncurryThis(store.get);
+    var wmhas = functionUncurryThis(store.has);
+    var wmset = functionUncurryThis(store.set);
 
     set$1 = function (it, metadata) {
-      if (wmhas.call(store, it)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
+      if (wmhas(store, it)) throw new TypeError$8(OBJECT_ALREADY_INITIALIZED);
       metadata.facade = it;
-      wmset.call(store, it, metadata);
+      wmset(store, it, metadata);
       return metadata;
     };
 
     get = function (it) {
-      return wmget.call(store, it) || {};
+      return wmget(store, it) || {};
     };
 
     has = function (it) {
-      return wmhas.call(store, it);
+      return wmhas(store, it);
     };
   } else {
     var STATE = sharedKey('state');
     hiddenKeys$1[STATE] = true;
 
     set$1 = function (it, metadata) {
-      if (hasOwnProperty_1(it, STATE)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
+      if (hasOwnProperty_1(it, STATE)) throw new TypeError$8(OBJECT_ALREADY_INITIALIZED);
       metadata.facade = it;
       createNonEnumerableProperty(it, STATE, metadata);
       return metadata;
@@ -452,16 +501,16 @@ this.google.maps.plugins.loader = (function (exports) {
     getterFor: getterFor
   };
 
-  var FunctionPrototype = Function.prototype; // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+  var FunctionPrototype$1 = Function.prototype; // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 
   var getDescriptor = descriptors && Object.getOwnPropertyDescriptor;
-  var EXISTS = hasOwnProperty_1(FunctionPrototype, 'name'); // additional protection from minified / mangled / dropped function names
+  var EXISTS = hasOwnProperty_1(FunctionPrototype$1, 'name'); // additional protection from minified / mangled / dropped function names
 
   var PROPER = EXISTS && function something() {
     /* empty */
   }.name === 'something';
 
-  var CONFIGURABLE = EXISTS && (!descriptors || descriptors && getDescriptor(FunctionPrototype, 'name').configurable);
+  var CONFIGURABLE = EXISTS && (!descriptors || descriptors && getDescriptor(FunctionPrototype$1, 'name').configurable);
   var functionName = {
     EXISTS: EXISTS,
     PROPER: PROPER,
@@ -573,6 +622,7 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var indexOf = arrayIncludes.indexOf;
+  var push$1 = functionUncurryThis([].push);
 
   var objectKeysInternal = function (object, names) {
     var O = toIndexedObject(object);
@@ -580,11 +630,11 @@ this.google.maps.plugins.loader = (function (exports) {
     var result = [];
     var key;
 
-    for (key in O) !hasOwnProperty_1(hiddenKeys$1, key) && hasOwnProperty_1(O, key) && result.push(key); // Don't enum bug & hidden keys
+    for (key in O) !hasOwnProperty_1(hiddenKeys$1, key) && hasOwnProperty_1(O, key) && push$1(result, key); // Don't enum bug & hidden keys
 
 
     while (names.length > i) if (hasOwnProperty_1(O, key = names[i++])) {
-      ~indexOf(result, key) || result.push(key);
+      ~indexOf(result, key) || push$1(result, key);
     }
 
     return result;
@@ -611,10 +661,12 @@ this.google.maps.plugins.loader = (function (exports) {
     f: f$1
   };
 
+  var concat = functionUncurryThis([].concat); // all object keys, includes non-enumerable and symbols
+
   var ownKeys = getBuiltIn('Reflect', 'ownKeys') || function ownKeys(it) {
     var keys = objectGetOwnPropertyNames.f(anObject(it));
     var getOwnPropertySymbols = objectGetOwnPropertySymbols.f;
-    return getOwnPropertySymbols ? keys.concat(getOwnPropertySymbols(it)) : keys;
+    return getOwnPropertySymbols ? concat(keys, getOwnPropertySymbols(it)) : keys;
   };
 
   var copyConstructorProperties = function (target, source) {
@@ -686,7 +738,7 @@ this.google.maps.plugins.loader = (function (exports) {
       FORCED = isForced_1(GLOBAL ? key : TARGET + (STATIC ? '.' : '#') + key, options.forced); // contained in target
 
       if (!FORCED && targetProperty !== undefined) {
-        if (typeof sourceProperty === typeof targetProperty) continue;
+        if (typeof sourceProperty == typeof targetProperty) continue;
         copyConstructorProperties(sourceProperty, targetProperty);
       } // add a flag to not completely full polyfills
 
@@ -717,7 +769,8 @@ this.google.maps.plugins.loader = (function (exports) {
   test[TO_STRING_TAG$2] = 'z';
   var toStringTagSupport = String(test) === '[object z]';
 
-  var TO_STRING_TAG$1 = wellKnownSymbol('toStringTag'); // ES3 wrong here
+  var TO_STRING_TAG$1 = wellKnownSymbol('toStringTag');
+  var Object$1 = global_1.Object; // ES3 wrong here
 
   var CORRECT_ARGUMENTS = classofRaw(function () {
     return arguments;
@@ -735,24 +788,26 @@ this.google.maps.plugins.loader = (function (exports) {
   var classof = toStringTagSupport ? classofRaw : function (it) {
     var O, tag, result;
     return it === undefined ? 'Undefined' : it === null ? 'Null' // @@toStringTag case
-    : typeof (tag = tryGet(O = Object(it), TO_STRING_TAG$1)) == 'string' ? tag // builtinTag case
+    : typeof (tag = tryGet(O = Object$1(it), TO_STRING_TAG$1)) == 'string' ? tag // builtinTag case
     : CORRECT_ARGUMENTS ? classofRaw(O) // ES3 arguments fallback
     : (result = classofRaw(O)) == 'Object' && isCallable(O.callee) ? 'Arguments' : result;
+  };
+
+  var noop = function () {
+    /* empty */
   };
 
   var empty = [];
   var construct = getBuiltIn('Reflect', 'construct');
   var constructorRegExp = /^\s*(?:class|function)\b/;
-  var exec = constructorRegExp.exec;
-  var INCORRECT_TO_STRING = !constructorRegExp.exec(function () {
-    /* empty */
-  });
+  var exec = functionUncurryThis(constructorRegExp.exec);
+  var INCORRECT_TO_STRING = !constructorRegExp.exec(noop);
 
   var isConstructorModern = function (argument) {
     if (!isCallable(argument)) return false;
 
     try {
-      construct(Object, empty, argument);
+      construct(noop, empty, argument);
       return true;
     } catch (error) {
       return false;
@@ -770,7 +825,7 @@ this.google.maps.plugins.loader = (function (exports) {
       // we can't check .prototype since constructors produced by .bind haven't it
     }
 
-    return INCORRECT_TO_STRING || !!exec.call(constructorRegExp, inspectSource(argument));
+    return INCORRECT_TO_STRING || !!exec(constructorRegExp, inspectSource(argument));
   }; // `IsConstructor` abstract operation
   // https://tc39.es/ecma262/#sec-isconstructor
 
@@ -782,7 +837,8 @@ this.google.maps.plugins.loader = (function (exports) {
     }) || called;
   }) ? isConstructorLegacy : isConstructorModern;
 
-  var SPECIES$4 = wellKnownSymbol('species'); // a part of `ArraySpeciesCreate` abstract operation
+  var SPECIES$4 = wellKnownSymbol('species');
+  var Array$1 = global_1.Array; // a part of `ArraySpeciesCreate` abstract operation
   // https://tc39.es/ecma262/#sec-arrayspeciescreate
 
   var arraySpeciesConstructor = function (originalArray) {
@@ -791,13 +847,13 @@ this.google.maps.plugins.loader = (function (exports) {
     if (isArray(originalArray)) {
       C = originalArray.constructor; // cross-realm fallback
 
-      if (isConstructor(C) && (C === Array || isArray(C.prototype))) C = undefined;else if (isObject(C)) {
+      if (isConstructor(C) && (C === Array$1 || isArray(C.prototype))) C = undefined;else if (isObject(C)) {
         C = C[SPECIES$4];
         if (C === null) C = undefined;
       }
     }
 
-    return C === undefined ? Array : C;
+    return C === undefined ? Array$1 : C;
   };
 
   // https://tc39.es/ecma262/#sec-arrayspeciescreate
@@ -828,7 +884,8 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var IS_CONCAT_SPREADABLE = wellKnownSymbol('isConcatSpreadable');
   var MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF;
-  var MAXIMUM_ALLOWED_INDEX_EXCEEDED = 'Maximum allowed index exceeded'; // We can't use this feature detection in V8 since it causes
+  var MAXIMUM_ALLOWED_INDEX_EXCEEDED = 'Maximum allowed index exceeded';
+  var TypeError$7 = global_1.TypeError; // We can't use this feature detection in V8 since it causes
   // deoptimization and serious performance degradation
   // https://github.com/zloirock/core-js/issues/679
 
@@ -866,11 +923,11 @@ this.google.maps.plugins.loader = (function (exports) {
 
         if (isConcatSpreadable(E)) {
           len = lengthOfArrayLike(E);
-          if (n + len > MAX_SAFE_INTEGER) throw TypeError(MAXIMUM_ALLOWED_INDEX_EXCEEDED);
+          if (n + len > MAX_SAFE_INTEGER) throw TypeError$7(MAXIMUM_ALLOWED_INDEX_EXCEEDED);
 
           for (k = 0; k < len; k++, n++) if (k in E) createProperty(A, n, E[k]);
         } else {
-          if (n >= MAX_SAFE_INTEGER) throw TypeError(MAXIMUM_ALLOWED_INDEX_EXCEEDED);
+          if (n >= MAX_SAFE_INTEGER) throw TypeError$7(MAXIMUM_ALLOWED_INDEX_EXCEEDED);
           createProperty(A, n++, E);
         }
       }
@@ -890,7 +947,7 @@ this.google.maps.plugins.loader = (function (exports) {
     });
   };
 
-  var nativeJoin = [].join;
+  var un$Join = functionUncurryThis([].join);
   var ES3_STRINGS = indexedObject != Object;
   var STRICT_METHOD$1 = arrayMethodIsStrict('join', ','); // `Array.prototype.join` method
   // https://tc39.es/ecma262/#sec-array.prototype.join
@@ -901,7 +958,7 @@ this.google.maps.plugins.loader = (function (exports) {
     forced: ES3_STRINGS || !STRICT_METHOD$1
   }, {
     join: function join(separator) {
-      return nativeJoin.call(toIndexedObject(this), separator === undefined ? ',' : separator);
+      return un$Join(toIndexedObject(this), separator === undefined ? ',' : separator);
     }
   });
 
@@ -928,9 +985,12 @@ this.google.maps.plugins.loader = (function (exports) {
     return target;
   };
 
+  var String$2 = global_1.String;
+  var TypeError$6 = global_1.TypeError;
+
   var aPossiblePrototype = function (argument) {
-    if (typeof argument === 'object' || isCallable(argument)) return argument;
-    throw TypeError("Can't set " + String(argument) + ' as a prototype');
+    if (typeof argument == 'object' || isCallable(argument)) return argument;
+    throw TypeError$6("Can't set " + String$2(argument) + ' as a prototype');
   };
 
   /* eslint-disable no-proto -- safe */
@@ -946,8 +1006,8 @@ this.google.maps.plugins.loader = (function (exports) {
 
     try {
       // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
-      setter = Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set;
-      setter.call(test, []);
+      setter = functionUncurryThis(Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set);
+      setter(test, []);
       CORRECT_SETTER = test instanceof Array;
     } catch (error) {
       /* empty */
@@ -956,7 +1016,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return function setPrototypeOf(O, proto) {
       anObject(O);
       aPossiblePrototype(proto);
-      if (CORRECT_SETTER) setter.call(O, proto);else O.__proto__ = proto;
+      if (CORRECT_SETTER) setter(O, proto);else O.__proto__ = proto;
       return O;
     };
   }() : undefined);
@@ -989,9 +1049,22 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   };
 
-  var anInstance = function (it, Constructor, name) {
-    if (it instanceof Constructor) return it;
-    throw TypeError('Incorrect ' + (name ? name + ' ' : '') + 'invocation');
+  var TypeError$5 = global_1.TypeError;
+
+  var anInstance = function (it, Prototype) {
+    if (objectIsPrototypeOf(Prototype, it)) return it;
+    throw TypeError$5('Incorrect invocation');
+  };
+
+  var bind$2 = functionUncurryThis(functionUncurryThis.bind); // optional / simple context binding
+
+  var functionBindContext = function (fn, that) {
+    aCallable(fn);
+    return that === undefined ? fn : bind$2 ? bind$2(fn, that) : function ()
+    /* ...args */
+    {
+      return fn.apply(that, arguments);
+    };
   };
 
   var iterators = {};
@@ -1003,49 +1076,18 @@ this.google.maps.plugins.loader = (function (exports) {
     return it !== undefined && (iterators.Array === it || ArrayPrototype[ITERATOR$2] === it);
   };
 
-  var functionBindContext = function (fn, that, length) {
-    aCallable(fn);
-    if (that === undefined) return fn;
-
-    switch (length) {
-      case 0:
-        return function () {
-          return fn.call(that);
-        };
-
-      case 1:
-        return function (a) {
-          return fn.call(that, a);
-        };
-
-      case 2:
-        return function (a, b) {
-          return fn.call(that, a, b);
-        };
-
-      case 3:
-        return function (a, b, c) {
-          return fn.call(that, a, b, c);
-        };
-    }
-
-    return function ()
-    /* ...args */
-    {
-      return fn.apply(that, arguments);
-    };
-  };
-
   var ITERATOR$1 = wellKnownSymbol('iterator');
 
   var getIteratorMethod = function (it) {
     if (it != undefined) return getMethod(it, ITERATOR$1) || getMethod(it, '@@iterator') || iterators[classof(it)];
   };
 
+  var TypeError$4 = global_1.TypeError;
+
   var getIterator = function (argument, usingIterator) {
     var iteratorMethod = arguments.length < 2 ? getIteratorMethod(argument) : usingIterator;
-    if (aCallable(iteratorMethod)) return anObject(iteratorMethod.call(argument));
-    throw TypeError(String(argument) + ' is not iterable');
+    if (aCallable(iteratorMethod)) return anObject(functionCall(iteratorMethod, argument));
+    throw TypeError$4(tryToString(argument) + ' is not iterable');
   };
 
   var iteratorClose = function (iterator, kind, value) {
@@ -1060,7 +1102,7 @@ this.google.maps.plugins.loader = (function (exports) {
         return value;
       }
 
-      innerResult = innerResult.call(iterator);
+      innerResult = functionCall(innerResult, iterator);
     } catch (error) {
       innerError = true;
       innerResult = error;
@@ -1072,17 +1114,21 @@ this.google.maps.plugins.loader = (function (exports) {
     return value;
   };
 
+  var TypeError$3 = global_1.TypeError;
+
   var Result = function (stopped, result) {
     this.stopped = stopped;
     this.result = result;
   };
+
+  var ResultPrototype = Result.prototype;
 
   var iterate = function (iterable, unboundFunction, options) {
     var that = options && options.that;
     var AS_ENTRIES = !!(options && options.AS_ENTRIES);
     var IS_ITERATOR = !!(options && options.IS_ITERATOR);
     var INTERRUPTED = !!(options && options.INTERRUPTED);
-    var fn = functionBindContext(unboundFunction, that, 1 + AS_ENTRIES + INTERRUPTED);
+    var fn = functionBindContext(unboundFunction, that);
     var iterator, iterFn, index, length, result, next, step;
 
     var stop = function (condition) {
@@ -1103,12 +1149,12 @@ this.google.maps.plugins.loader = (function (exports) {
       iterator = iterable;
     } else {
       iterFn = getIteratorMethod(iterable);
-      if (!iterFn) throw TypeError(String(iterable) + ' is not iterable'); // optimisation for array iterators
+      if (!iterFn) throw TypeError$3(tryToString(iterable) + ' is not iterable'); // optimisation for array iterators
 
       if (isArrayIteratorMethod(iterFn)) {
         for (index = 0, length = lengthOfArrayLike(iterable); length > index; index++) {
           result = callFn(iterable[index]);
-          if (result && result instanceof Result) return result;
+          if (result && objectIsPrototypeOf(ResultPrototype, result)) return result;
         }
 
         return new Result(false);
@@ -1119,14 +1165,14 @@ this.google.maps.plugins.loader = (function (exports) {
 
     next = iterator.next;
 
-    while (!(step = next.call(iterator)).done) {
+    while (!(step = functionCall(next, iterator)).done) {
       try {
         result = callFn(step.value);
       } catch (error) {
         iteratorClose(iterator, 'throw', error);
       }
 
-      if (typeof result == 'object' && result && result instanceof Result) return result;
+      if (typeof result == 'object' && result && objectIsPrototypeOf(ResultPrototype, result)) return result;
     }
 
     return new Result(false);
@@ -1185,9 +1231,11 @@ this.google.maps.plugins.loader = (function (exports) {
     return ITERATION_SUPPORT;
   };
 
+  var TypeError$2 = global_1.TypeError; // `Assert: IsConstructor(argument) is true`
+
   var aConstructor = function (argument) {
     if (isConstructor(argument)) return argument;
-    throw TypeError(tryToString(argument) + ' is not a constructor');
+    throw TypeError$2(tryToString(argument) + ' is not a constructor');
   };
 
   var SPECIES$1 = wellKnownSymbol('species'); // `SpeciesConstructor` abstract operation
@@ -1199,7 +1247,18 @@ this.google.maps.plugins.loader = (function (exports) {
     return C === undefined || (S = anObject(C)[SPECIES$1]) == undefined ? defaultConstructor : aConstructor(S);
   };
 
+  var FunctionPrototype = Function.prototype;
+  var apply = FunctionPrototype.apply;
+  var bind$1 = FunctionPrototype.bind;
+  var call = FunctionPrototype.call; // eslint-disable-next-line es/no-reflect -- safe
+
+  var functionApply = typeof Reflect == 'object' && Reflect.apply || (bind$1 ? call.bind(apply) : function () {
+    return call.apply(apply, arguments);
+  });
+
   var html = getBuiltIn('document', 'documentElement');
+
+  var arraySlice = functionUncurryThis([].slice);
 
   var engineIsIos = /(?:ipad|iphone|ipod).*applewebkit/i.test(engineUserAgent);
 
@@ -1208,8 +1267,10 @@ this.google.maps.plugins.loader = (function (exports) {
   var set = global_1.setImmediate;
   var clear = global_1.clearImmediate;
   var process$2 = global_1.process;
-  var MessageChannel = global_1.MessageChannel;
   var Dispatch = global_1.Dispatch;
+  var Function$1 = global_1.Function;
+  var MessageChannel = global_1.MessageChannel;
+  var String$1 = global_1.String;
   var counter = 0;
   var queue = {};
   var ONREADYSTATECHANGE = 'onreadystatechange';
@@ -1223,8 +1284,7 @@ this.google.maps.plugins.loader = (function (exports) {
   }
 
   var run = function (id) {
-    // eslint-disable-next-line no-prototype-builtins -- safe
-    if (queue.hasOwnProperty(id)) {
+    if (hasOwnProperty_1(queue, id)) {
       var fn = queue[id];
       delete queue[id];
       fn();
@@ -1243,21 +1303,16 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var post = function (id) {
     // old engines have not location.origin
-    global_1.postMessage(String(id), location.protocol + '//' + location.host);
+    global_1.postMessage(String$1(id), location.protocol + '//' + location.host);
   }; // Node.js 0.9+ & IE10+ has setImmediate, otherwise:
 
 
   if (!set || !clear) {
     set = function setImmediate(fn) {
-      var args = [];
-      var argumentsLength = arguments.length;
-      var i = 1;
-
-      while (argumentsLength > i) args.push(arguments[i++]);
+      var args = arraySlice(arguments, 1);
 
       queue[++counter] = function () {
-        // eslint-disable-next-line no-new-func -- spec requirement
-        (isCallable(fn) ? fn : Function(fn)).apply(undefined, args);
+        functionApply(isCallable(fn) ? fn : Function$1(fn), undefined, args);
       };
 
       defer(counter);
@@ -1284,7 +1339,7 @@ this.google.maps.plugins.loader = (function (exports) {
       channel = new MessageChannel();
       port = channel.port2;
       channel.port1.onmessage = listener;
-      defer = functionBindContext(port.postMessage, port, 1); // Browsers with postMessage, skip WebWorkers
+      defer = functionBindContext(port.postMessage, port); // Browsers with postMessage, skip WebWorkers
       // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
     } else if (global_1.addEventListener && isCallable(global_1.postMessage) && !global_1.importScripts && location && location.protocol !== 'file:' && !fails(post)) {
       defer = post;
@@ -1363,10 +1418,10 @@ this.google.maps.plugins.loader = (function (exports) {
       promise = Promise$1.resolve(undefined); // workaround of WebKit ~ iOS Safari 10.1 bug
 
       promise.constructor = Promise$1;
-      then = promise.then;
+      then = functionBindContext(promise.then, promise);
 
       notify$1 = function () {
-        then.call(promise, flush);
+        then(flush);
       }; // Node.js without promises
 
     } else if (engineIsNode) {
@@ -1380,9 +1435,11 @@ this.google.maps.plugins.loader = (function (exports) {
       // - setTimeout
 
     } else {
+      // strange IE + webpack dev server bug - use .bind(global)
+      macrotask = functionBindContext(macrotask, global_1);
+
       notify$1 = function () {
-        // strange IE + webpack dev server bug - use .call(global)
-        macrotask.call(global_1, flush);
+        macrotask(flush);
       };
     }
   }
@@ -1436,7 +1493,7 @@ this.google.maps.plugins.loader = (function (exports) {
     var console = global_1.console;
 
     if (console && console.error) {
-      arguments.length === 1 ? console.error(a) : console.error(a, b);
+      arguments.length == 1 ? console.error(a) : console.error(a, b);
     }
   };
 
@@ -1464,7 +1521,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var getInternalPromiseState = internalState.getterFor(PROMISE);
   var NativePromisePrototype = nativePromiseConstructor && nativePromiseConstructor.prototype;
   var PromiseConstructor = nativePromiseConstructor;
-  var PromiseConstructorPrototype = NativePromisePrototype;
+  var PromisePrototype = NativePromisePrototype;
   var TypeError$1 = global_1.TypeError;
   var document$1 = global_1.document;
   var process = global_1.process;
@@ -1562,7 +1619,7 @@ this.google.maps.plugins.loader = (function (exports) {
             if (result === reaction.promise) {
               reject(TypeError$1('Promise-chain cycle'));
             } else if (then = isThenable(result)) {
-              then.call(result, resolve, reject);
+              functionCall(then, result, resolve, reject);
             } else resolve(result);
           } else reject(value);
         } catch (error) {
@@ -1595,7 +1652,7 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var onUnhandled = function (state) {
-    task.call(global_1, function () {
+    functionCall(task, global_1, function () {
       var promise = state.facade;
       var value = state.value;
       var IS_UNHANDLED = isUnhandled(state);
@@ -1619,7 +1676,7 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var onHandleUnhandled = function (state) {
-    task.call(global_1, function () {
+    functionCall(task, global_1, function () {
       var promise = state.facade;
 
       if (engineIsNode) {
@@ -1659,7 +1716,7 @@ this.google.maps.plugins.loader = (function (exports) {
           };
 
           try {
-            then.call(value, bind(internalResolve, wrapper, state), bind(internalReject, wrapper, state));
+            functionCall(then, value, bind(internalResolve, wrapper, state), bind(internalReject, wrapper, state));
           } catch (error) {
             internalReject(wrapper, error, state);
           }
@@ -1680,9 +1737,9 @@ this.google.maps.plugins.loader = (function (exports) {
   if (FORCED) {
     // 25.4.3.1 Promise(executor)
     PromiseConstructor = function Promise(executor) {
-      anInstance(this, PromiseConstructor, PROMISE);
+      anInstance(this, PromisePrototype);
       aCallable(executor);
-      Internal.call(this);
+      functionCall(Internal, this);
       var state = getInternalState(this);
 
       try {
@@ -1692,7 +1749,7 @@ this.google.maps.plugins.loader = (function (exports) {
       }
     };
 
-    PromiseConstructorPrototype = PromiseConstructor.prototype; // eslint-disable-next-line no-unused-vars -- required for `.length`
+    PromisePrototype = PromiseConstructor.prototype; // eslint-disable-next-line no-unused-vars -- required for `.length`
 
     Internal = function Promise(executor) {
       setInternalState(this, {
@@ -1707,17 +1764,18 @@ this.google.maps.plugins.loader = (function (exports) {
       });
     };
 
-    Internal.prototype = redefineAll(PromiseConstructorPrototype, {
+    Internal.prototype = redefineAll(PromisePrototype, {
       // `Promise.prototype.then` method
       // https://tc39.es/ecma262/#sec-promise.prototype.then
       then: function then(onFulfilled, onRejected) {
         var state = getInternalPromiseState(this);
+        var reactions = state.reactions;
         var reaction = newPromiseCapability(speciesConstructor(this, PromiseConstructor));
         reaction.ok = isCallable(onFulfilled) ? onFulfilled : true;
         reaction.fail = isCallable(onRejected) && onRejected;
         reaction.domain = engineIsNode ? process.domain : undefined;
         state.parent = true;
-        state.reactions.push(reaction);
+        reactions[reactions.length] = reaction;
         if (state.state != PENDING) notify(state, false);
         return reaction.promise;
       },
@@ -1748,13 +1806,13 @@ this.google.maps.plugins.loader = (function (exports) {
         redefine(NativePromisePrototype, 'then', function then(onFulfilled, onRejected) {
           var that = this;
           return new PromiseConstructor(function (resolve, reject) {
-            nativeThen.call(that, resolve, reject);
+            functionCall(nativeThen, that, resolve, reject);
           }).then(onFulfilled, onRejected); // https://github.com/zloirock/core-js/issues/640
         }, {
           unsafe: true
         }); // makes sure that native promise-based APIs `Promise#catch` properly works with patched `Promise#then`
 
-        redefine(NativePromisePrototype, 'catch', PromiseConstructorPrototype['catch'], {
+        redefine(NativePromisePrototype, 'catch', PromisePrototype['catch'], {
           unsafe: true
         });
       } // make `.constructor === Promise` work for native promise-based APIs
@@ -1768,7 +1826,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
 
       if (objectSetPrototypeOf) {
-        objectSetPrototypeOf(NativePromisePrototype, PromiseConstructorPrototype);
+        objectSetPrototypeOf(NativePromisePrototype, PromisePrototype);
       }
     }
   }
@@ -1793,7 +1851,7 @@ this.google.maps.plugins.loader = (function (exports) {
     // https://tc39.es/ecma262/#sec-promise.reject
     reject: function reject(r) {
       var capability = newPromiseCapability(this);
-      capability.reject.call(undefined, r);
+      functionCall(capability.reject, undefined, r);
       return capability.promise;
     }
   });
@@ -1828,9 +1886,8 @@ this.google.maps.plugins.loader = (function (exports) {
         iterate(iterable, function (promise) {
           var index = counter++;
           var alreadyCalled = false;
-          values.push(undefined);
           remaining++;
-          $promiseResolve.call(C, promise).then(function (value) {
+          functionCall($promiseResolve, C, promise).then(function (value) {
             if (alreadyCalled) return;
             alreadyCalled = true;
             values[index] = value;
@@ -1851,7 +1908,7 @@ this.google.maps.plugins.loader = (function (exports) {
       var result = perform(function () {
         var $promiseResolve = aCallable(C.resolve);
         iterate(iterable, function (promise) {
-          $promiseResolve.call(C, promise).then(capability.resolve, reject);
+          functionCall($promiseResolve, C, promise).then(capability.resolve, reject);
         });
       });
       if (result.error) reject(result.value);
@@ -1899,7 +1956,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var DOMTokenListPrototype = classList && classList.constructor && classList.constructor.prototype;
   var domTokenListPrototype = DOMTokenListPrototype === Object.prototype ? undefined : DOMTokenListPrototype;
 
-  var push = [].push; // `Array.prototype.{ forEach, map, filter, some, every, find, findIndex, filterReject }` methods implementation
+  var push = functionUncurryThis([].push); // `Array.prototype.{ forEach, map, filter, some, every, find, findIndex, filterReject }` methods implementation
 
   var createMethod = function (TYPE) {
     var IS_MAP = TYPE == 1;
@@ -1912,7 +1969,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return function ($this, callbackfn, that, specificCreate) {
       var O = toObject($this);
       var self = indexedObject(O);
-      var boundFunction = functionBindContext(callbackfn, that, 3);
+      var boundFunction = functionBindContext(callbackfn, that);
       var length = lengthOfArrayLike(self);
       var index = 0;
       var create = specificCreate || arraySpeciesCreate;
@@ -1939,7 +1996,7 @@ this.google.maps.plugins.loader = (function (exports) {
               // findIndex
 
               case 2:
-                push.call(target, value);
+                push(target, value);
               // filter
             } else switch (TYPE) {
               case 4:
@@ -1947,7 +2004,7 @@ this.google.maps.plugins.loader = (function (exports) {
               // every
 
               case 7:
-                push.call(target, value);
+                push(target, value);
               // filterReject
             }
         }
