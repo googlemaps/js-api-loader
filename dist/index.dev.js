@@ -2254,6 +2254,15 @@ this.google.maps.plugins.loader = (function (exports) {
 
         return url;
       }
+    }, {
+      key: "deleteScript",
+      value: function deleteScript() {
+        var script = document.getElementById(this.id);
+
+        if (script) {
+          script.remove();
+        }
+      }
       /**
        * Load the Google Maps JavaScript API script and return a Promise.
        */
@@ -2321,15 +2330,6 @@ this.google.maps.plugins.loader = (function (exports) {
         }
 
         document.head.appendChild(script);
-      }
-    }, {
-      key: "deleteScript",
-      value: function deleteScript() {
-        var script = document.getElementById(this.id);
-
-        if (script) {
-          script.remove();
-        }
       }
       /**
        * Reset the loader state.

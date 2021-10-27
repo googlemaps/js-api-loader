@@ -173,6 +173,7 @@ export interface LoaderOptions {
  * ```
  */
 export declare class Loader {
+    private static instance;
     /**
      * See [[LoaderOptions.version]]
      */
@@ -226,7 +227,6 @@ export declare class Loader {
     private done;
     private loading;
     private onerrorEvent;
-    private static instance;
     private errors;
     /**
      * Creates an instance of Loader using [[LoaderOptions]]. No defaults are set
@@ -246,6 +246,7 @@ export declare class Loader {
      * @ignore
      */
     createUrl(): string;
+    deleteScript(): void;
     /**
      * Load the Google Maps JavaScript API script and return a Promise.
      */
@@ -264,7 +265,6 @@ export declare class Loader {
      * Set the script on document.
      */
     private setScript;
-    deleteScript(): void;
     /**
      * Reset the loader state.
      */
