@@ -185,6 +185,7 @@ export interface LoaderOptions {
  * ```
  */
 export class Loader {
+  private static instance: Loader;
   /**
    * See [[LoaderOptions.version]]
    */
@@ -244,7 +245,6 @@ export class Loader {
   private done = false;
   private loading = false;
   private onerrorEvent: ErrorEvent;
-  private static instance: Loader;
   private errors: ErrorEvent[] = [];
 
   /**
@@ -363,6 +363,13 @@ export class Loader {
     return url;
   }
 
+  public deleteScript(): void {
+    const script = document.getElementById(this.id);
+    if (script) {
+      script.remove();
+    }
+  }
+
   /**
    * Load the Google Maps JavaScript API script and return a Promise.
    */
@@ -419,13 +426,6 @@ export class Loader {
     }
 
     document.head.appendChild(script);
-  }
-
-  public deleteScript(): void {
-    const script = document.getElementById(this.id);
-    if (script) {
-      script.remove();
-    }
   }
 
   /**
