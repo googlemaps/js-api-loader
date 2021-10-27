@@ -45,6 +45,7 @@ jobs:
             @semantic-release/github
             @semantic-release/npm
             @googlemaps/semantic-release-config
+            semantic-release-npm-deprecate
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_WOMBAT_TOKEN }}
