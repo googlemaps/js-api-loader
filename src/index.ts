@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import isEqual from "fast-deep-equal";
+import isEqual from 'fast-deep-equal';
 
 /**
  * @ignore
@@ -25,14 +25,14 @@ declare global {
   }
 }
 
-export const DEFAULT_ID = "__googleMapsScriptId";
+export const DEFAULT_ID = '__googleMapsScriptId';
 
 type Libraries = (
-  | "drawing"
-  | "geometry"
-  | "localContext"
-  | "places"
-  | "visualization"
+  | 'drawing'
+  | 'geometry'
+  | 'localContext'
+  | 'places'
+  | 'visualization'
 )[];
 
 /**
@@ -240,7 +240,7 @@ export class Loader {
    */
   public readonly url: string;
 
-  private CALLBACK = "__googleMapsCallback";
+  private CALLBACK = '__googleMapsCallback';
   private callbacks: ((e: ErrorEvent) => void)[] = [];
   private done = false;
   private loading = false;
@@ -268,7 +268,7 @@ export class Loader {
     mapIds,
     nonce,
     retries = 3,
-    url = "https://maps.googleapis.com/maps/api/js",
+    url = 'https://maps.googleapis.com/maps/api/js',
   }: LoaderOptions) {
     this.version = version;
     this.apiKey = apiKey;
@@ -341,7 +341,7 @@ export class Loader {
     }
 
     if (this.libraries.length > 0) {
-      url += `&libraries=${this.libraries.join(",")}`;
+      url += `&libraries=${this.libraries.join(',')}`;
     }
 
     if (this.language) {
@@ -357,7 +357,7 @@ export class Loader {
     }
 
     if (this.mapIds) {
-      url += `&map_ids=${this.mapIds.join(",")}`;
+      url += `&map_ids=${this.mapIds.join(',')}`;
     }
 
     return url;
@@ -413,9 +413,9 @@ export class Loader {
     }
 
     const url = this.createUrl();
-    const script = document.createElement("script");
+    const script = document.createElement('script');
     script.id = this.id;
-    script.type = "text/javascript";
+    script.type = 'text/javascript';
     script.src = url;
     script.onerror = this.loadErrorCallback.bind(this);
     script.defer = true;
@@ -473,7 +473,7 @@ export class Loader {
     this.done = true;
     this.loading = false;
 
-    this.callbacks.forEach((cb) => {
+    this.callbacks.forEach(cb => {
       cb(this.onerrorEvent);
     });
 
@@ -489,8 +489,8 @@ export class Loader {
       // short circuit and warn if google.maps is already loaded
       if (window.google && window.google.maps && window.google.maps.version) {
         console.warn(
-          "Google Maps already loaded outside @googlemaps/js-api-loader." +
-            "This may result in undesirable behavior as options and script parameters may not match."
+          'Google Maps already loaded outside @googlemaps/js-api-loader.' +
+            'This may result in undesirable behavior as options and script parameters may not match.'
         );
         this.callback();
         return;

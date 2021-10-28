@@ -15,9 +15,9 @@
  */
 
 module.exports = {
-  out: "docs",
-  exclude: ["**/node_modules/**", "**/*.spec.ts", "**/*.test.ts"],
-  name: "@googlemaps/js-api-loader",
+  out: 'docs',
+  exclude: ['**/node_modules/**', '**/*.spec.ts', '**/*.test.ts'],
+  name: '@googlemaps/js-api-loader',
   excludePrivate: true,
   excludeExternals: true,
 };

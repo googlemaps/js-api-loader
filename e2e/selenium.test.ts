@@ -14,29 +14,29 @@
  * limitations under the License.
  */
 /* eslint  @typescript-eslint/ban-ts-ignore: 0 */
-import path from "path";
-import webdriver from "selenium-webdriver";
+import path from 'path';
+import webdriver from 'selenium-webdriver';
 
 let driver: webdriver.WebDriver;
 
 beforeAll(async () => {
-  const server = `http://localhost:4444/wd/hub`;
+  const server = 'http://localhost:4444/wd/hub';
 
-  switch (process.env.BROWSER || "chrome") {
-    case "chrome": {
+  switch (process.env.BROWSER || 'chrome') {
+    case 'chrome': {
       driver = new webdriver.Builder()
         .usingServer(server)
         .withCapabilities({
-          browserName: "chrome",
+          browserName: 'chrome',
         })
         .build();
       break;
     }
-    case "firefox": {
+    case 'firefox': {
       driver = new webdriver.Builder()
         .usingServer(server)
         .withCapabilities({
-          browserName: "firefox",
+          browserName: 'firefox',
         })
         .build();
       break;
@@ -48,9 +48,9 @@ afterAll(async () => {
   await driver.quit();
 });
 
-it("loader should load map and getCenter", async () => {
+it('loader should load map and getCenter', async () => {
   jest.setTimeout(30000);
-  await driver.get("file://" + path.resolve(__dirname, "index.html"));
+  await driver.get('file://' + path.resolve(__dirname, 'index.html'));
 
   await expect(
     driver.executeAsyncScript((apiKey: string) => {
@@ -60,7 +60,7 @@ it("loader should load map and getCenter", async () => {
       /* eslint-enable no-undef */
 
       // @ts-ignore-next-line
-      const { expect } = window.jestLite.core;
+      const {expect} = window.jestLite.core;
 
       const mapOptions = {
         center: {
@@ -72,14 +72,14 @@ it("loader should load map and getCenter", async () => {
 
       try {
         // @ts-ignore-next-line
-        const loader = new google.maps.plugins.loader.Loader({ apiKey });
+        const loader = new google.maps.plugins.loader.Loader({apiKey});
 
         loader.load().then(() => {
           expect(loader.done).toBeTruthy();
           expect(google.maps.Map).toBeDefined();
 
           const map = new google.maps.Map(
-            document.getElementById("map"),
+            document.getElementById('map'),
             mapOptions
           );
           // use toString since serialization doesn't work in firefox
@@ -89,5 +89,5 @@ it("loader should load map and getCenter", async () => {
         callback(e);
       }
     }, process.env.GOOGLE_MAPS_API_KEY)
-  ).resolves.toEqual("(0, 0)");
+  ).resolves.toEqual('(0, 0)');
 });
