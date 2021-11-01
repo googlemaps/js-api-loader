@@ -800,7 +800,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var empty = [];
   var construct = getBuiltIn('Reflect', 'construct');
   var constructorRegExp = /^\s*(?:class|function)\b/;
-  var exec = functionUncurryThis(constructorRegExp.exec);
+  var exec$1 = functionUncurryThis(constructorRegExp.exec);
   var INCORRECT_TO_STRING = !constructorRegExp.exec(noop);
 
   var isConstructorModern = function (argument) {
@@ -825,7 +825,7 @@ this.google.maps.plugins.loader = (function (exports) {
       // we can't check .prototype since constructors produced by .bind haven't it
     }
 
-    return INCORRECT_TO_STRING || !!exec(constructorRegExp, inspectSource(argument));
+    return INCORRECT_TO_STRING || !!exec$1(constructorRegExp, inspectSource(argument));
   }; // `IsConstructor` abstract operation
   // https://tc39.es/ecma262/#sec-isconstructor
 
@@ -838,7 +838,7 @@ this.google.maps.plugins.loader = (function (exports) {
   }) ? isConstructorLegacy : isConstructorModern;
 
   var SPECIES$4 = wellKnownSymbol('species');
-  var Array$1 = global_1.Array; // a part of `ArraySpeciesCreate` abstract operation
+  var Array$2 = global_1.Array; // a part of `ArraySpeciesCreate` abstract operation
   // https://tc39.es/ecma262/#sec-arrayspeciescreate
 
   var arraySpeciesConstructor = function (originalArray) {
@@ -847,13 +847,13 @@ this.google.maps.plugins.loader = (function (exports) {
     if (isArray(originalArray)) {
       C = originalArray.constructor; // cross-realm fallback
 
-      if (isConstructor(C) && (C === Array$1 || isArray(C.prototype))) C = undefined;else if (isObject(C)) {
+      if (isConstructor(C) && (C === Array$2 || isArray(C.prototype))) C = undefined;else if (isObject(C)) {
         C = C[SPECIES$4];
         if (C === null) C = undefined;
       }
     }
 
-    return C === undefined ? Array$1 : C;
+    return C === undefined ? Array$2 : C;
   };
 
   // https://tc39.es/ecma262/#sec-arrayspeciescreate
@@ -902,14 +902,14 @@ this.google.maps.plugins.loader = (function (exports) {
     return spreadable !== undefined ? !!spreadable : isArray(O);
   };
 
-  var FORCED$1 = !IS_CONCAT_SPREADABLE_SUPPORT || !SPECIES_SUPPORT; // `Array.prototype.concat` method
+  var FORCED$2 = !IS_CONCAT_SPREADABLE_SUPPORT || !SPECIES_SUPPORT; // `Array.prototype.concat` method
   // https://tc39.es/ecma262/#sec-array.prototype.concat
   // with adding support of @@isConcatSpreadable and @@species
 
   _export({
     target: 'Array',
     proto: true,
-    forced: FORCED$1
+    forced: FORCED$2
   }, {
     // eslint-disable-next-line no-unused-vars -- required for `.length`
     concat: function concat(arg) {
@@ -936,6 +936,60 @@ this.google.maps.plugins.loader = (function (exports) {
       return A;
     }
   });
+
+  var FunctionPrototype = Function.prototype;
+  var apply = FunctionPrototype.apply;
+  var bind$2 = FunctionPrototype.bind;
+  var call = FunctionPrototype.call; // eslint-disable-next-line es/no-reflect -- safe
+
+  var functionApply = typeof Reflect == 'object' && Reflect.apply || (bind$2 ? call.bind(apply) : function () {
+    return call.apply(apply, arguments);
+  });
+
+  var Array$1 = global_1.Array;
+  var $stringify = getBuiltIn('JSON', 'stringify');
+  var exec = functionUncurryThis(/./.exec);
+  var charAt = functionUncurryThis(''.charAt);
+  var charCodeAt = functionUncurryThis(''.charCodeAt);
+  var replace = functionUncurryThis(''.replace);
+  var numberToString = functionUncurryThis(1.0.toString);
+  var tester = /[\uD800-\uDFFF]/g;
+  var low = /^[\uD800-\uDBFF]$/;
+  var hi = /^[\uDC00-\uDFFF]$/;
+
+  var fix = function (match, offset, string) {
+    var prev = charAt(string, offset - 1);
+    var next = charAt(string, offset + 1);
+
+    if (exec(low, match) && !exec(hi, next) || exec(hi, match) && !exec(low, prev)) {
+      return '\\u' + numberToString(charCodeAt(match, 0), 16);
+    }
+
+    return match;
+  };
+
+  var FORCED$1 = fails(function () {
+    return $stringify('\uDF06\uD834') !== '"\\udf06\\ud834"' || $stringify('\uDEAD') !== '"\\udead"';
+  });
+
+  if ($stringify) {
+    // `JSON.stringify` method
+    // https://tc39.es/ecma262/#sec-json.stringify
+    // https://github.com/tc39/proposal-well-formed-stringify
+    _export({
+      target: 'JSON',
+      stat: true,
+      forced: FORCED$1
+    }, {
+      // eslint-disable-next-line no-unused-vars -- required for `.length`
+      stringify: function stringify(it, replacer, space) {
+        for (var i = 0, l = arguments.length, args = Array$1(l); i < l; i++) args[i] = arguments[i];
+
+        var result = functionApply($stringify, null, args);
+        return typeof result == 'string' ? replace(result, tester, fix) : result;
+      }
+    });
+  }
 
   var arrayMethodIsStrict = function (METHOD_NAME, argument) {
     var method = [][METHOD_NAME];
@@ -1056,11 +1110,11 @@ this.google.maps.plugins.loader = (function (exports) {
     throw TypeError$5('Incorrect invocation');
   };
 
-  var bind$2 = functionUncurryThis(functionUncurryThis.bind); // optional / simple context binding
+  var bind$1 = functionUncurryThis(functionUncurryThis.bind); // optional / simple context binding
 
   var functionBindContext = function (fn, that) {
     aCallable(fn);
-    return that === undefined ? fn : bind$2 ? bind$2(fn, that) : function ()
+    return that === undefined ? fn : bind$1 ? bind$1(fn, that) : function ()
     /* ...args */
     {
       return fn.apply(that, arguments);
@@ -1246,15 +1300,6 @@ this.google.maps.plugins.loader = (function (exports) {
     var S;
     return C === undefined || (S = anObject(C)[SPECIES$1]) == undefined ? defaultConstructor : aConstructor(S);
   };
-
-  var FunctionPrototype = Function.prototype;
-  var apply = FunctionPrototype.apply;
-  var bind$1 = FunctionPrototype.bind;
-  var call = FunctionPrototype.call; // eslint-disable-next-line es/no-reflect -- safe
-
-  var functionApply = typeof Reflect == 'object' && Reflect.apply || (bind$1 ? call.bind(apply) : function () {
-    return call.apply(apply, arguments);
-  });
 
   var html = getBuiltIn('document', 'documentElement');
 
