@@ -34,7 +34,8 @@ export default [
   {
     input: "src/index.ts",
     plugins: [
-      typescript(),
+      typescript({ tsconfig: './tsconfig.json' }),
+,
       nodeResolve(resolveOptions),
       commonjs(),
       babel(babelOptions),
@@ -50,7 +51,8 @@ export default [
   {
     input: "src/index.ts",
     plugins: [
-      typescript(),
+      typescript({ tsconfig: './tsconfig.json', 'declarationDir': './' }),
+,
       nodeResolve(resolveOptions),
       commonjs(),
       babel(babelOptions),
@@ -65,7 +67,8 @@ export default [
   {
     input: "src/index.ts",
     plugins: [
-      typescript(),
+      typescript({ tsconfig: './tsconfig.json', 'declarationDir': './' }),
+,
       nodeResolve(resolveOptions),
       commonjs(),
       babel(babelOptions),
@@ -78,7 +81,8 @@ export default [
   },
   {
     input: "src/index.ts",
-    plugins: [typescript(), nodeResolve(resolveOptions), commonjs()],
+    plugins: [typescript({ tsconfig: './tsconfig.json', 'declarationDir': './' }),
+, nodeResolve(resolveOptions), commonjs()],
     output: {
       file: "dist/index.esm.js",
       format: "esm",

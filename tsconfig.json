@@ -10,5 +10,6 @@
     "target": "ES6",
     "moduleResolution": "node"
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "./dist"]
 }
