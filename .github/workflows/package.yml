@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: npm i
-      - uses: jpoehnelt/verify-npm-files-action@v1
+      - uses: jpoehnelt/verify-npm-files-action@main
         with:
           keys: |
             types
