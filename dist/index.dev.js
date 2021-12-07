@@ -302,7 +302,7 @@ this.google.maps.plugins.loader = (function (exports) {
   (shared$3.exports = function (key, value) {
     return store$2[key] || (store$2[key] = value !== undefined ? value : {});
   })('versions', []).push({
-    version: '3.19.1',
+    version: '3.19.3',
     mode: 'global',
     copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
   });
@@ -1858,7 +1858,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var V8_VERSION = engineV8Version;
   var SPECIES = wellKnownSymbol('species');
   var PROMISE = 'Promise';
-  var getInternalState = InternalStateModule.get;
+  var getInternalState = InternalStateModule.getterFor(PROMISE);
   var setInternalState = InternalStateModule.set;
   var getInternalPromiseState = InternalStateModule.getterFor(PROMISE);
   var NativePromisePrototype = NativePromise && NativePromise.prototype;
