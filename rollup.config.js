@@ -34,7 +34,7 @@ export default [
   {
     input: "src/index.ts",
     plugins: [
-      typescript({ tsconfig: "./tsconfig.json" }),
+      typescript({ tsconfig: "./tsconfig.json", declarationDir: "./" }),
 
       nodeResolve(resolveOptions),
       commonjs(),
