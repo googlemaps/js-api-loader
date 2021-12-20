@@ -21,7 +21,8 @@
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
   "files": [
-    "dist/*"
+    "dist/",
+    "src/"
   ],
   "scripts": {
     "docs": "typedoc src/index.ts && cp -r dist docs/dist && cp -r examples docs/examples",
