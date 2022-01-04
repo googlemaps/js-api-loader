@@ -163,6 +163,16 @@ export interface LoaderOptions {
    * The number of script load retries.
    */
   retries?: number;
+  /**
+   * This option determines if the Loader should check the options against
+   * previous instantiations of the [[Loader]]. The default is `true` because
+   * the API does support dynamically change the options and teardown of
+   * `google.maps` objects.
+   *
+   * This option may be useful when working within a shadow DOM.
+   *
+   */
+  strictOptionsCheck?: boolean;
 }
 
 /**
@@ -271,30 +281,34 @@ export class Loader {
     channel,
     client,
     id = DEFAULT_ID,
-    libraries = [],
     language,
-    region,
-    version,
+    libraries = [],
     mapIds,
     nonce,
+    region,
     retries = 3,
+    strictOptionsCheck = true,
     url = "https://maps.googleapis.com/maps/api/js",
+    version,
   }: LoaderOptions) {
-    this.version = version;
     this.apiKey = apiKey;
     this.channel = channel;
     this.client = client;
     this.id = id || DEFAULT_ID; // Do not allow empty string
-    this.libraries = libraries;
     this.language = language;
-    this.region = region;
+    this.libraries = libraries;
     this.mapIds = mapIds;
     this.nonce = nonce;
+    this.region = region;
     this.retries = retries;
     this.url = url;
+    this.version = version;
 
     if (Loader.instance) {
-      if (!isEqual(this.options, Loader.instance.options)) {
+      if (
+        strictOptionsCheck &&
+        !isEqual(this.options, Loader.instance.options)
+      ) {
         throw new Error(
           `Loader must not be called again with different options. ${JSON.stringify(
             this.options
