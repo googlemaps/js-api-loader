@@ -2463,6 +2463,18 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var DEFAULT_ID = "__googleMapsScriptId";
   /**
+   * The status of the [[Loader]].
+   */
+
+  exports.LoaderStatus = void 0;
+
+  (function (LoaderStatus) {
+    LoaderStatus[LoaderStatus["INITIALIZED"] = 0] = "INITIALIZED";
+    LoaderStatus[LoaderStatus["LOADING"] = 1] = "LOADING";
+    LoaderStatus[LoaderStatus["SUCCESS"] = 2] = "SUCCESS";
+    LoaderStatus[LoaderStatus["FAILURE"] = 3] = "FAILURE";
+  })(exports.LoaderStatus || (exports.LoaderStatus = {}));
+  /**
    * [[Loader]] makes it easier to add Google Maps JavaScript API to your application
    * dynamically using
    * [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
@@ -2481,6 +2493,7 @@ this.google.maps.plugins.loader = (function (exports) {
    * })
    * ```
    */
+
 
   var Loader = /*#__PURE__*/function () {
     /**
@@ -2558,6 +2571,23 @@ this.google.maps.plugins.loader = (function (exports) {
           nonce: this.nonce,
           url: this.url
         };
+      }
+    }, {
+      key: "status",
+      get: function get() {
+        if (this.errors.length) {
+          return exports.LoaderStatus.FAILURE;
+        }
+
+        if (this.done) {
+          return exports.LoaderStatus.SUCCESS;
+        }
+
+        if (this.loading) {
+          return exports.LoaderStatus.LOADING;
+        }
+
+        return exports.LoaderStatus.INITIALIZED;
       }
     }, {
       key: "failed",

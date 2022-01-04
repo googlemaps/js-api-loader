@@ -60,6 +60,16 @@ var fastDeepEqual = function equal(a, b) {
  */
 const DEFAULT_ID = "__googleMapsScriptId";
 /**
+ * The status of the [[Loader]].
+ */
+var LoaderStatus;
+(function (LoaderStatus) {
+    LoaderStatus[LoaderStatus["INITIALIZED"] = 0] = "INITIALIZED";
+    LoaderStatus[LoaderStatus["LOADING"] = 1] = "LOADING";
+    LoaderStatus[LoaderStatus["SUCCESS"] = 2] = "SUCCESS";
+    LoaderStatus[LoaderStatus["FAILURE"] = 3] = "FAILURE";
+})(LoaderStatus || (LoaderStatus = {}));
+/**
  * [[Loader]] makes it easier to add Google Maps JavaScript API to your application
  * dynamically using
  * [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
@@ -128,6 +138,18 @@ class Loader {
             nonce: this.nonce,
             url: this.url,
         };
+    }
+    get status() {
+        if (this.errors.length) {
+            return LoaderStatus.FAILURE;
+        }
+        if (this.done) {
+            return LoaderStatus.SUCCESS;
+        }
+        if (this.loading) {
+            return LoaderStatus.LOADING;
+        }
+        return LoaderStatus.INITIALIZED;
     }
     get failed() {
         return this.done && !this.loading && this.errors.length >= this.retries + 1;
@@ -288,5 +310,5 @@ class Loader {
     }
 }
 
-export { DEFAULT_ID, Loader };
+export { DEFAULT_ID, Loader, LoaderStatus };
 //# sourceMappingURL=index.esm.js.map

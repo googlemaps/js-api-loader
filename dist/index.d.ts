@@ -154,6 +154,15 @@ export interface LoaderOptions {
     retries?: number;
 }
 /**
+ * The status of the [[Loader]].
+ */
+export declare enum LoaderStatus {
+    INITIALIZED = 0,
+    LOADING = 1,
+    SUCCESS = 2,
+    FAILURE = 3
+}
+/**
  * [[Loader]] makes it easier to add Google Maps JavaScript API to your application
  * dynamically using
  * [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
@@ -239,6 +248,7 @@ export declare class Loader {
      */
     constructor({ apiKey, channel, client, id, libraries, language, region, version, mapIds, nonce, retries, url, }: LoaderOptions);
     get options(): LoaderOptions;
+    get status(): LoaderStatus;
     private get failed();
     /**
      * CreateUrl returns the Google Maps JavaScript API script url given the [[LoaderOptions]].
