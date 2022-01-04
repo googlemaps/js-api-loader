@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /* eslint @typescript-eslint/no-explicit-any: 0 */
-import { DEFAULT_ID, Loader, LoaderOptions } from ".";
+import { DEFAULT_ID, Loader, LoaderOptions, LoaderStatus } from ".";
 
 jest.useFakeTimers();
 
@@ -54,6 +54,7 @@ test.each([
 ])("createUrl is correct", (options: LoaderOptions, expected: string) => {
   const loader = new Loader(options);
   expect(loader.createUrl()).toEqual(expected);
+  expect(loader.status).toBe(LoaderStatus.INITIALIZED);
 });
 
 test("uses default id if empty string", () => {
@@ -128,6 +129,7 @@ test("script onerror should reject promise", async () => {
   expect(loader["done"]).toBeTruthy();
   expect(loader["loading"]).toBeFalsy();
   expect(loader["errors"].length).toBe(1);
+  expect(loader.status).toBe(LoaderStatus.FAILURE);
 });
 
 test("script onerror should reject promise with multiple loaders", async () => {
@@ -301,6 +303,7 @@ test("singleton should be used", () => {
 
   loader["done"] = true;
   expect(extraLoader["done"]).toBe(loader["done"]);
+  expect(loader.status).toBe(LoaderStatus.SUCCESS);
 });
 
 test("singleton should throw with different options", () => {
@@ -333,7 +336,7 @@ test("loader should resolve immediately when failed loading", async () => {
 test("loader should wait if already loading", () => {
   const loader = new Loader({ apiKey: "foo", retries: 0 });
   loader["loading"] = true;
-
+  expect(loader.status).toBe(LoaderStatus.LOADING);
   loader.load();
 });
 

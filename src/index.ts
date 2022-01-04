@@ -166,6 +166,16 @@ export interface LoaderOptions {
 }
 
 /**
+ * The status of the [[Loader]].
+ */
+export enum LoaderStatus {
+  INITIALIZED,
+  LOADING,
+  SUCCESS,
+  FAILURE,
+}
+
+/**
  * [[Loader]] makes it easier to add Google Maps JavaScript API to your application
  * dynamically using
  * [Promises](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise).
@@ -312,6 +322,19 @@ export class Loader {
       nonce: this.nonce,
       url: this.url,
     };
+  }
+
+  public get status(): LoaderStatus {
+    if (this.errors.length) {
+      return LoaderStatus.FAILURE;
+    }
+    if (this.done) {
+      return LoaderStatus.SUCCESS;
+    }
+    if (this.loading) {
+      return LoaderStatus.LOADING;
+    }
+    return LoaderStatus.INITIALIZED;
   }
 
   private get failed(): boolean {
