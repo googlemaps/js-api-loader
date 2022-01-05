@@ -33,19 +33,3 @@ jobs:
       - run: npm run test:e2e
         env:
           GOOGLE_MAPS_API_KEY: ${{ secrets.SYNCED_GOOGLE_MAPS_API_KEY_WEB }}
-  firefox:
-    runs-on: ubuntu-latest
-    services:
-      hub:
-        image: selenium/standalone-firefox
-        volumes:
-          - ${{ github.workspace }}:${{ github.workspace }}
-        ports:
-          - 4444:4444
-    steps:
-      - uses: actions/checkout@v2
-      - run: npm i
-      - run: npm run test:e2e
-        env:
-          GOOGLE_MAPS_API_KEY: ${{ secrets.SYNCED_GOOGLE_MAPS_API_KEY_WEB }}
-          BROWSER: firefox
