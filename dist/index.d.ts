@@ -23,7 +23,7 @@ declare global {
     }
 }
 export declare const DEFAULT_ID = "__googleMapsScriptId";
-declare type Libraries = ("drawing" | "geometry" | "localContext" | "places" | "visualization")[];
+export declare type Libraries = ("drawing" | "geometry" | "localContext" | "places" | "visualization")[];
 /**
  * The Google Maps JavaScript API
  * [documentation](https://developers.google.com/maps/documentation/javascript/tutorial)
@@ -285,4 +285,3 @@ export declare class Loader {
     private callback;
     private execute;
 }
-export {};
