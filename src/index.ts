@@ -27,7 +27,7 @@ declare global {
 
 export const DEFAULT_ID = "__googleMapsScriptId";
 
-type Libraries = (
+export type Libraries = (
   | "drawing"
   | "geometry"
   | "localContext"
