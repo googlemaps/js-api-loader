@@ -42,7 +42,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var objectGetOwnPropertyDescriptor = {};
 
-  var fails$b = function (exec) {
+  var fails$c = function (exec) {
     try {
       return !!exec();
     } catch (error) {
@@ -50,9 +50,9 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   };
 
-  var fails$a = fails$b; // Detect IE8's incomplete defineProperty implementation
+  var fails$b = fails$c; // Detect IE8's incomplete defineProperty implementation
 
-  var descriptors = !fails$a(function () {
+  var descriptors = !fails$b(function () {
     // eslint-disable-next-line es/no-object-defineproperty -- required for testing
     return Object.defineProperty({}, 1, {
       get: function () {
@@ -94,9 +94,9 @@ this.google.maps.plugins.loader = (function (exports) {
   var FunctionPrototype$2 = Function.prototype;
   var bind$7 = FunctionPrototype$2.bind;
   var call$8 = FunctionPrototype$2.call;
-  var callBind = bind$7 && bind$7.bind(call$8);
+  var uncurryThis$g = bind$7 && bind$7.bind(call$8, call$8);
   var functionUncurryThis = bind$7 ? function (fn) {
-    return fn && callBind(call$8, fn);
+    return fn && uncurryThis$g(fn);
   } : function (fn) {
     return fn && function () {
       return call$8.apply(fn, arguments);
@@ -113,12 +113,12 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var global$B = global$C;
   var uncurryThis$e = functionUncurryThis;
-  var fails$9 = fails$b;
+  var fails$a = fails$c;
   var classof$6 = classofRaw$1;
   var Object$4 = global$B.Object;
   var split = uncurryThis$e(''.split); // fallback for non-array-like ES3 and non-enumerable old V8 strings
 
-  var indexedObject = fails$9(function () {
+  var indexedObject = fails$a(function () {
     // throws an error in rhino, see https://github.com/mozilla/rhino/issues/346
     // eslint-disable-next-line no-prototype-builtins -- safe
     return !Object$4('z').propertyIsEnumerable(0);
@@ -201,9 +201,9 @@ this.google.maps.plugins.loader = (function (exports) {
 
   /* eslint-disable es/no-symbol -- required for testing */
   var V8_VERSION$3 = engineV8Version;
-  var fails$8 = fails$b; // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
+  var fails$9 = fails$c; // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
 
-  var nativeSymbol = !!Object.getOwnPropertySymbols && !fails$8(function () {
+  var nativeSymbol = !!Object.getOwnPropertySymbols && !fails$9(function () {
     var symbol = Symbol(); // Chrome 38 Symbol has incorrect toString conversion
     // `get-own-property-symbols` polyfill symbols converted to object are not Symbol instances
 
@@ -302,9 +302,9 @@ this.google.maps.plugins.loader = (function (exports) {
   (shared$3.exports = function (key, value) {
     return store$2[key] || (store$2[key] = value !== undefined ? value : {});
   })('versions', []).push({
-    version: '3.19.3',
+    version: '3.20.2',
     mode: 'global',
-    copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
+    copyright: '© 2022 Denis Pushkarev (zloirock.ru)'
   });
 
   var global$r = global$C;
@@ -407,12 +407,12 @@ this.google.maps.plugins.loader = (function (exports) {
     return EXISTS$1 ? document$3.createElement(it) : {};
   };
 
-  var DESCRIPTORS$5 = descriptors;
-  var fails$7 = fails$b;
+  var DESCRIPTORS$6 = descriptors;
+  var fails$8 = fails$c;
   var createElement$1 = documentCreateElement$1; // Thank's IE8 for his funny defineProperty
 
-  var ie8DomDefine = !DESCRIPTORS$5 && !fails$7(function () {
-    // eslint-disable-next-line es/no-object-defineproperty -- requied for testing
+  var ie8DomDefine = !DESCRIPTORS$6 && !fails$8(function () {
+    // eslint-disable-next-line es/no-object-defineproperty -- required for testing
     return Object.defineProperty(createElement$1('div'), 'a', {
       get: function () {
         return 7;
@@ -420,7 +420,7 @@ this.google.maps.plugins.loader = (function (exports) {
     }).a != 7;
   });
 
-  var DESCRIPTORS$4 = descriptors;
+  var DESCRIPTORS$5 = descriptors;
   var call$5 = functionCall;
   var propertyIsEnumerableModule = objectPropertyIsEnumerable;
   var createPropertyDescriptor$2 = createPropertyDescriptor$3;
@@ -429,14 +429,14 @@ this.google.maps.plugins.loader = (function (exports) {
   var hasOwn$7 = hasOwnProperty_1;
   var IE8_DOM_DEFINE$1 = ie8DomDefine; // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 
-  var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor; // `Object.getOwnPropertyDescriptor` method
+  var $getOwnPropertyDescriptor$1 = Object.getOwnPropertyDescriptor; // `Object.getOwnPropertyDescriptor` method
   // https://tc39.es/ecma262/#sec-object.getownpropertydescriptor
 
-  objectGetOwnPropertyDescriptor.f = DESCRIPTORS$4 ? $getOwnPropertyDescriptor : function getOwnPropertyDescriptor(O, P) {
+  objectGetOwnPropertyDescriptor.f = DESCRIPTORS$5 ? $getOwnPropertyDescriptor$1 : function getOwnPropertyDescriptor(O, P) {
     O = toIndexedObject$3(O);
     P = toPropertyKey$2(P);
     if (IE8_DOM_DEFINE$1) try {
-      return $getOwnPropertyDescriptor(O, P);
+      return $getOwnPropertyDescriptor$1(O, P);
     } catch (error) {
       /* empty */
     }
@@ -444,6 +444,20 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var objectDefineProperty = {};
+
+  var DESCRIPTORS$4 = descriptors;
+  var fails$7 = fails$c; // V8 ~ Chrome 36-
+  // https://bugs.chromium.org/p/v8/issues/detail?id=3334
+
+  var v8PrototypeDefineBug = DESCRIPTORS$4 && fails$7(function () {
+    // eslint-disable-next-line es/no-object-defineproperty -- required for testing
+    return Object.defineProperty(function () {
+      /* empty */
+    }, 'prototype', {
+      value: 42,
+      writable: false
+    }).prototype != 42;
+  });
 
   var global$n = global$C;
   var isObject$5 = isObject$9;
@@ -458,14 +472,39 @@ this.google.maps.plugins.loader = (function (exports) {
   var global$m = global$C;
   var DESCRIPTORS$3 = descriptors;
   var IE8_DOM_DEFINE = ie8DomDefine;
+  var V8_PROTOTYPE_DEFINE_BUG = v8PrototypeDefineBug;
   var anObject$7 = anObject$8;
   var toPropertyKey$1 = toPropertyKey$3;
   var TypeError$9 = global$m.TypeError; // eslint-disable-next-line es/no-object-defineproperty -- safe
 
-  var $defineProperty = Object.defineProperty; // `Object.defineProperty` method
+  var $defineProperty = Object.defineProperty; // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+
+  var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+  var ENUMERABLE = 'enumerable';
+  var CONFIGURABLE$1 = 'configurable';
+  var WRITABLE = 'writable'; // `Object.defineProperty` method
   // https://tc39.es/ecma262/#sec-object.defineproperty
 
-  objectDefineProperty.f = DESCRIPTORS$3 ? $defineProperty : function defineProperty(O, P, Attributes) {
+  objectDefineProperty.f = DESCRIPTORS$3 ? V8_PROTOTYPE_DEFINE_BUG ? function defineProperty(O, P, Attributes) {
+    anObject$7(O);
+    P = toPropertyKey$1(P);
+    anObject$7(Attributes);
+
+    if (typeof O === 'function' && P === 'prototype' && 'value' in Attributes && WRITABLE in Attributes && !Attributes[WRITABLE]) {
+      var current = $getOwnPropertyDescriptor(O, P);
+
+      if (current && current[WRITABLE]) {
+        O[P] = Attributes.value;
+        Attributes = {
+          configurable: CONFIGURABLE$1 in Attributes ? Attributes[CONFIGURABLE$1] : current[CONFIGURABLE$1],
+          enumerable: ENUMERABLE in Attributes ? Attributes[ENUMERABLE] : current[ENUMERABLE],
+          writable: false
+        };
+      }
+    }
+
+    return $defineProperty(O, P, Attributes);
+  } : $defineProperty : function defineProperty(O, P, Attributes) {
     anObject$7(O);
     P = toPropertyKey$1(P);
     anObject$7(Attributes);
@@ -791,18 +830,21 @@ this.google.maps.plugins.loader = (function (exports) {
   var getOwnPropertyDescriptorModule = objectGetOwnPropertyDescriptor;
   var definePropertyModule$2 = objectDefineProperty;
 
-  var copyConstructorProperties$1 = function (target, source) {
+  var copyConstructorProperties$1 = function (target, source, exceptions) {
     var keys = ownKeys(source);
     var defineProperty = definePropertyModule$2.f;
     var getOwnPropertyDescriptor = getOwnPropertyDescriptorModule.f;
 
     for (var i = 0; i < keys.length; i++) {
       var key = keys[i];
-      if (!hasOwn$2(target, key)) defineProperty(target, key, getOwnPropertyDescriptor(source, key));
+
+      if (!hasOwn$2(target, key) && !(exceptions && hasOwn$2(exceptions, key))) {
+        defineProperty(target, key, getOwnPropertyDescriptor(source, key));
+      }
     }
   };
 
-  var fails$6 = fails$b;
+  var fails$6 = fails$c;
   var isCallable$5 = isCallable$e;
   var replacement = /#|\.prototype\./;
 
@@ -935,7 +977,7 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var uncurryThis$6 = functionUncurryThis;
-  var fails$5 = fails$b;
+  var fails$5 = fails$c;
   var isCallable$3 = isCallable$e;
   var classof$3 = classof$4;
   var getBuiltIn$4 = getBuiltIn$8;
@@ -951,7 +993,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var exec$1 = uncurryThis$6(constructorRegExp.exec);
   var INCORRECT_TO_STRING = !constructorRegExp.exec(noop);
 
-  var isConstructorModern = function (argument) {
+  var isConstructorModern = function isConstructor(argument) {
     if (!isCallable$3(argument)) return false;
 
     try {
@@ -962,7 +1004,7 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   };
 
-  var isConstructorLegacy = function (argument) {
+  var isConstructorLegacy = function isConstructor(argument) {
     if (!isCallable$3(argument)) return false;
 
     switch (classof$3(argument)) {
@@ -970,13 +1012,20 @@ this.google.maps.plugins.loader = (function (exports) {
       case 'GeneratorFunction':
       case 'AsyncGeneratorFunction':
         return false;
-      // we can't check .prototype since constructors produced by .bind haven't it
     }
 
-    return INCORRECT_TO_STRING || !!exec$1(constructorRegExp, inspectSource$1(argument));
-  }; // `IsConstructor` abstract operation
-  // https://tc39.es/ecma262/#sec-isconstructor
+    try {
+      // we can't check .prototype since constructors produced by .bind haven't it
+      // `Function#toString` throws on some built-it function in some legacy engines
+      // (for example, `DOMQuad` and similar in FF41-)
+      return INCORRECT_TO_STRING || !!exec$1(constructorRegExp, inspectSource$1(argument));
+    } catch (error) {
+      return true;
+    }
+  };
 
+  isConstructorLegacy.sham = true; // `IsConstructor` abstract operation
+  // https://tc39.es/ecma262/#sec-isconstructor
 
   var isConstructor$2 = !construct || fails$5(function () {
     var called;
@@ -1016,7 +1065,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return new (arraySpeciesConstructor(originalArray))(length === 0 ? 0 : length);
   };
 
-  var fails$4 = fails$b;
+  var fails$4 = fails$c;
   var wellKnownSymbol$8 = wellKnownSymbol$d;
   var V8_VERSION$2 = engineV8Version;
   var SPECIES$3 = wellKnownSymbol$8('species');
@@ -1041,7 +1090,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var $$3 = _export;
   var global$f = global$C;
-  var fails$3 = fails$b;
+  var fails$3 = fails$c;
   var isArray = isArray$2;
   var isObject$2 = isObject$9;
   var toObject$1 = toObject$3;
@@ -1120,7 +1169,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var getBuiltIn$3 = getBuiltIn$8;
   var apply$1 = functionApply;
   var uncurryThis$5 = functionUncurryThis;
-  var fails$2 = fails$b;
+  var fails$2 = fails$c;
   var Array$1 = global$e.Array;
   var $stringify = getBuiltIn$3('JSON', 'stringify');
   var exec = uncurryThis$5(/./.exec);
@@ -1166,7 +1215,7 @@ this.google.maps.plugins.loader = (function (exports) {
     });
   }
 
-  var fails$1 = fails$b;
+  var fails$1 = fails$c;
 
   var arrayMethodIsStrict$2 = function (METHOD_NAME, argument) {
     var method = [][METHOD_NAME];
@@ -1273,9 +1322,11 @@ this.google.maps.plugins.loader = (function (exports) {
   var wellKnownSymbol$6 = wellKnownSymbol$d;
   var TO_STRING_TAG = wellKnownSymbol$6('toStringTag');
 
-  var setToStringTag$1 = function (it, TAG, STATIC) {
-    if (it && !hasOwn$1(it = STATIC ? it : it.prototype, TO_STRING_TAG)) {
-      defineProperty(it, TO_STRING_TAG, {
+  var setToStringTag$1 = function (target, TAG, STATIC) {
+    if (target && !STATIC) target = target.prototype;
+
+    if (target && !hasOwn$1(target, TO_STRING_TAG)) {
+      defineProperty(target, TO_STRING_TAG, {
         configurable: true,
         value: TAG
       });
@@ -1556,7 +1607,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var bind$3 = functionBindContext;
   var isCallable$1 = isCallable$e;
   var hasOwn = hasOwnProperty_1;
-  var fails = fails$b;
+  var fails = fails$c;
   var html = html$1;
   var arraySlice = arraySlice$1;
   var createElement = documentCreateElement$1;
@@ -1570,7 +1621,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var MessageChannel = global$6.MessageChannel;
   var String$1 = global$6.String;
   var counter = 0;
-  var queue = {};
+  var queue$1 = {};
   var ONREADYSTATECHANGE = 'onreadystatechange';
   var location, defer, channel, port;
 
@@ -1582,9 +1633,9 @@ this.google.maps.plugins.loader = (function (exports) {
   }
 
   var run = function (id) {
-    if (hasOwn(queue, id)) {
-      var fn = queue[id];
-      delete queue[id];
+    if (hasOwn(queue$1, id)) {
+      var fn = queue$1[id];
+      delete queue$1[id];
       fn();
     }
   };
@@ -1609,7 +1660,7 @@ this.google.maps.plugins.loader = (function (exports) {
     set = function setImmediate(fn) {
       var args = arraySlice(arguments, 1);
 
-      queue[++counter] = function () {
+      queue$1[++counter] = function () {
         apply(isCallable$1(fn) ? fn : Function$1(fn), undefined, args);
       };
 
@@ -1618,7 +1669,7 @@ this.google.maps.plugins.loader = (function (exports) {
     };
 
     clear = function clearImmediate(id) {
-      delete queue[id];
+      delete queue$1[id];
     }; // Node.js 0.8-
 
 
@@ -1824,6 +1875,32 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   };
 
+  var Queue$1 = function () {
+    this.head = null;
+    this.tail = null;
+  };
+
+  Queue$1.prototype = {
+    add: function (item) {
+      var entry = {
+        item: item,
+        next: null
+      };
+      if (this.head) this.tail.next = entry;else this.head = entry;
+      this.tail = entry;
+    },
+    get: function () {
+      var entry = this.head;
+
+      if (entry) {
+        this.head = entry.next;
+        if (this.tail === entry) this.tail = null;
+        return entry.item;
+      }
+    }
+  };
+  var queue = Queue$1;
+
   var engineIsBrowser = typeof window == 'object';
 
   var $ = _export;
@@ -1850,6 +1927,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var hostReportErrors = hostReportErrors$1;
   var newPromiseCapabilityModule = newPromiseCapability$2;
   var perform = perform$1;
+  var Queue = queue;
   var InternalStateModule = internalState;
   var isForced = isForced_1;
   var wellKnownSymbol = wellKnownSymbol$d;
@@ -1924,53 +2002,55 @@ this.google.maps.plugins.loader = (function (exports) {
     return isObject(it) && isCallable(then = it.then) ? then : false;
   };
 
+  var callReaction = function (reaction, state) {
+    var value = state.value;
+    var ok = state.state == FULFILLED;
+    var handler = ok ? reaction.ok : reaction.fail;
+    var resolve = reaction.resolve;
+    var reject = reaction.reject;
+    var domain = reaction.domain;
+    var result, then, exited;
+
+    try {
+      if (handler) {
+        if (!ok) {
+          if (state.rejection === UNHANDLED) onHandleUnhandled(state);
+          state.rejection = HANDLED;
+        }
+
+        if (handler === true) result = value;else {
+          if (domain) domain.enter();
+          result = handler(value); // can throw
+
+          if (domain) {
+            domain.exit();
+            exited = true;
+          }
+        }
+
+        if (result === reaction.promise) {
+          reject(TypeError$1('Promise-chain cycle'));
+        } else if (then = isThenable(result)) {
+          call(then, result, resolve, reject);
+        } else resolve(result);
+      } else reject(value);
+    } catch (error) {
+      if (domain && !exited) domain.exit();
+      reject(error);
+    }
+  };
+
   var notify = function (state, isReject) {
     if (state.notified) return;
     state.notified = true;
-    var chain = state.reactions;
     microtask(function () {
-      var value = state.value;
-      var ok = state.state == FULFILLED;
-      var index = 0; // variable length - can't use forEach
+      var reactions = state.reactions;
+      var reaction;
 
-      while (chain.length > index) {
-        var reaction = chain[index++];
-        var handler = ok ? reaction.ok : reaction.fail;
-        var resolve = reaction.resolve;
-        var reject = reaction.reject;
-        var domain = reaction.domain;
-        var result, then, exited;
-
-        try {
-          if (handler) {
-            if (!ok) {
-              if (state.rejection === UNHANDLED) onHandleUnhandled(state);
-              state.rejection = HANDLED;
-            }
-
-            if (handler === true) result = value;else {
-              if (domain) domain.enter();
-              result = handler(value); // can throw
-
-              if (domain) {
-                domain.exit();
-                exited = true;
-              }
-            }
-
-            if (result === reaction.promise) {
-              reject(TypeError$1('Promise-chain cycle'));
-            } else if (then = isThenable(result)) {
-              call(then, result, resolve, reject);
-            } else resolve(result);
-          } else reject(value);
-        } catch (error) {
-          if (domain && !exited) domain.exit();
-          reject(error);
-        }
+      while (reaction = reactions.get()) {
+        callReaction(reaction, state);
       }
 
-      state.reactions = [];
       state.notified = false;
       if (isReject && !state.rejection) onUnhandled(state);
     });
@@ -2099,7 +2179,7 @@ this.google.maps.plugins.loader = (function (exports) {
         done: false,
         notified: false,
         parent: false,
-        reactions: [],
+        reactions: new Queue(),
         rejection: false,
         state: PENDING,
         value: undefined
@@ -2109,16 +2189,17 @@ this.google.maps.plugins.loader = (function (exports) {
     Internal.prototype = redefineAll(PromisePrototype, {
       // `Promise.prototype.then` method
       // https://tc39.es/ecma262/#sec-promise.prototype.then
+      // eslint-disable-next-line unicorn/no-thenable -- safe
       then: function then(onFulfilled, onRejected) {
         var state = getInternalPromiseState(this);
-        var reactions = state.reactions;
         var reaction = newPromiseCapability(speciesConstructor(this, PromiseConstructor));
+        state.parent = true;
         reaction.ok = isCallable(onFulfilled) ? onFulfilled : true;
         reaction.fail = isCallable(onRejected) && onRejected;
         reaction.domain = IS_NODE ? process.domain : undefined;
-        state.parent = true;
-        reactions[reactions.length] = reaction;
-        if (state.state != PENDING) notify(state, false);
+        if (state.state == PENDING) state.reactions.add(reaction);else microtask(function () {
+          callReaction(reaction, state);
+        });
         return reaction.promise;
       },
       // `Promise.prototype.catch` method
