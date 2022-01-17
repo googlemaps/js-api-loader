@@ -42,7 +42,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var objectGetOwnPropertyDescriptor = {};
 
-  var fails$c = function (exec) {
+  var fails$d = function (exec) {
     try {
       return !!exec();
     } catch (error) {
@@ -50,9 +50,9 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   };
 
-  var fails$b = fails$c; // Detect IE8's incomplete defineProperty implementation
+  var fails$c = fails$d; // Detect IE8's incomplete defineProperty implementation
 
-  var descriptors = !fails$b(function () {
+  var descriptors = !fails$c(function () {
     // eslint-disable-next-line es/no-object-defineproperty -- required for testing
     return Object.defineProperty({}, 1, {
       get: function () {
@@ -61,8 +61,19 @@ this.google.maps.plugins.loader = (function (exports) {
     })[1] != 7;
   });
 
+  var fails$b = fails$d;
+  var functionBindNative = !fails$b(function () {
+    var test = function () {
+      /* empty */
+    }.bind(); // eslint-disable-next-line no-prototype-builtins -- safe
+
+
+    return typeof test != 'function' || test.hasOwnProperty('prototype');
+  });
+
+  var NATIVE_BIND$3 = functionBindNative;
   var call$9 = Function.prototype.call;
-  var functionCall = call$9.bind ? call$9.bind(call$9) : function () {
+  var functionCall = NATIVE_BIND$3 ? call$9.bind(call$9) : function () {
     return call$9.apply(call$9, arguments);
   };
 
@@ -91,11 +102,12 @@ this.google.maps.plugins.loader = (function (exports) {
     };
   };
 
+  var NATIVE_BIND$2 = functionBindNative;
   var FunctionPrototype$2 = Function.prototype;
-  var bind$7 = FunctionPrototype$2.bind;
+  var bind$6 = FunctionPrototype$2.bind;
   var call$8 = FunctionPrototype$2.call;
-  var uncurryThis$g = bind$7 && bind$7.bind(call$8, call$8);
-  var functionUncurryThis = bind$7 ? function (fn) {
+  var uncurryThis$g = NATIVE_BIND$2 && bind$6.bind(call$8, call$8);
+  var functionUncurryThis = NATIVE_BIND$2 ? function (fn) {
     return fn && uncurryThis$g(fn);
   } : function (fn) {
     return fn && function () {
@@ -113,7 +125,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var global$B = global$C;
   var uncurryThis$e = functionUncurryThis;
-  var fails$a = fails$c;
+  var fails$a = fails$d;
   var classof$6 = classofRaw$1;
   var Object$4 = global$B.Object;
   var split = uncurryThis$e(''.split); // fallback for non-array-like ES3 and non-enumerable old V8 strings
@@ -201,7 +213,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   /* eslint-disable es/no-symbol -- required for testing */
   var V8_VERSION$3 = engineV8Version;
-  var fails$9 = fails$c; // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
+  var fails$9 = fails$d; // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
 
   var nativeSymbol = !!Object.getOwnPropertySymbols && !fails$9(function () {
     var symbol = Symbol(); // Chrome 38 Symbol has incorrect toString conversion
@@ -302,9 +314,11 @@ this.google.maps.plugins.loader = (function (exports) {
   (shared$3.exports = function (key, value) {
     return store$2[key] || (store$2[key] = value !== undefined ? value : {});
   })('versions', []).push({
-    version: '3.20.2',
+    version: '3.20.3',
     mode: 'global',
-    copyright: '© 2022 Denis Pushkarev (zloirock.ru)'
+    copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
+    license: 'https://github.com/zloirock/core-js/blob/v3.20.3/LICENSE',
+    source: 'https://github.com/zloirock/core-js'
   });
 
   var global$r = global$C;
@@ -408,8 +422,8 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var DESCRIPTORS$6 = descriptors;
-  var fails$8 = fails$c;
-  var createElement$1 = documentCreateElement$1; // Thank's IE8 for his funny defineProperty
+  var fails$8 = fails$d;
+  var createElement$1 = documentCreateElement$1; // Thanks to IE8 for its funny defineProperty
 
   var ie8DomDefine = !DESCRIPTORS$6 && !fails$8(function () {
     // eslint-disable-next-line es/no-object-defineproperty -- required for testing
@@ -446,7 +460,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var objectDefineProperty = {};
 
   var DESCRIPTORS$4 = descriptors;
-  var fails$7 = fails$c; // V8 ~ Chrome 36-
+  var fails$7 = fails$d; // V8 ~ Chrome 36-
   // https://bugs.chromium.org/p/v8/issues/detail?id=3334
 
   var v8PrototypeDefineBug = DESCRIPTORS$4 && fails$7(function () {
@@ -844,7 +858,7 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   };
 
-  var fails$6 = fails$c;
+  var fails$6 = fails$d;
   var isCallable$5 = isCallable$e;
   var replacement = /#|\.prototype\./;
 
@@ -977,7 +991,7 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var uncurryThis$6 = functionUncurryThis;
-  var fails$5 = fails$c;
+  var fails$5 = fails$d;
   var isCallable$3 = isCallable$e;
   var classof$3 = classof$4;
   var getBuiltIn$4 = getBuiltIn$8;
@@ -1065,7 +1079,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return new (arraySpeciesConstructor(originalArray))(length === 0 ? 0 : length);
   };
 
-  var fails$4 = fails$c;
+  var fails$4 = fails$d;
   var wellKnownSymbol$8 = wellKnownSymbol$d;
   var V8_VERSION$2 = engineV8Version;
   var SPECIES$3 = wellKnownSymbol$8('species');
@@ -1090,7 +1104,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var $$3 = _export;
   var global$f = global$C;
-  var fails$3 = fails$c;
+  var fails$3 = fails$d;
   var isArray = isArray$2;
   var isObject$2 = isObject$9;
   var toObject$1 = toObject$3;
@@ -1155,12 +1169,12 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   });
 
+  var NATIVE_BIND$1 = functionBindNative;
   var FunctionPrototype = Function.prototype;
   var apply$2 = FunctionPrototype.apply;
-  var bind$6 = FunctionPrototype.bind;
   var call$4 = FunctionPrototype.call; // eslint-disable-next-line es/no-reflect -- safe
 
-  var functionApply = typeof Reflect == 'object' && Reflect.apply || (bind$6 ? call$4.bind(apply$2) : function () {
+  var functionApply = typeof Reflect == 'object' && Reflect.apply || (NATIVE_BIND$1 ? call$4.bind(apply$2) : function () {
     return call$4.apply(apply$2, arguments);
   });
 
@@ -1169,7 +1183,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var getBuiltIn$3 = getBuiltIn$8;
   var apply$1 = functionApply;
   var uncurryThis$5 = functionUncurryThis;
-  var fails$2 = fails$c;
+  var fails$2 = fails$d;
   var Array$1 = global$e.Array;
   var $stringify = getBuiltIn$3('JSON', 'stringify');
   var exec = uncurryThis$5(/./.exec);
@@ -1215,7 +1229,7 @@ this.google.maps.plugins.loader = (function (exports) {
     });
   }
 
-  var fails$1 = fails$c;
+  var fails$1 = fails$d;
 
   var arrayMethodIsStrict$2 = function (METHOD_NAME, argument) {
     var method = [][METHOD_NAME];
@@ -1364,11 +1378,12 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var uncurryThis$2 = functionUncurryThis;
   var aCallable$3 = aCallable$5;
+  var NATIVE_BIND = functionBindNative;
   var bind$5 = uncurryThis$2(uncurryThis$2.bind); // optional / simple context binding
 
   var functionBindContext = function (fn, that) {
     aCallable$3(fn);
-    return that === undefined ? fn : bind$5 ? bind$5(fn, that) : function ()
+    return that === undefined ? fn : NATIVE_BIND ? bind$5(fn, that) : function ()
     /* ...args */
     {
       return fn.apply(that, arguments);
@@ -1607,7 +1622,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var bind$3 = functionBindContext;
   var isCallable$1 = isCallable$e;
   var hasOwn = hasOwnProperty_1;
-  var fails = fails$c;
+  var fails = fails$d;
   var html = html$1;
   var arraySlice = arraySlice$1;
   var createElement = documentCreateElement$1;
