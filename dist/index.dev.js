@@ -33,7 +33,7 @@ this.google.maps.plugins.loader = (function (exports) {
   }; // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 
 
-  var global$C = // eslint-disable-next-line es/no-global-this -- safe
+  var global$D = // eslint-disable-next-line es/no-global-this -- safe
   check(typeof globalThis == 'object' && globalThis) || check(typeof window == 'object' && window) || // eslint-disable-next-line no-restricted-globals -- safe
   check(typeof self == 'object' && self) || check(typeof commonjsGlobal == 'object' && commonjsGlobal) || // eslint-disable-next-line no-new-func -- fallback
   function () {
@@ -123,11 +123,11 @@ this.google.maps.plugins.loader = (function (exports) {
     return stringSlice(toString$2(it), 8, -1);
   };
 
-  var global$B = global$C;
+  var global$C = global$D;
   var uncurryThis$e = functionUncurryThis;
   var fails$a = fails$d;
   var classof$6 = classofRaw$1;
-  var Object$4 = global$B.Object;
+  var Object$4 = global$C.Object;
   var split = uncurryThis$e(''.split); // fallback for non-array-like ES3 and non-enumerable old V8 strings
 
   var indexedObject = fails$a(function () {
@@ -138,12 +138,12 @@ this.google.maps.plugins.loader = (function (exports) {
     return classof$6(it) == 'String' ? split(it, '') : Object$4(it);
   } : Object$4;
 
-  var global$A = global$C;
-  var TypeError$e = global$A.TypeError; // `RequireObjectCoercible` abstract operation
+  var global$B = global$D;
+  var TypeError$f = global$B.TypeError; // `RequireObjectCoercible` abstract operation
   // https://tc39.es/ecma262/#sec-requireobjectcoercible
 
   var requireObjectCoercible$2 = function (it) {
-    if (it == undefined) throw TypeError$e("Can't call method on " + it);
+    if (it == undefined) throw TypeError$f("Can't call method on " + it);
     return it;
   };
 
@@ -166,7 +166,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return typeof it == 'object' ? it !== null : isCallable$d(it);
   };
 
-  var global$z = global$C;
+  var global$A = global$D;
   var isCallable$c = isCallable$e;
 
   var aFunction = function (argument) {
@@ -174,7 +174,7 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var getBuiltIn$8 = function (namespace, method) {
-    return arguments.length < 2 ? aFunction(global$z[namespace]) : global$z[namespace] && global$z[namespace][method];
+    return arguments.length < 2 ? aFunction(global$A[namespace]) : global$A[namespace] && global$A[namespace][method];
   };
 
   var uncurryThis$d = functionUncurryThis;
@@ -183,10 +183,10 @@ this.google.maps.plugins.loader = (function (exports) {
   var getBuiltIn$7 = getBuiltIn$8;
   var engineUserAgent = getBuiltIn$7('navigator', 'userAgent') || '';
 
-  var global$y = global$C;
+  var global$z = global$D;
   var userAgent$3 = engineUserAgent;
-  var process$3 = global$y.process;
-  var Deno = global$y.Deno;
+  var process$3 = global$z.process;
+  var Deno = global$z.Deno;
   var versions = process$3 && process$3.versions || Deno && Deno.version;
   var v8 = versions && versions.v8;
   var match, version;
@@ -227,12 +227,12 @@ this.google.maps.plugins.loader = (function (exports) {
   var NATIVE_SYMBOL$1 = nativeSymbol;
   var useSymbolAsUid = NATIVE_SYMBOL$1 && !Symbol.sham && typeof Symbol.iterator == 'symbol';
 
-  var global$x = global$C;
+  var global$y = global$D;
   var getBuiltIn$6 = getBuiltIn$8;
   var isCallable$b = isCallable$e;
   var isPrototypeOf$2 = objectIsPrototypeOf;
   var USE_SYMBOL_AS_UID$1 = useSymbolAsUid;
-  var Object$3 = global$x.Object;
+  var Object$3 = global$y.Object;
   var isSymbol$2 = USE_SYMBOL_AS_UID$1 ? function (it) {
     return typeof it == 'symbol';
   } : function (it) {
@@ -240,8 +240,8 @@ this.google.maps.plugins.loader = (function (exports) {
     return isCallable$b($Symbol) && isPrototypeOf$2($Symbol.prototype, Object$3(it));
   };
 
-  var global$w = global$C;
-  var String$4 = global$w.String;
+  var global$x = global$D;
+  var String$4 = global$x.String;
 
   var tryToString$4 = function (argument) {
     try {
@@ -251,14 +251,14 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   };
 
-  var global$v = global$C;
+  var global$w = global$D;
   var isCallable$a = isCallable$e;
   var tryToString$3 = tryToString$4;
-  var TypeError$d = global$v.TypeError; // `Assert: IsCallable(argument) is true`
+  var TypeError$e = global$w.TypeError; // `Assert: IsCallable(argument) is true`
 
   var aCallable$5 = function (argument) {
     if (isCallable$a(argument)) return argument;
-    throw TypeError$d(tryToString$3(argument) + ' is not a function');
+    throw TypeError$e(tryToString$3(argument) + ' is not a function');
   };
 
   var aCallable$4 = aCallable$5; // `GetMethod` abstract operation
@@ -269,11 +269,11 @@ this.google.maps.plugins.loader = (function (exports) {
     return func == null ? undefined : aCallable$4(func);
   };
 
-  var global$u = global$C;
+  var global$v = global$D;
   var call$7 = functionCall;
   var isCallable$9 = isCallable$e;
   var isObject$8 = isObject$9;
-  var TypeError$c = global$u.TypeError; // `OrdinaryToPrimitive` abstract operation
+  var TypeError$d = global$v.TypeError; // `OrdinaryToPrimitive` abstract operation
   // https://tc39.es/ecma262/#sec-ordinarytoprimitive
 
   var ordinaryToPrimitive$1 = function (input, pref) {
@@ -281,49 +281,49 @@ this.google.maps.plugins.loader = (function (exports) {
     if (pref === 'string' && isCallable$9(fn = input.toString) && !isObject$8(val = call$7(fn, input))) return val;
     if (isCallable$9(fn = input.valueOf) && !isObject$8(val = call$7(fn, input))) return val;
     if (pref !== 'string' && isCallable$9(fn = input.toString) && !isObject$8(val = call$7(fn, input))) return val;
-    throw TypeError$c("Can't convert object to primitive value");
+    throw TypeError$d("Can't convert object to primitive value");
   };
 
   var shared$3 = {exports: {}};
 
-  var global$t = global$C; // eslint-disable-next-line es/no-object-defineproperty -- safe
+  var global$u = global$D; // eslint-disable-next-line es/no-object-defineproperty -- safe
 
   var defineProperty$1 = Object.defineProperty;
 
   var setGlobal$3 = function (key, value) {
     try {
-      defineProperty$1(global$t, key, {
+      defineProperty$1(global$u, key, {
         value: value,
         configurable: true,
         writable: true
       });
     } catch (error) {
-      global$t[key] = value;
+      global$u[key] = value;
     }
 
     return value;
   };
 
-  var global$s = global$C;
+  var global$t = global$D;
   var setGlobal$2 = setGlobal$3;
   var SHARED = '__core-js_shared__';
-  var store$3 = global$s[SHARED] || setGlobal$2(SHARED, {});
+  var store$3 = global$t[SHARED] || setGlobal$2(SHARED, {});
   var sharedStore = store$3;
 
   var store$2 = sharedStore;
   (shared$3.exports = function (key, value) {
     return store$2[key] || (store$2[key] = value !== undefined ? value : {});
   })('versions', []).push({
-    version: '3.20.3',
+    version: '3.21.0',
     mode: 'global',
     copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-    license: 'https://github.com/zloirock/core-js/blob/v3.20.3/LICENSE',
+    license: 'https://github.com/zloirock/core-js/blob/v3.21.0/LICENSE',
     source: 'https://github.com/zloirock/core-js'
   });
 
-  var global$r = global$C;
+  var global$s = global$D;
   var requireObjectCoercible = requireObjectCoercible$2;
-  var Object$2 = global$r.Object; // `ToObject` abstract operation
+  var Object$2 = global$s.Object; // `ToObject` abstract operation
   // https://tc39.es/ecma262/#sec-toobject
 
   var toObject$3 = function (argument) {
@@ -348,14 +348,14 @@ this.google.maps.plugins.loader = (function (exports) {
     return 'Symbol(' + (key === undefined ? '' : key) + ')_' + toString$1(++id + postfix, 36);
   };
 
-  var global$q = global$C;
+  var global$r = global$D;
   var shared$2 = shared$3.exports;
   var hasOwn$8 = hasOwnProperty_1;
   var uid$1 = uid$2;
   var NATIVE_SYMBOL = nativeSymbol;
   var USE_SYMBOL_AS_UID = useSymbolAsUid;
   var WellKnownSymbolsStore = shared$2('wks');
-  var Symbol$1 = global$q.Symbol;
+  var Symbol$1 = global$r.Symbol;
   var symbolFor = Symbol$1 && Symbol$1['for'];
   var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol$1 : Symbol$1 && Symbol$1.withoutSetter || uid$1;
 
@@ -375,14 +375,14 @@ this.google.maps.plugins.loader = (function (exports) {
     return WellKnownSymbolsStore[name];
   };
 
-  var global$p = global$C;
+  var global$q = global$D;
   var call$6 = functionCall;
   var isObject$7 = isObject$9;
   var isSymbol$1 = isSymbol$2;
   var getMethod$2 = getMethod$3;
   var ordinaryToPrimitive = ordinaryToPrimitive$1;
   var wellKnownSymbol$c = wellKnownSymbol$d;
-  var TypeError$b = global$p.TypeError;
+  var TypeError$c = global$q.TypeError;
   var TO_PRIMITIVE = wellKnownSymbol$c('toPrimitive'); // `ToPrimitive` abstract operation
   // https://tc39.es/ecma262/#sec-toprimitive
 
@@ -395,7 +395,7 @@ this.google.maps.plugins.loader = (function (exports) {
       if (pref === undefined) pref = 'default';
       result = call$6(exoticToPrim, input, pref);
       if (!isObject$7(result) || isSymbol$1(result)) return result;
-      throw TypeError$b("Can't convert object to primitive value");
+      throw TypeError$c("Can't convert object to primitive value");
     }
 
     if (pref === undefined) pref = 'number';
@@ -411,9 +411,9 @@ this.google.maps.plugins.loader = (function (exports) {
     return isSymbol(key) ? key : key + '';
   };
 
-  var global$o = global$C;
+  var global$p = global$D;
   var isObject$6 = isObject$9;
-  var document$3 = global$o.document; // typeof document.createElement is 'object' in old IE
+  var document$3 = global$p.document; // typeof document.createElement is 'object' in old IE
 
   var EXISTS$1 = isObject$6(document$3) && isObject$6(document$3.createElement);
 
@@ -473,23 +473,23 @@ this.google.maps.plugins.loader = (function (exports) {
     }).prototype != 42;
   });
 
-  var global$n = global$C;
+  var global$o = global$D;
   var isObject$5 = isObject$9;
-  var String$3 = global$n.String;
-  var TypeError$a = global$n.TypeError; // `Assert: Type(argument) is Object`
+  var String$3 = global$o.String;
+  var TypeError$b = global$o.TypeError; // `Assert: Type(argument) is Object`
 
   var anObject$8 = function (argument) {
     if (isObject$5(argument)) return argument;
-    throw TypeError$a(String$3(argument) + ' is not an object');
+    throw TypeError$b(String$3(argument) + ' is not an object');
   };
 
-  var global$m = global$C;
+  var global$n = global$D;
   var DESCRIPTORS$3 = descriptors;
   var IE8_DOM_DEFINE = ie8DomDefine;
   var V8_PROTOTYPE_DEFINE_BUG = v8PrototypeDefineBug;
   var anObject$7 = anObject$8;
   var toPropertyKey$1 = toPropertyKey$3;
-  var TypeError$9 = global$m.TypeError; // eslint-disable-next-line es/no-object-defineproperty -- safe
+  var TypeError$a = global$n.TypeError; // eslint-disable-next-line es/no-object-defineproperty -- safe
 
   var $defineProperty = Object.defineProperty; // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 
@@ -527,7 +527,7 @@ this.google.maps.plugins.loader = (function (exports) {
     } catch (error) {
       /* empty */
     }
-    if ('get' in Attributes || 'set' in Attributes) throw TypeError$9('Accessors not supported');
+    if ('get' in Attributes || 'set' in Attributes) throw TypeError$a('Accessors not supported');
     if ('value' in Attributes) O[P] = Attributes.value;
     return O;
   };
@@ -557,10 +557,10 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var inspectSource$4 = store$1.inspectSource;
 
-  var global$l = global$C;
+  var global$m = global$D;
   var isCallable$7 = isCallable$e;
   var inspectSource$3 = inspectSource$4;
-  var WeakMap$1 = global$l.WeakMap;
+  var WeakMap$1 = global$m.WeakMap;
   var nativeWeakMap = isCallable$7(WeakMap$1) && /native code/.test(inspectSource$3(WeakMap$1));
 
   var shared$1 = shared$3.exports;
@@ -574,7 +574,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var hiddenKeys$3 = {};
 
   var NATIVE_WEAK_MAP = nativeWeakMap;
-  var global$k = global$C;
+  var global$l = global$D;
   var uncurryThis$9 = functionUncurryThis;
   var isObject$4 = isObject$9;
   var createNonEnumerableProperty$3 = createNonEnumerableProperty$4;
@@ -583,8 +583,8 @@ this.google.maps.plugins.loader = (function (exports) {
   var sharedKey = sharedKey$1;
   var hiddenKeys$2 = hiddenKeys$3;
   var OBJECT_ALREADY_INITIALIZED = 'Object already initialized';
-  var TypeError$8 = global$k.TypeError;
-  var WeakMap = global$k.WeakMap;
+  var TypeError$9 = global$l.TypeError;
+  var WeakMap = global$l.WeakMap;
   var set$1, get, has;
 
   var enforce = function (it) {
@@ -596,7 +596,7 @@ this.google.maps.plugins.loader = (function (exports) {
       var state;
 
       if (!isObject$4(it) || (state = get(it)).type !== TYPE) {
-        throw TypeError$8('Incompatible receiver, ' + TYPE + ' required');
+        throw TypeError$9('Incompatible receiver, ' + TYPE + ' required');
       }
 
       return state;
@@ -610,7 +610,7 @@ this.google.maps.plugins.loader = (function (exports) {
     var wmset = uncurryThis$9(store.set);
 
     set$1 = function (it, metadata) {
-      if (wmhas(store, it)) throw new TypeError$8(OBJECT_ALREADY_INITIALIZED);
+      if (wmhas(store, it)) throw new TypeError$9(OBJECT_ALREADY_INITIALIZED);
       metadata.facade = it;
       wmset(store, it, metadata);
       return metadata;
@@ -628,7 +628,7 @@ this.google.maps.plugins.loader = (function (exports) {
     hiddenKeys$2[STATE] = true;
 
     set$1 = function (it, metadata) {
-      if (hasOwn$6(it, STATE)) throw new TypeError$8(OBJECT_ALREADY_INITIALIZED);
+      if (hasOwn$6(it, STATE)) throw new TypeError$9(OBJECT_ALREADY_INITIALIZED);
       metadata.facade = it;
       createNonEnumerableProperty$3(it, STATE, metadata);
       return metadata;
@@ -669,7 +669,7 @@ this.google.maps.plugins.loader = (function (exports) {
     CONFIGURABLE: CONFIGURABLE
   };
 
-  var global$j = global$C;
+  var global$k = global$D;
   var isCallable$6 = isCallable$e;
   var hasOwn$4 = hasOwnProperty_1;
   var createNonEnumerableProperty$2 = createNonEnumerableProperty$4;
@@ -703,7 +703,7 @@ this.google.maps.plugins.loader = (function (exports) {
       }
     }
 
-    if (O === global$j) {
+    if (O === global$k) {
       if (simple) O[key] = value;else setGlobal$1(key, value);
       return;
     } else if (!unsafe) {
@@ -876,7 +876,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var POLYFILL = isForced$2.POLYFILL = 'P';
   var isForced_1 = isForced$2;
 
-  var global$i = global$C;
+  var global$j = global$D;
   var getOwnPropertyDescriptor$1 = objectGetOwnPropertyDescriptor.f;
   var createNonEnumerableProperty$1 = createNonEnumerableProperty$4;
   var redefine$3 = redefine$4.exports;
@@ -906,11 +906,11 @@ this.google.maps.plugins.loader = (function (exports) {
     var FORCED, target, key, targetProperty, sourceProperty, descriptor;
 
     if (GLOBAL) {
-      target = global$i;
+      target = global$j;
     } else if (STATIC) {
-      target = global$i[TARGET] || setGlobal(TARGET, {});
+      target = global$j[TARGET] || setGlobal(TARGET, {});
     } else {
-      target = (global$i[TARGET] || {}).prototype;
+      target = (global$j[TARGET] || {}).prototype;
     }
 
     if (target) for (key in source) {
@@ -961,13 +961,13 @@ this.google.maps.plugins.loader = (function (exports) {
   test[TO_STRING_TAG$2] = 'z';
   var toStringTagSupport = String(test) === '[object z]';
 
-  var global$h = global$C;
+  var global$i = global$D;
   var TO_STRING_TAG_SUPPORT$2 = toStringTagSupport;
   var isCallable$4 = isCallable$e;
   var classofRaw = classofRaw$1;
   var wellKnownSymbol$a = wellKnownSymbol$d;
   var TO_STRING_TAG$1 = wellKnownSymbol$a('toStringTag');
-  var Object$1 = global$h.Object; // ES3 wrong here
+  var Object$1 = global$i.Object; // ES3 wrong here
 
   var CORRECT_ARGUMENTS = classofRaw(function () {
     return arguments;
@@ -1048,13 +1048,13 @@ this.google.maps.plugins.loader = (function (exports) {
     }) || called;
   }) ? isConstructorLegacy : isConstructorModern;
 
-  var global$g = global$C;
+  var global$h = global$D;
   var isArray$1 = isArray$2;
   var isConstructor$1 = isConstructor$2;
   var isObject$3 = isObject$9;
   var wellKnownSymbol$9 = wellKnownSymbol$d;
   var SPECIES$4 = wellKnownSymbol$9('species');
-  var Array$2 = global$g.Array; // a part of `ArraySpeciesCreate` abstract operation
+  var Array$2 = global$h.Array; // a part of `ArraySpeciesCreate` abstract operation
   // https://tc39.es/ecma262/#sec-arrayspeciescreate
 
   var arraySpeciesConstructor$1 = function (originalArray) {
@@ -1103,7 +1103,7 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var $$3 = _export;
-  var global$f = global$C;
+  var global$g = global$D;
   var fails$3 = fails$d;
   var isArray = isArray$2;
   var isObject$2 = isObject$9;
@@ -1117,7 +1117,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var IS_CONCAT_SPREADABLE = wellKnownSymbol$7('isConcatSpreadable');
   var MAX_SAFE_INTEGER = 0x1FFFFFFFFFFFFF;
   var MAXIMUM_ALLOWED_INDEX_EXCEEDED = 'Maximum allowed index exceeded';
-  var TypeError$7 = global$f.TypeError; // We can't use this feature detection in V8 since it causes
+  var TypeError$8 = global$g.TypeError; // We can't use this feature detection in V8 since it causes
   // deoptimization and serious performance degradation
   // https://github.com/zloirock/core-js/issues/679
 
@@ -1155,11 +1155,11 @@ this.google.maps.plugins.loader = (function (exports) {
 
         if (isConcatSpreadable(E)) {
           len = lengthOfArrayLike$2(E);
-          if (n + len > MAX_SAFE_INTEGER) throw TypeError$7(MAXIMUM_ALLOWED_INDEX_EXCEEDED);
+          if (n + len > MAX_SAFE_INTEGER) throw TypeError$8(MAXIMUM_ALLOWED_INDEX_EXCEEDED);
 
           for (k = 0; k < len; k++, n++) if (k in E) createProperty(A, n, E[k]);
         } else {
-          if (n >= MAX_SAFE_INTEGER) throw TypeError$7(MAXIMUM_ALLOWED_INDEX_EXCEEDED);
+          if (n >= MAX_SAFE_INTEGER) throw TypeError$8(MAXIMUM_ALLOWED_INDEX_EXCEEDED);
           createProperty(A, n++, E);
         }
       }
@@ -1179,12 +1179,12 @@ this.google.maps.plugins.loader = (function (exports) {
   });
 
   var $$2 = _export;
-  var global$e = global$C;
+  var global$f = global$D;
   var getBuiltIn$3 = getBuiltIn$8;
   var apply$1 = functionApply;
   var uncurryThis$5 = functionUncurryThis;
   var fails$2 = fails$d;
-  var Array$1 = global$e.Array;
+  var Array$1 = global$f.Array;
   var $stringify = getBuiltIn$3('JSON', 'stringify');
   var exec = uncurryThis$5(/./.exec);
   var charAt = uncurryThis$5(''.charAt);
@@ -1280,8 +1280,8 @@ this.google.maps.plugins.loader = (function (exports) {
     });
   }
 
-  var global$d = global$C;
-  var nativePromiseConstructor = global$d.Promise;
+  var global$e = global$D;
+  var nativePromiseConstructor = global$e.Promise;
 
   var redefine$1 = redefine$4.exports;
 
@@ -1291,14 +1291,14 @@ this.google.maps.plugins.loader = (function (exports) {
     return target;
   };
 
-  var global$c = global$C;
+  var global$d = global$D;
   var isCallable$2 = isCallable$e;
-  var String$2 = global$c.String;
-  var TypeError$6 = global$c.TypeError;
+  var String$2 = global$d.String;
+  var TypeError$7 = global$d.TypeError;
 
   var aPossiblePrototype$1 = function (argument) {
     if (typeof argument == 'object' || isCallable$2(argument)) return argument;
-    throw TypeError$6("Can't set " + String$2(argument) + ' as a prototype');
+    throw TypeError$7("Can't set " + String$2(argument) + ' as a prototype');
   };
 
   /* eslint-disable no-proto -- safe */
@@ -1367,13 +1367,13 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   };
 
-  var global$b = global$C;
+  var global$c = global$D;
   var isPrototypeOf$1 = objectIsPrototypeOf;
-  var TypeError$5 = global$b.TypeError;
+  var TypeError$6 = global$c.TypeError;
 
   var anInstance$1 = function (it, Prototype) {
     if (isPrototypeOf$1(Prototype, it)) return it;
-    throw TypeError$5('Incorrect invocation');
+    throw TypeError$6('Incorrect invocation');
   };
 
   var uncurryThis$2 = functionUncurryThis;
@@ -1411,18 +1411,18 @@ this.google.maps.plugins.loader = (function (exports) {
     if (it != undefined) return getMethod$1(it, ITERATOR$1) || getMethod$1(it, '@@iterator') || Iterators[classof$1(it)];
   };
 
-  var global$a = global$C;
+  var global$b = global$D;
   var call$3 = functionCall;
   var aCallable$2 = aCallable$5;
   var anObject$4 = anObject$8;
   var tryToString$2 = tryToString$4;
   var getIteratorMethod$1 = getIteratorMethod$2;
-  var TypeError$4 = global$a.TypeError;
+  var TypeError$5 = global$b.TypeError;
 
   var getIterator$1 = function (argument, usingIterator) {
     var iteratorMethod = arguments.length < 2 ? getIteratorMethod$1(argument) : usingIterator;
     if (aCallable$2(iteratorMethod)) return anObject$4(call$3(iteratorMethod, argument));
-    throw TypeError$4(tryToString$2(argument) + ' is not iterable');
+    throw TypeError$5(tryToString$2(argument) + ' is not iterable');
   };
 
   var call$2 = functionCall;
@@ -1453,7 +1453,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return value;
   };
 
-  var global$9 = global$C;
+  var global$a = global$D;
   var bind$4 = functionBindContext;
   var call$1 = functionCall;
   var anObject$2 = anObject$8;
@@ -1464,7 +1464,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var getIterator = getIterator$1;
   var getIteratorMethod = getIteratorMethod$2;
   var iteratorClose = iteratorClose$1;
-  var TypeError$3 = global$9.TypeError;
+  var TypeError$4 = global$a.TypeError;
 
   var Result = function (stopped, result) {
     this.stopped = stopped;
@@ -1499,7 +1499,7 @@ this.google.maps.plugins.loader = (function (exports) {
       iterator = iterable;
     } else {
       iterFn = getIteratorMethod(iterable);
-      if (!iterFn) throw TypeError$3(tryToString$1(iterable) + ' is not iterable'); // optimisation for array iterators
+      if (!iterFn) throw TypeError$4(tryToString$1(iterable) + ' is not iterable'); // optimisation for array iterators
 
       if (isArrayIteratorMethod(iterFn)) {
         for (index = 0, length = lengthOfArrayLike$1(iterable); length > index; index++) {
@@ -1582,14 +1582,14 @@ this.google.maps.plugins.loader = (function (exports) {
     return ITERATION_SUPPORT;
   };
 
-  var global$8 = global$C;
+  var global$9 = global$D;
   var isConstructor = isConstructor$2;
   var tryToString = tryToString$4;
-  var TypeError$2 = global$8.TypeError; // `Assert: IsConstructor(argument) is true`
+  var TypeError$3 = global$9.TypeError; // `Assert: IsConstructor(argument) is true`
 
   var aConstructor$1 = function (argument) {
     if (isConstructor(argument)) return argument;
-    throw TypeError$2(tryToString(argument) + ' is not a constructor');
+    throw TypeError$3(tryToString(argument) + ' is not a constructor');
   };
 
   var anObject$1 = anObject$8;
@@ -1610,14 +1610,22 @@ this.google.maps.plugins.loader = (function (exports) {
   var uncurryThis$1 = functionUncurryThis;
   var arraySlice$1 = uncurryThis$1([].slice);
 
+  var global$8 = global$D;
+  var TypeError$2 = global$8.TypeError;
+
+  var validateArgumentsLength$1 = function (passed, required) {
+    if (passed < required) throw TypeError$2('Not enough arguments');
+    return passed;
+  };
+
   var userAgent$2 = engineUserAgent;
   var engineIsIos = /(?:ipad|iphone|ipod).*applewebkit/i.test(userAgent$2);
 
   var classof = classofRaw$1;
-  var global$7 = global$C;
+  var global$7 = global$D;
   var engineIsNode = classof(global$7.process) == 'process';
 
-  var global$6 = global$C;
+  var global$6 = global$D;
   var apply = functionApply;
   var bind$3 = functionBindContext;
   var isCallable$1 = isCallable$e;
@@ -1626,6 +1634,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var html = html$1;
   var arraySlice = arraySlice$1;
   var createElement = documentCreateElement$1;
+  var validateArgumentsLength = validateArgumentsLength$1;
   var IS_IOS$1 = engineIsIos;
   var IS_NODE$2 = engineIsNode;
   var set = global$6.setImmediate;
@@ -1672,11 +1681,13 @@ this.google.maps.plugins.loader = (function (exports) {
 
 
   if (!set || !clear) {
-    set = function setImmediate(fn) {
+    set = function setImmediate(handler) {
+      validateArgumentsLength(arguments.length, 1);
+      var fn = isCallable$1(handler) ? handler : Function$1(handler);
       var args = arraySlice(arguments, 1);
 
       queue$1[++counter] = function () {
-        apply(isCallable$1(fn) ? fn : Function$1(fn), undefined, args);
+        apply(fn, undefined, args);
       };
 
       defer(counter);
@@ -1729,13 +1740,13 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var userAgent$1 = engineUserAgent;
-  var global$5 = global$C;
+  var global$5 = global$D;
   var engineIsIosPebble = /ipad|iphone|ipod/i.test(userAgent$1) && global$5.Pebble !== undefined;
 
   var userAgent = engineUserAgent;
   var engineIsWebosWebkit = /web0s(?!.*chrome)/i.test(userAgent);
 
-  var global$4 = global$C;
+  var global$4 = global$D;
   var bind$2 = functionBindContext;
   var getOwnPropertyDescriptor = objectGetOwnPropertyDescriptor.f;
   var macrotask = task$1.set;
@@ -1866,7 +1877,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return promiseCapability.promise;
   };
 
-  var global$3 = global$C;
+  var global$3 = global$D;
 
   var hostReportErrors$1 = function (a, b) {
     var console = global$3.console;
@@ -1919,7 +1930,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var engineIsBrowser = typeof window == 'object';
 
   var $ = _export;
-  var global$2 = global$C;
+  var global$2 = global$D;
   var getBuiltIn = getBuiltIn$8;
   var call = functionCall;
   var NativePromise = nativePromiseConstructor;
@@ -2497,7 +2508,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return $forEach(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined); // eslint-disable-next-line es/no-array-prototype-foreach -- safe
   } : [].forEach;
 
-  var global$1 = global$C;
+  var global$1 = global$D;
   var DOMIterables = domIterables;
   var DOMTokenListPrototype = domTokenListPrototype;
   var forEach = arrayForEach;
