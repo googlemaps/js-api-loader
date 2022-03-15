@@ -1,6 +1,6 @@
 {
   "name": "@googlemaps/js-api-loader",
-  "version": "1.13.8",
+  "version": "1.13.9",
   "description": "Wrapper for the loading of Google Maps JavaScript API script in the browser",
   "keywords": [
     "google",
