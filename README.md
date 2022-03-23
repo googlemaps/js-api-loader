@@ -19,12 +19,6 @@ Available via npm as the package [@googlemaps/js-api-loader](https://www.npmjs.c
 npm i @googlemaps/js-api-loader
 ```
 
-or
-
-```sh
-yarn add @googlemaps/js-api-loader
-```
-
 Alternatively you may add the umd package directly to the html document using the unpkg link.
 
 ```html
@@ -32,6 +26,14 @@ Alternatively you may add the umd package directly to the html document using th
 ```
 
 When adding via unpkg, the loader can be accessed at `google.maps.plugins.loader.Loader`.
+
+### TypeScript 
+
+TypeScript users need to install the following types package.
+
+```sh
+npm i -D @types/google.maps
+```
 
 ## Documentation
 
