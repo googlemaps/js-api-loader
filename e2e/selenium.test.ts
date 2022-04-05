@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* eslint  @typescript-eslint/ban-ts-ignore: 0 */
 import path from "path";
 import webdriver from "selenium-webdriver";
 
