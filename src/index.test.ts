@@ -51,6 +51,10 @@ test.each([
     { client: "bar", channel: "foo" },
     "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&channel=foo&client=bar",
   ],
+  [
+    { apiKey: "foo", signature: "zOEwiZWvDLJxLHqBj0BDeThAkuM=" },
+    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&key=foo&signature=zOEwiZWvDLJxLHqBj0BDeThAkuM=",
+  ],
 ])("createUrl is correct", (options: LoaderOptions, expected: string) => {
   const loader = new Loader(options);
   expect(loader.createUrl()).toEqual(expected);

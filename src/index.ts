@@ -160,6 +160,10 @@ export interface LoaderOptions {
    */
   nonce?: string;
   /**
+   * See https://developers.google.com/maps/documentation/maps-static/digital-signature
+   */
+  signature?: string;
+  /**
    * The number of script load retries.
    */
   retries?: number;
@@ -241,6 +245,11 @@ export class Loader {
   public readonly nonce: string | null;
 
   /**
+   * See [[LoaderOptions.signature]]
+   */
+  public readonly signature: string;
+
+  /**
    * See [[LoaderOptions.retries]]
    */
   public readonly retries: number;
@@ -277,6 +286,7 @@ export class Loader {
     version,
     mapIds,
     nonce,
+    signature,
     retries = 3,
     url = "https://maps.googleapis.com/maps/api/js",
   }: LoaderOptions) {
@@ -290,6 +300,7 @@ export class Loader {
     this.region = region;
     this.mapIds = mapIds;
     this.nonce = nonce;
+    this.signature = signature;
     this.retries = retries;
     this.url = url;
 
@@ -320,6 +331,7 @@ export class Loader {
       region: this.region,
       mapIds: this.mapIds,
       nonce: this.nonce,
+      signature: this.signature,
       url: this.url,
     };
   }
@@ -381,6 +393,10 @@ export class Loader {
 
     if (this.mapIds) {
       url += `&map_ids=${this.mapIds.join(",")}`;
+    }
+
+    if (this.signature) {
+      url += `&signature=${this.signature}`;
     }
 
     return url;
