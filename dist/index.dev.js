@@ -2614,21 +2614,22 @@ this.google.maps.plugins.loader = (function (exports) {
      */
     function Loader(_ref) {
       var apiKey = _ref.apiKey,
+          authReferrerPolicy = _ref.authReferrerPolicy,
           channel = _ref.channel,
           client = _ref.client,
           _ref$id = _ref.id,
           id = _ref$id === void 0 ? DEFAULT_ID : _ref$id,
+          language = _ref.language,
           _ref$libraries = _ref.libraries,
           libraries = _ref$libraries === void 0 ? [] : _ref$libraries,
-          language = _ref.language,
-          region = _ref.region,
-          version = _ref.version,
           mapIds = _ref.mapIds,
           nonce = _ref.nonce,
+          region = _ref.region,
           _ref$retries = _ref.retries,
           retries = _ref$retries === void 0 ? 3 : _ref$retries,
           _ref$url = _ref.url,
-          url = _ref$url === void 0 ? "https://maps.googleapis.com/maps/api/js" : _ref$url;
+          url = _ref$url === void 0 ? "https://maps.googleapis.com/maps/api/js" : _ref$url,
+          version = _ref.version;
 
       _classCallCheck(this, Loader);
 
@@ -2637,19 +2638,20 @@ this.google.maps.plugins.loader = (function (exports) {
       this.done = false;
       this.loading = false;
       this.errors = [];
-      this.version = version;
       this.apiKey = apiKey;
+      this.authReferrerPolicy = authReferrerPolicy;
       this.channel = channel;
       this.client = client;
       this.id = id || DEFAULT_ID; // Do not allow empty string
 
-      this.libraries = libraries;
       this.language = language;
-      this.region = region;
+      this.libraries = libraries;
       this.mapIds = mapIds;
       this.nonce = nonce;
+      this.region = region;
       this.retries = retries;
       this.url = url;
+      this.version = version;
 
       if (Loader.instance) {
         if (!fastDeepEqual(this.options, Loader.instance.options)) {
@@ -2676,7 +2678,8 @@ this.google.maps.plugins.loader = (function (exports) {
           region: this.region,
           mapIds: this.mapIds,
           nonce: this.nonce,
-          url: this.url
+          url: this.url,
+          authReferrerPolicy: this.authReferrerPolicy
         };
       }
     }, {
@@ -2743,6 +2746,10 @@ this.google.maps.plugins.loader = (function (exports) {
 
         if (this.mapIds) {
           url += "&map_ids=".concat(this.mapIds.join(","));
+        }
+
+        if (this.authReferrerPolicy) {
+          url += "&auth_referrer_policy=".concat(this.authReferrerPolicy);
         }
 
         return url;

@@ -152,6 +152,19 @@ export interface LoaderOptions {
      * The number of script load retries.
      */
     retries?: number;
+    /**
+     * Maps JS customers can configure HTTP Referrer Restrictions in the Cloud
+     * Console to limit which URLs are allowed to use a particular API Key. By
+     * default, these restrictions can be configured to allow only certain paths
+     * to use an API Key. If any URL on the same domain or origin may use the API
+     * Key, you can set `auth_referrer_policy=origin` to limit the amount of data
+     * sent when authorizing requests from the Maps JavaScript API. This is
+     * available starting in version 3.46. When this parameter is specified and
+     * HTTP Referrer Restrictions are enabled on Cloud Console, Maps JavaScript
+     * API will only be able to load if there is an HTTP Referrer Restriction that
+     * matches the current website's domain without a path specified.
+     */
+    authReferrerPolicy?: "origin";
 }
 /**
  * The status of the [[Loader]].
@@ -231,6 +244,10 @@ export declare class Loader {
      * See [[LoaderOptions.url]]
      */
     readonly url: string;
+    /**
+     * See [[LoaderOptions.authReferrerPolicy]]
+     */
+    readonly authReferrerPolicy: "origin";
     private CALLBACK;
     private callbacks;
     private done;
@@ -246,7 +263,7 @@ export declare class Loader {
      * const loader = Loader({apiKey, version: 'weekly', libraries: ['places']});
      * ```
      */
-    constructor({ apiKey, channel, client, id, libraries, language, region, version, mapIds, nonce, retries, url, }: LoaderOptions);
+    constructor({ apiKey, authReferrerPolicy, channel, client, id, language, libraries, mapIds, nonce, region, retries, url, version, }: LoaderOptions);
     get options(): LoaderOptions;
     get status(): LoaderStatus;
     private get failed();
