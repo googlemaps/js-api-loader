@@ -263,7 +263,7 @@ export class Loader {
    */
   public readonly url: string;
   /**
-   * See [[LoaderOptions.url]]
+   * See [[LoaderOptions.authReferrerPolicy]]
    */
   public readonly authReferrerPolicy: "origin";
 
