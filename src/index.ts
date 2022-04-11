@@ -163,6 +163,19 @@ export interface LoaderOptions {
    * The number of script load retries.
    */
   retries?: number;
+  /**
+   * Maps JS customers can configure HTTP Referrer Restrictions in the Cloud
+   * Console to limit which URLs are allowed to use a particular API Key. By
+   * default, these restrictions can be configured to allow only certain paths
+   * to use an API Key. If any URL on the same domain or origin may use the API
+   * Key, you can set `auth_referrer_policy=origin` to limit the amount of data
+   * sent when authorizing requests from the Maps JavaScript API. This is
+   * available starting in version 3.46. When this parameter is specified and
+   * HTTP Referrer Restrictions are enabled on Cloud Console, Maps JavaScript
+   * API will only be able to load if there is an HTTP Referrer Restriction that
+   * matches the current website's domain without a path specified.
+   */
+  authReferrerPolicy?: "origin";
 }
 
 /**
@@ -249,6 +262,10 @@ export class Loader {
    * See [[LoaderOptions.url]]
    */
   public readonly url: string;
+  /**
+   * See [[LoaderOptions.authReferrerPolicy]]
+   */
+  public readonly authReferrerPolicy: "origin";
 
   private CALLBACK = "__googleMapsCallback";
   private callbacks: ((e: ErrorEvent) => void)[] = [];
@@ -268,30 +285,32 @@ export class Loader {
    */
   constructor({
     apiKey,
+    authReferrerPolicy,
     channel,
     client,
     id = DEFAULT_ID,
-    libraries = [],
     language,
-    region,
-    version,
+    libraries = [],
     mapIds,
     nonce,
+    region,
     retries = 3,
     url = "https://maps.googleapis.com/maps/api/js",
+    version,
   }: LoaderOptions) {
-    this.version = version;
     this.apiKey = apiKey;
+    this.authReferrerPolicy = authReferrerPolicy;
     this.channel = channel;
     this.client = client;
     this.id = id || DEFAULT_ID; // Do not allow empty string
-    this.libraries = libraries;
     this.language = language;
-    this.region = region;
+    this.libraries = libraries;
     this.mapIds = mapIds;
     this.nonce = nonce;
+    this.region = region;
     this.retries = retries;
     this.url = url;
+    this.version = version;
 
     if (Loader.instance) {
       if (!isEqual(this.options, Loader.instance.options)) {
@@ -321,6 +340,7 @@ export class Loader {
       mapIds: this.mapIds,
       nonce: this.nonce,
       url: this.url,
+      authReferrerPolicy: this.authReferrerPolicy,
     };
   }
 
@@ -381,6 +401,10 @@ export class Loader {
 
     if (this.mapIds) {
       url += `&map_ids=${this.mapIds.join(",")}`;
+    }
+
+    if (this.authReferrerPolicy) {
+      url += `&auth_referrer_policy=${this.authReferrerPolicy}`;
     }
 
     return url;
