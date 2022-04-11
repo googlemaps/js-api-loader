@@ -175,7 +175,7 @@ export interface LoaderOptions {
    * API will only be able to load if there is an HTTP Referrer Restriction that
    * matches the current website's domain without a path specified.
    */
-  authReferrerPolicy?: 'origin';
+  authReferrerPolicy?: "origin";
 }
 
 /**
@@ -265,7 +265,7 @@ export class Loader {
   /**
    * See [[LoaderOptions.url]]
    */
-   public readonly authReferrerPolicy: 'origin';
+  public readonly authReferrerPolicy: "origin";
 
   private CALLBACK = "__googleMapsCallback";
   private callbacks: ((e: ErrorEvent) => void)[] = [];
@@ -299,7 +299,7 @@ export class Loader {
     version,
   }: LoaderOptions) {
     this.apiKey = apiKey;
-    this.authReferrerPolicy = authReferrerPolicy
+    this.authReferrerPolicy = authReferrerPolicy;
     this.channel = channel;
     this.client = client;
     this.id = id || DEFAULT_ID; // Do not allow empty string
