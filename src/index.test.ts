@@ -51,6 +51,10 @@ test.each([
     { client: "bar", channel: "foo" },
     "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&channel=foo&client=bar",
   ],
+  [
+    { authReferrerPolicy: "origin" },
+    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&auth_referrer_policy=origin",
+  ],
 ])("createUrl is correct", (options: LoaderOptions, expected: string) => {
   const loader = new Loader(options);
   expect(loader.createUrl()).toEqual(expected);
