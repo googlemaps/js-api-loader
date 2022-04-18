@@ -33,7 +33,7 @@ this.google.maps.plugins.loader = (function (exports) {
   }; // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 
 
-  var global$D = // eslint-disable-next-line es/no-global-this -- safe
+  var global$D = // eslint-disable-next-line es-x/no-global-this -- safe
   check(typeof globalThis == 'object' && globalThis) || check(typeof window == 'object' && window) || // eslint-disable-next-line no-restricted-globals -- safe
   check(typeof self == 'object' && self) || check(typeof commonjsGlobal == 'object' && commonjsGlobal) || // eslint-disable-next-line no-new-func -- fallback
   function () {
@@ -53,7 +53,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var fails$c = fails$d; // Detect IE8's incomplete defineProperty implementation
 
   var descriptors = !fails$c(function () {
-    // eslint-disable-next-line es/no-object-defineproperty -- required for testing
+    // eslint-disable-next-line es-x/no-object-defineproperty -- required for testing
     return Object.defineProperty({}, 1, {
       get: function () {
         return 7;
@@ -63,6 +63,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var fails$b = fails$d;
   var functionBindNative = !fails$b(function () {
+    // eslint-disable-next-line es-x/no-function-prototype-bind -- safe
     var test = function () {
       /* empty */
     }.bind(); // eslint-disable-next-line no-prototype-builtins -- safe
@@ -72,14 +73,14 @@ this.google.maps.plugins.loader = (function (exports) {
   });
 
   var NATIVE_BIND$3 = functionBindNative;
-  var call$9 = Function.prototype.call;
-  var functionCall = NATIVE_BIND$3 ? call$9.bind(call$9) : function () {
-    return call$9.apply(call$9, arguments);
+  var call$d = Function.prototype.call;
+  var functionCall = NATIVE_BIND$3 ? call$d.bind(call$d) : function () {
+    return call$d.apply(call$d, arguments);
   };
 
   var objectPropertyIsEnumerable = {};
 
-  var $propertyIsEnumerable = {}.propertyIsEnumerable; // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+  var $propertyIsEnumerable = {}.propertyIsEnumerable; // eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
 
   var getOwnPropertyDescriptor$2 = Object.getOwnPropertyDescriptor; // Nashorn ~ JDK8 bug
 
@@ -105,13 +106,13 @@ this.google.maps.plugins.loader = (function (exports) {
   var NATIVE_BIND$2 = functionBindNative;
   var FunctionPrototype$2 = Function.prototype;
   var bind$6 = FunctionPrototype$2.bind;
-  var call$8 = FunctionPrototype$2.call;
-  var uncurryThis$g = NATIVE_BIND$2 && bind$6.bind(call$8, call$8);
+  var call$c = FunctionPrototype$2.call;
+  var uncurryThis$g = NATIVE_BIND$2 && bind$6.bind(call$c, call$c);
   var functionUncurryThis = NATIVE_BIND$2 ? function (fn) {
     return fn && uncurryThis$g(fn);
   } : function (fn) {
     return fn && function () {
-      return call$8.apply(fn, arguments);
+      return call$c.apply(fn, arguments);
     };
   };
 
@@ -156,38 +157,38 @@ this.google.maps.plugins.loader = (function (exports) {
 
   // https://tc39.es/ecma262/#sec-iscallable
 
-  var isCallable$e = function (argument) {
+  var isCallable$h = function (argument) {
     return typeof argument == 'function';
   };
 
-  var isCallable$d = isCallable$e;
+  var isCallable$g = isCallable$h;
 
-  var isObject$9 = function (it) {
-    return typeof it == 'object' ? it !== null : isCallable$d(it);
+  var isObject$a = function (it) {
+    return typeof it == 'object' ? it !== null : isCallable$g(it);
   };
 
   var global$A = global$D;
-  var isCallable$c = isCallable$e;
+  var isCallable$f = isCallable$h;
 
   var aFunction = function (argument) {
-    return isCallable$c(argument) ? argument : undefined;
+    return isCallable$f(argument) ? argument : undefined;
   };
 
-  var getBuiltIn$8 = function (namespace, method) {
+  var getBuiltIn$9 = function (namespace, method) {
     return arguments.length < 2 ? aFunction(global$A[namespace]) : global$A[namespace] && global$A[namespace][method];
   };
 
   var uncurryThis$d = functionUncurryThis;
   var objectIsPrototypeOf = uncurryThis$d({}.isPrototypeOf);
 
-  var getBuiltIn$7 = getBuiltIn$8;
-  var engineUserAgent = getBuiltIn$7('navigator', 'userAgent') || '';
+  var getBuiltIn$8 = getBuiltIn$9;
+  var engineUserAgent = getBuiltIn$8('navigator', 'userAgent') || '';
 
   var global$z = global$D;
   var userAgent$3 = engineUserAgent;
   var process$3 = global$z.process;
-  var Deno = global$z.Deno;
-  var versions = process$3 && process$3.versions || Deno && Deno.version;
+  var Deno$1 = global$z.Deno;
+  var versions = process$3 && process$3.versions || Deno$1 && Deno$1.version;
   var v8 = versions && versions.v8;
   var match, version;
 
@@ -211,9 +212,9 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var engineV8Version = version;
 
-  /* eslint-disable es/no-symbol -- required for testing */
+  /* eslint-disable es-x/no-symbol -- required for testing */
   var V8_VERSION$3 = engineV8Version;
-  var fails$9 = fails$d; // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
+  var fails$9 = fails$d; // eslint-disable-next-line es-x/no-object-getownpropertysymbols -- required for testing
 
   var nativeSymbol = !!Object.getOwnPropertySymbols && !fails$9(function () {
     var symbol = Symbol(); // Chrome 38 Symbol has incorrect toString conversion
@@ -223,21 +224,21 @@ this.google.maps.plugins.loader = (function (exports) {
     !Symbol.sham && V8_VERSION$3 && V8_VERSION$3 < 41;
   });
 
-  /* eslint-disable es/no-symbol -- required for testing */
-  var NATIVE_SYMBOL$1 = nativeSymbol;
-  var useSymbolAsUid = NATIVE_SYMBOL$1 && !Symbol.sham && typeof Symbol.iterator == 'symbol';
+  /* eslint-disable es-x/no-symbol -- required for testing */
+  var NATIVE_SYMBOL$2 = nativeSymbol;
+  var useSymbolAsUid = NATIVE_SYMBOL$2 && !Symbol.sham && typeof Symbol.iterator == 'symbol';
 
   var global$y = global$D;
-  var getBuiltIn$6 = getBuiltIn$8;
-  var isCallable$b = isCallable$e;
+  var getBuiltIn$7 = getBuiltIn$9;
+  var isCallable$e = isCallable$h;
   var isPrototypeOf$2 = objectIsPrototypeOf;
   var USE_SYMBOL_AS_UID$1 = useSymbolAsUid;
   var Object$3 = global$y.Object;
-  var isSymbol$2 = USE_SYMBOL_AS_UID$1 ? function (it) {
+  var isSymbol$3 = USE_SYMBOL_AS_UID$1 ? function (it) {
     return typeof it == 'symbol';
   } : function (it) {
-    var $Symbol = getBuiltIn$6('Symbol');
-    return isCallable$b($Symbol) && isPrototypeOf$2($Symbol.prototype, Object$3(it));
+    var $Symbol = getBuiltIn$7('Symbol');
+    return isCallable$e($Symbol) && isPrototypeOf$2($Symbol.prototype, Object$3(it));
   };
 
   var global$x = global$D;
@@ -252,41 +253,41 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var global$w = global$D;
-  var isCallable$a = isCallable$e;
+  var isCallable$d = isCallable$h;
   var tryToString$3 = tryToString$4;
   var TypeError$e = global$w.TypeError; // `Assert: IsCallable(argument) is true`
 
-  var aCallable$5 = function (argument) {
-    if (isCallable$a(argument)) return argument;
+  var aCallable$7 = function (argument) {
+    if (isCallable$d(argument)) return argument;
     throw TypeError$e(tryToString$3(argument) + ' is not a function');
   };
 
-  var aCallable$4 = aCallable$5; // `GetMethod` abstract operation
+  var aCallable$6 = aCallable$7; // `GetMethod` abstract operation
   // https://tc39.es/ecma262/#sec-getmethod
 
   var getMethod$3 = function (V, P) {
     var func = V[P];
-    return func == null ? undefined : aCallable$4(func);
+    return func == null ? undefined : aCallable$6(func);
   };
 
   var global$v = global$D;
-  var call$7 = functionCall;
-  var isCallable$9 = isCallable$e;
-  var isObject$8 = isObject$9;
+  var call$b = functionCall;
+  var isCallable$c = isCallable$h;
+  var isObject$9 = isObject$a;
   var TypeError$d = global$v.TypeError; // `OrdinaryToPrimitive` abstract operation
   // https://tc39.es/ecma262/#sec-ordinarytoprimitive
 
   var ordinaryToPrimitive$1 = function (input, pref) {
     var fn, val;
-    if (pref === 'string' && isCallable$9(fn = input.toString) && !isObject$8(val = call$7(fn, input))) return val;
-    if (isCallable$9(fn = input.valueOf) && !isObject$8(val = call$7(fn, input))) return val;
-    if (pref !== 'string' && isCallable$9(fn = input.toString) && !isObject$8(val = call$7(fn, input))) return val;
+    if (pref === 'string' && isCallable$c(fn = input.toString) && !isObject$9(val = call$b(fn, input))) return val;
+    if (isCallable$c(fn = input.valueOf) && !isObject$9(val = call$b(fn, input))) return val;
+    if (pref !== 'string' && isCallable$c(fn = input.toString) && !isObject$9(val = call$b(fn, input))) return val;
     throw TypeError$d("Can't convert object to primitive value");
   };
 
   var shared$3 = {exports: {}};
 
-  var global$u = global$D; // eslint-disable-next-line es/no-object-defineproperty -- safe
+  var global$u = global$D; // eslint-disable-next-line es-x/no-object-defineproperty -- safe
 
   var defineProperty$1 = Object.defineProperty;
 
@@ -314,10 +315,10 @@ this.google.maps.plugins.loader = (function (exports) {
   (shared$3.exports = function (key, value) {
     return store$2[key] || (store$2[key] = value !== undefined ? value : {});
   })('versions', []).push({
-    version: '3.21.1',
+    version: '3.22.0',
     mode: 'global',
     copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-    license: 'https://github.com/zloirock/core-js/blob/v3.21.1/LICENSE',
+    license: 'https://github.com/zloirock/core-js/blob/v3.22.0/LICENSE',
     source: 'https://github.com/zloirock/core-js'
   });
 
@@ -334,6 +335,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var toObject$2 = toObject$3;
   var hasOwnProperty = uncurryThis$c({}.hasOwnProperty); // `HasOwnProperty` abstract operation
   // https://tc39.es/ecma262/#sec-hasownproperty
+  // eslint-disable-next-line es-x/no-object-hasown -- safe
 
   var hasOwnProperty_1 = Object.hasOwn || function hasOwn(it, key) {
     return hasOwnProperty(toObject$2(it), key);
@@ -352,7 +354,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var shared$2 = shared$3.exports;
   var hasOwn$8 = hasOwnProperty_1;
   var uid$1 = uid$2;
-  var NATIVE_SYMBOL = nativeSymbol;
+  var NATIVE_SYMBOL$1 = nativeSymbol;
   var USE_SYMBOL_AS_UID = useSymbolAsUid;
   var WellKnownSymbolsStore = shared$2('wks');
   var Symbol$1 = global$r.Symbol;
@@ -360,10 +362,10 @@ this.google.maps.plugins.loader = (function (exports) {
   var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol$1 : Symbol$1 && Symbol$1.withoutSetter || uid$1;
 
   var wellKnownSymbol$d = function (name) {
-    if (!hasOwn$8(WellKnownSymbolsStore, name) || !(NATIVE_SYMBOL || typeof WellKnownSymbolsStore[name] == 'string')) {
+    if (!hasOwn$8(WellKnownSymbolsStore, name) || !(NATIVE_SYMBOL$1 || typeof WellKnownSymbolsStore[name] == 'string')) {
       var description = 'Symbol.' + name;
 
-      if (NATIVE_SYMBOL && hasOwn$8(Symbol$1, name)) {
+      if (NATIVE_SYMBOL$1 && hasOwn$8(Symbol$1, name)) {
         WellKnownSymbolsStore[name] = Symbol$1[name];
       } else if (USE_SYMBOL_AS_UID && symbolFor) {
         WellKnownSymbolsStore[name] = symbolFor(description);
@@ -376,9 +378,9 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var global$q = global$D;
-  var call$6 = functionCall;
-  var isObject$7 = isObject$9;
-  var isSymbol$1 = isSymbol$2;
+  var call$a = functionCall;
+  var isObject$8 = isObject$a;
+  var isSymbol$2 = isSymbol$3;
   var getMethod$2 = getMethod$3;
   var ordinaryToPrimitive = ordinaryToPrimitive$1;
   var wellKnownSymbol$c = wellKnownSymbol$d;
@@ -387,14 +389,14 @@ this.google.maps.plugins.loader = (function (exports) {
   // https://tc39.es/ecma262/#sec-toprimitive
 
   var toPrimitive$1 = function (input, pref) {
-    if (!isObject$7(input) || isSymbol$1(input)) return input;
+    if (!isObject$8(input) || isSymbol$2(input)) return input;
     var exoticToPrim = getMethod$2(input, TO_PRIMITIVE);
     var result;
 
     if (exoticToPrim) {
       if (pref === undefined) pref = 'default';
-      result = call$6(exoticToPrim, input, pref);
-      if (!isObject$7(result) || isSymbol$1(result)) return result;
+      result = call$a(exoticToPrim, input, pref);
+      if (!isObject$8(result) || isSymbol$2(result)) return result;
       throw TypeError$c("Can't convert object to primitive value");
     }
 
@@ -403,19 +405,19 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var toPrimitive = toPrimitive$1;
-  var isSymbol = isSymbol$2; // `ToPropertyKey` abstract operation
+  var isSymbol$1 = isSymbol$3; // `ToPropertyKey` abstract operation
   // https://tc39.es/ecma262/#sec-topropertykey
 
   var toPropertyKey$3 = function (argument) {
     var key = toPrimitive(argument, 'string');
-    return isSymbol(key) ? key : key + '';
+    return isSymbol$1(key) ? key : key + '';
   };
 
   var global$p = global$D;
-  var isObject$6 = isObject$9;
+  var isObject$7 = isObject$a;
   var document$3 = global$p.document; // typeof document.createElement is 'object' in old IE
 
-  var EXISTS$1 = isObject$6(document$3) && isObject$6(document$3.createElement);
+  var EXISTS$1 = isObject$7(document$3) && isObject$7(document$3.createElement);
 
   var documentCreateElement$1 = function (it) {
     return EXISTS$1 ? document$3.createElement(it) : {};
@@ -426,7 +428,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var createElement$1 = documentCreateElement$1; // Thanks to IE8 for its funny defineProperty
 
   var ie8DomDefine = !DESCRIPTORS$6 && !fails$8(function () {
-    // eslint-disable-next-line es/no-object-defineproperty -- required for testing
+    // eslint-disable-next-line es-x/no-object-defineproperty -- required for testing
     return Object.defineProperty(createElement$1('div'), 'a', {
       get: function () {
         return 7;
@@ -435,13 +437,13 @@ this.google.maps.plugins.loader = (function (exports) {
   });
 
   var DESCRIPTORS$5 = descriptors;
-  var call$5 = functionCall;
+  var call$9 = functionCall;
   var propertyIsEnumerableModule = objectPropertyIsEnumerable;
   var createPropertyDescriptor$2 = createPropertyDescriptor$3;
   var toIndexedObject$3 = toIndexedObject$4;
   var toPropertyKey$2 = toPropertyKey$3;
   var hasOwn$7 = hasOwnProperty_1;
-  var IE8_DOM_DEFINE$1 = ie8DomDefine; // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+  var IE8_DOM_DEFINE$1 = ie8DomDefine; // eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
 
   var $getOwnPropertyDescriptor$1 = Object.getOwnPropertyDescriptor; // `Object.getOwnPropertyDescriptor` method
   // https://tc39.es/ecma262/#sec-object.getownpropertydescriptor
@@ -454,7 +456,7 @@ this.google.maps.plugins.loader = (function (exports) {
     } catch (error) {
       /* empty */
     }
-    if (hasOwn$7(O, P)) return createPropertyDescriptor$2(!call$5(propertyIsEnumerableModule.f, O, P), O[P]);
+    if (hasOwn$7(O, P)) return createPropertyDescriptor$2(!call$9(propertyIsEnumerableModule.f, O, P), O[P]);
   };
 
   var objectDefineProperty = {};
@@ -464,7 +466,7 @@ this.google.maps.plugins.loader = (function (exports) {
   // https://bugs.chromium.org/p/v8/issues/detail?id=3334
 
   var v8PrototypeDefineBug = DESCRIPTORS$4 && fails$7(function () {
-    // eslint-disable-next-line es/no-object-defineproperty -- required for testing
+    // eslint-disable-next-line es-x/no-object-defineproperty -- required for testing
     return Object.defineProperty(function () {
       /* empty */
     }, 'prototype', {
@@ -474,12 +476,12 @@ this.google.maps.plugins.loader = (function (exports) {
   });
 
   var global$o = global$D;
-  var isObject$5 = isObject$9;
+  var isObject$6 = isObject$a;
   var String$3 = global$o.String;
   var TypeError$b = global$o.TypeError; // `Assert: Type(argument) is Object`
 
   var anObject$8 = function (argument) {
-    if (isObject$5(argument)) return argument;
+    if (isObject$6(argument)) return argument;
     throw TypeError$b(String$3(argument) + ' is not an object');
   };
 
@@ -489,9 +491,9 @@ this.google.maps.plugins.loader = (function (exports) {
   var V8_PROTOTYPE_DEFINE_BUG = v8PrototypeDefineBug;
   var anObject$7 = anObject$8;
   var toPropertyKey$1 = toPropertyKey$3;
-  var TypeError$a = global$n.TypeError; // eslint-disable-next-line es/no-object-defineproperty -- safe
+  var TypeError$a = global$n.TypeError; // eslint-disable-next-line es-x/no-object-defineproperty -- safe
 
-  var $defineProperty = Object.defineProperty; // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+  var $defineProperty = Object.defineProperty; // eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
 
   var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
   var ENUMERABLE = 'enumerable';
@@ -542,14 +544,14 @@ this.google.maps.plugins.loader = (function (exports) {
     return object;
   };
 
-  var redefine$4 = {exports: {}};
+  var redefine$5 = {exports: {}};
 
   var uncurryThis$a = functionUncurryThis;
-  var isCallable$8 = isCallable$e;
+  var isCallable$b = isCallable$h;
   var store$1 = sharedStore;
   var functionToString = uncurryThis$a(Function.toString); // this helper broken in `core-js@3.4.1-3.4.4`, so we can't use `shared` helper
 
-  if (!isCallable$8(store$1.inspectSource)) {
+  if (!isCallable$b(store$1.inspectSource)) {
     store$1.inspectSource = function (it) {
       return functionToString(it);
     };
@@ -558,10 +560,10 @@ this.google.maps.plugins.loader = (function (exports) {
   var inspectSource$4 = store$1.inspectSource;
 
   var global$m = global$D;
-  var isCallable$7 = isCallable$e;
+  var isCallable$a = isCallable$h;
   var inspectSource$3 = inspectSource$4;
   var WeakMap$1 = global$m.WeakMap;
-  var nativeWeakMap = isCallable$7(WeakMap$1) && /native code/.test(inspectSource$3(WeakMap$1));
+  var nativeWeakMap = isCallable$a(WeakMap$1) && /native code/.test(inspectSource$3(WeakMap$1));
 
   var shared$1 = shared$3.exports;
   var uid = uid$2;
@@ -576,7 +578,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var NATIVE_WEAK_MAP = nativeWeakMap;
   var global$l = global$D;
   var uncurryThis$9 = functionUncurryThis;
-  var isObject$4 = isObject$9;
+  var isObject$5 = isObject$a;
   var createNonEnumerableProperty$3 = createNonEnumerableProperty$4;
   var hasOwn$6 = hasOwnProperty_1;
   var shared = sharedStore;
@@ -595,7 +597,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return function (it) {
       var state;
 
-      if (!isObject$4(it) || (state = get(it)).type !== TYPE) {
+      if (!isObject$5(it) || (state = get(it)).type !== TYPE) {
         throw TypeError$9('Incompatible receiver, ' + TYPE + ' required');
       }
 
@@ -653,7 +655,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var DESCRIPTORS$1 = descriptors;
   var hasOwn$5 = hasOwnProperty_1;
-  var FunctionPrototype$1 = Function.prototype; // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+  var FunctionPrototype$1 = Function.prototype; // eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
 
   var getDescriptor = DESCRIPTORS$1 && Object.getOwnPropertyDescriptor;
   var EXISTS = hasOwn$5(FunctionPrototype$1, 'name'); // additional protection from minified / mangled / dropped function names
@@ -670,24 +672,24 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var global$k = global$D;
-  var isCallable$6 = isCallable$e;
+  var isCallable$9 = isCallable$h;
   var hasOwn$4 = hasOwnProperty_1;
   var createNonEnumerableProperty$2 = createNonEnumerableProperty$4;
   var setGlobal$1 = setGlobal$3;
   var inspectSource$2 = inspectSource$4;
   var InternalStateModule$1 = internalState;
   var CONFIGURABLE_FUNCTION_NAME = functionName.CONFIGURABLE;
-  var getInternalState$1 = InternalStateModule$1.get;
+  var getInternalState = InternalStateModule$1.get;
   var enforceInternalState = InternalStateModule$1.enforce;
   var TEMPLATE = String(String).split('String');
-  (redefine$4.exports = function (O, key, value, options) {
+  (redefine$5.exports = function (O, key, value, options) {
     var unsafe = options ? !!options.unsafe : false;
     var simple = options ? !!options.enumerable : false;
     var noTargetGet = options ? !!options.noTargetGet : false;
     var name = options && options.name !== undefined ? options.name : key;
     var state;
 
-    if (isCallable$6(value)) {
+    if (isCallable$9(value)) {
       if (String(name).slice(0, 7) === 'Symbol(') {
         name = '[' + String(name).replace(/^Symbol\(([^)]*)\)/, '$1') + ']';
       }
@@ -714,7 +716,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
     if (simple) O[key] = value;else createNonEnumerableProperty$2(O, key, value); // add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
   })(Function.prototype, 'toString', function toString() {
-    return isCallable$6(this) && getInternalState$1(this).source || inspectSource$2(this);
+    return isCallable$9(this) && getInternalState(this).source || inspectSource$2(this);
   });
 
   var objectGetOwnPropertyNames = {};
@@ -816,7 +818,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var enumBugKeys = enumBugKeys$1;
   var hiddenKeys = enumBugKeys.concat('length', 'prototype'); // `Object.getOwnPropertyNames` method
   // https://tc39.es/ecma262/#sec-object.getownpropertynames
-  // eslint-disable-next-line es/no-object-getownpropertynames -- safe
+  // eslint-disable-next-line es-x/no-object-getownpropertynames -- safe
 
   objectGetOwnPropertyNames.f = Object.getOwnPropertyNames || function getOwnPropertyNames(O) {
     return internalObjectKeys(O, hiddenKeys);
@@ -826,14 +828,14 @@ this.google.maps.plugins.loader = (function (exports) {
 
   objectGetOwnPropertySymbols.f = Object.getOwnPropertySymbols;
 
-  var getBuiltIn$5 = getBuiltIn$8;
+  var getBuiltIn$6 = getBuiltIn$9;
   var uncurryThis$7 = functionUncurryThis;
   var getOwnPropertyNamesModule = objectGetOwnPropertyNames;
   var getOwnPropertySymbolsModule = objectGetOwnPropertySymbols;
   var anObject$6 = anObject$8;
   var concat = uncurryThis$7([].concat); // all object keys, includes non-enumerable and symbols
 
-  var ownKeys$1 = getBuiltIn$5('Reflect', 'ownKeys') || function ownKeys(it) {
+  var ownKeys$1 = getBuiltIn$6('Reflect', 'ownKeys') || function ownKeys(it) {
     var keys = getOwnPropertyNamesModule.f(anObject$6(it));
     var getOwnPropertySymbols = getOwnPropertySymbolsModule.f;
     return getOwnPropertySymbols ? concat(keys, getOwnPropertySymbols(it)) : keys;
@@ -859,12 +861,12 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var fails$6 = fails$d;
-  var isCallable$5 = isCallable$e;
+  var isCallable$8 = isCallable$h;
   var replacement = /#|\.prototype\./;
 
   var isForced$2 = function (feature, detection) {
     var value = data[normalize(feature)];
-    return value == POLYFILL ? true : value == NATIVE ? false : isCallable$5(detection) ? fails$6(detection) : !!detection;
+    return value == POLYFILL ? true : value == NATIVE ? false : isCallable$8(detection) ? fails$6(detection) : !!detection;
   };
 
   var normalize = isForced$2.normalize = function (string) {
@@ -879,7 +881,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var global$j = global$D;
   var getOwnPropertyDescriptor$1 = objectGetOwnPropertyDescriptor.f;
   var createNonEnumerableProperty$1 = createNonEnumerableProperty$4;
-  var redefine$3 = redefine$4.exports;
+  var redefine$4 = redefine$5.exports;
   var setGlobal = setGlobal$3;
   var copyConstructorProperties = copyConstructorProperties$1;
   var isForced$1 = isForced_1;
@@ -934,15 +936,15 @@ this.google.maps.plugins.loader = (function (exports) {
       } // extend global
 
 
-      redefine$3(target, key, sourceProperty, options);
+      redefine$4(target, key, sourceProperty, options);
     }
   };
 
   var classof$5 = classofRaw$1; // `IsArray` abstract operation
   // https://tc39.es/ecma262/#sec-isarray
-  // eslint-disable-next-line es/no-array-isarray -- safe
+  // eslint-disable-next-line es-x/no-array-isarray -- safe
 
-  var isArray$2 = Array.isArray || function isArray(argument) {
+  var isArray$3 = Array.isArray || function isArray(argument) {
     return classof$5(argument) == 'Array';
   };
 
@@ -963,7 +965,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var global$i = global$D;
   var TO_STRING_TAG_SUPPORT$2 = toStringTagSupport;
-  var isCallable$4 = isCallable$e;
+  var isCallable$7 = isCallable$h;
   var classofRaw = classofRaw$1;
   var wellKnownSymbol$a = wellKnownSymbol$d;
   var TO_STRING_TAG$1 = wellKnownSymbol$a('toStringTag');
@@ -987,14 +989,14 @@ this.google.maps.plugins.loader = (function (exports) {
     return it === undefined ? 'Undefined' : it === null ? 'Null' // @@toStringTag case
     : typeof (tag = tryGet(O = Object$1(it), TO_STRING_TAG$1)) == 'string' ? tag // builtinTag case
     : CORRECT_ARGUMENTS ? classofRaw(O) // ES3 arguments fallback
-    : (result = classofRaw(O)) == 'Object' && isCallable$4(O.callee) ? 'Arguments' : result;
+    : (result = classofRaw(O)) == 'Object' && isCallable$7(O.callee) ? 'Arguments' : result;
   };
 
   var uncurryThis$6 = functionUncurryThis;
   var fails$5 = fails$d;
-  var isCallable$3 = isCallable$e;
+  var isCallable$6 = isCallable$h;
   var classof$3 = classof$4;
-  var getBuiltIn$4 = getBuiltIn$8;
+  var getBuiltIn$5 = getBuiltIn$9;
   var inspectSource$1 = inspectSource$4;
 
   var noop = function () {
@@ -1002,13 +1004,13 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var empty = [];
-  var construct = getBuiltIn$4('Reflect', 'construct');
+  var construct = getBuiltIn$5('Reflect', 'construct');
   var constructorRegExp = /^\s*(?:class|function)\b/;
   var exec$1 = uncurryThis$6(constructorRegExp.exec);
   var INCORRECT_TO_STRING = !constructorRegExp.exec(noop);
 
   var isConstructorModern = function isConstructor(argument) {
-    if (!isCallable$3(argument)) return false;
+    if (!isCallable$6(argument)) return false;
 
     try {
       construct(noop, empty, argument);
@@ -1019,7 +1021,7 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var isConstructorLegacy = function isConstructor(argument) {
-    if (!isCallable$3(argument)) return false;
+    if (!isCallable$6(argument)) return false;
 
     switch (classof$3(argument)) {
       case 'AsyncFunction':
@@ -1049,27 +1051,27 @@ this.google.maps.plugins.loader = (function (exports) {
   }) ? isConstructorLegacy : isConstructorModern;
 
   var global$h = global$D;
-  var isArray$1 = isArray$2;
+  var isArray$2 = isArray$3;
   var isConstructor$1 = isConstructor$2;
-  var isObject$3 = isObject$9;
+  var isObject$4 = isObject$a;
   var wellKnownSymbol$9 = wellKnownSymbol$d;
   var SPECIES$4 = wellKnownSymbol$9('species');
-  var Array$2 = global$h.Array; // a part of `ArraySpeciesCreate` abstract operation
+  var Array$1 = global$h.Array; // a part of `ArraySpeciesCreate` abstract operation
   // https://tc39.es/ecma262/#sec-arrayspeciescreate
 
   var arraySpeciesConstructor$1 = function (originalArray) {
     var C;
 
-    if (isArray$1(originalArray)) {
+    if (isArray$2(originalArray)) {
       C = originalArray.constructor; // cross-realm fallback
 
-      if (isConstructor$1(C) && (C === Array$2 || isArray$1(C.prototype))) C = undefined;else if (isObject$3(C)) {
+      if (isConstructor$1(C) && (C === Array$1 || isArray$2(C.prototype))) C = undefined;else if (isObject$4(C)) {
         C = C[SPECIES$4];
         if (C === null) C = undefined;
       }
     }
 
-    return C === undefined ? Array$2 : C;
+    return C === undefined ? Array$1 : C;
   };
 
   var arraySpeciesConstructor = arraySpeciesConstructor$1; // `ArraySpeciesCreate` abstract operation
@@ -1102,11 +1104,11 @@ this.google.maps.plugins.loader = (function (exports) {
     });
   };
 
-  var $$3 = _export;
+  var $$8 = _export;
   var global$g = global$D;
   var fails$3 = fails$d;
-  var isArray = isArray$2;
-  var isObject$2 = isObject$9;
+  var isArray$1 = isArray$3;
+  var isObject$3 = isObject$a;
   var toObject$1 = toObject$3;
   var lengthOfArrayLike$2 = lengthOfArrayLike$4;
   var createProperty = createProperty$1;
@@ -1129,19 +1131,19 @@ this.google.maps.plugins.loader = (function (exports) {
   var SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('concat');
 
   var isConcatSpreadable = function (O) {
-    if (!isObject$2(O)) return false;
+    if (!isObject$3(O)) return false;
     var spreadable = O[IS_CONCAT_SPREADABLE];
-    return spreadable !== undefined ? !!spreadable : isArray(O);
+    return spreadable !== undefined ? !!spreadable : isArray$1(O);
   };
 
-  var FORCED$2 = !IS_CONCAT_SPREADABLE_SUPPORT || !SPECIES_SUPPORT; // `Array.prototype.concat` method
+  var FORCED = !IS_CONCAT_SPREADABLE_SUPPORT || !SPECIES_SUPPORT; // `Array.prototype.concat` method
   // https://tc39.es/ecma262/#sec-array.prototype.concat
   // with adding support of @@isConcatSpreadable and @@species
 
-  $$3({
+  $$8({
     target: 'Array',
     proto: true,
-    forced: FORCED$2
+    forced: FORCED
   }, {
     // eslint-disable-next-line no-unused-vars -- required for `.length`
     concat: function concat(arg) {
@@ -1172,30 +1174,64 @@ this.google.maps.plugins.loader = (function (exports) {
   var NATIVE_BIND$1 = functionBindNative;
   var FunctionPrototype = Function.prototype;
   var apply$2 = FunctionPrototype.apply;
-  var call$4 = FunctionPrototype.call; // eslint-disable-next-line es/no-reflect -- safe
+  var call$8 = FunctionPrototype.call; // eslint-disable-next-line es-x/no-reflect -- safe
 
-  var functionApply = typeof Reflect == 'object' && Reflect.apply || (NATIVE_BIND$1 ? call$4.bind(apply$2) : function () {
-    return call$4.apply(apply$2, arguments);
+  var functionApply = typeof Reflect == 'object' && Reflect.apply || (NATIVE_BIND$1 ? call$8.bind(apply$2) : function () {
+    return call$8.apply(apply$2, arguments);
   });
 
-  var $$2 = _export;
-  var global$f = global$D;
-  var getBuiltIn$3 = getBuiltIn$8;
-  var apply$1 = functionApply;
   var uncurryThis$5 = functionUncurryThis;
+  var arraySlice$2 = uncurryThis$5([].slice);
+
+  var $$7 = _export;
+  var getBuiltIn$4 = getBuiltIn$9;
+  var apply$1 = functionApply;
+  var call$7 = functionCall;
+  var uncurryThis$4 = functionUncurryThis;
   var fails$2 = fails$d;
-  var Array$1 = global$f.Array;
-  var $stringify = getBuiltIn$3('JSON', 'stringify');
-  var exec = uncurryThis$5(/./.exec);
-  var charAt = uncurryThis$5(''.charAt);
-  var charCodeAt = uncurryThis$5(''.charCodeAt);
-  var replace = uncurryThis$5(''.replace);
-  var numberToString = uncurryThis$5(1.0.toString);
+  var isArray = isArray$3;
+  var isCallable$5 = isCallable$h;
+  var isObject$2 = isObject$a;
+  var isSymbol = isSymbol$3;
+  var arraySlice$1 = arraySlice$2;
+  var NATIVE_SYMBOL = nativeSymbol;
+  var $stringify = getBuiltIn$4('JSON', 'stringify');
+  var exec = uncurryThis$4(/./.exec);
+  var charAt = uncurryThis$4(''.charAt);
+  var charCodeAt = uncurryThis$4(''.charCodeAt);
+  var replace = uncurryThis$4(''.replace);
+  var numberToString = uncurryThis$4(1.0.toString);
   var tester = /[\uD800-\uDFFF]/g;
   var low = /^[\uD800-\uDBFF]$/;
   var hi = /^[\uDC00-\uDFFF]$/;
+  var WRONG_SYMBOLS_CONVERSION = !NATIVE_SYMBOL || fails$2(function () {
+    var symbol = getBuiltIn$4('Symbol')(); // MS Edge converts symbol values to JSON as {}
 
-  var fix = function (match, offset, string) {
+    return $stringify([symbol]) != '[null]' // WebKit converts symbol values to JSON as null
+    || $stringify({
+      a: symbol
+    }) != '{}' // V8 throws on boxed symbols
+    || $stringify(Object(symbol)) != '{}';
+  }); // https://github.com/tc39/proposal-well-formed-stringify
+
+  var ILL_FORMED_UNICODE = fails$2(function () {
+    return $stringify('\uDF06\uD834') !== '"\\udf06\\ud834"' || $stringify('\uDEAD') !== '"\\udead"';
+  });
+
+  var stringifyWithSymbolsFix = function (it, replacer) {
+    var args = arraySlice$1(arguments);
+    var $replacer = replacer;
+    if (!isObject$2(replacer) && it === undefined || isSymbol(it)) return; // IE8 returns string on undefined
+
+    if (!isArray(replacer)) replacer = function (key, value) {
+      if (isCallable$5($replacer)) value = call$7($replacer, this, key, value);
+      if (!isSymbol(value)) return value;
+    };
+    args[1] = replacer;
+    return apply$1($stringify, null, args);
+  };
+
+  var fixIllFormed = function (match, offset, string) {
     var prev = charAt(string, offset - 1);
     var next = charAt(string, offset + 1);
 
@@ -1206,25 +1242,19 @@ this.google.maps.plugins.loader = (function (exports) {
     return match;
   };
 
-  var FORCED$1 = fails$2(function () {
-    return $stringify('\uDF06\uD834') !== '"\\udf06\\ud834"' || $stringify('\uDEAD') !== '"\\udead"';
-  });
-
   if ($stringify) {
     // `JSON.stringify` method
     // https://tc39.es/ecma262/#sec-json.stringify
-    // https://github.com/tc39/proposal-well-formed-stringify
-    $$2({
+    $$7({
       target: 'JSON',
       stat: true,
-      forced: FORCED$1
+      forced: WRONG_SYMBOLS_CONVERSION || ILL_FORMED_UNICODE
     }, {
       // eslint-disable-next-line no-unused-vars -- required for `.length`
       stringify: function stringify(it, replacer, space) {
-        for (var i = 0, l = arguments.length, args = Array$1(l); i < l; i++) args[i] = arguments[i];
-
-        var result = apply$1($stringify, null, args);
-        return typeof result == 'string' ? replace(result, tester, fix) : result;
+        var args = arraySlice$1(arguments);
+        var result = apply$1(WRONG_SYMBOLS_CONVERSION ? stringifyWithSymbolsFix : $stringify, null, args);
+        return ILL_FORMED_UNICODE && typeof result == 'string' ? replace(result, tester, fixIllFormed) : result;
       }
     });
   }
@@ -1241,17 +1271,17 @@ this.google.maps.plugins.loader = (function (exports) {
     });
   };
 
-  var $$1 = _export;
-  var uncurryThis$4 = functionUncurryThis;
+  var $$6 = _export;
+  var uncurryThis$3 = functionUncurryThis;
   var IndexedObject$1 = indexedObject;
   var toIndexedObject = toIndexedObject$4;
   var arrayMethodIsStrict$1 = arrayMethodIsStrict$2;
-  var un$Join = uncurryThis$4([].join);
+  var un$Join = uncurryThis$3([].join);
   var ES3_STRINGS = IndexedObject$1 != Object;
   var STRICT_METHOD$1 = arrayMethodIsStrict$1('join', ','); // `Array.prototype.join` method
   // https://tc39.es/ecma262/#sec-array.prototype.join
 
-  $$1({
+  $$6({
     target: 'Array',
     proto: true,
     forced: ES3_STRINGS || !STRICT_METHOD$1
@@ -1270,44 +1300,45 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var TO_STRING_TAG_SUPPORT = toStringTagSupport;
-  var redefine$2 = redefine$4.exports;
+  var redefine$3 = redefine$5.exports;
   var toString = objectToString; // `Object.prototype.toString` method
   // https://tc39.es/ecma262/#sec-object.prototype.tostring
 
   if (!TO_STRING_TAG_SUPPORT) {
-    redefine$2(Object.prototype, 'toString', toString, {
+    redefine$3(Object.prototype, 'toString', toString, {
       unsafe: true
     });
   }
 
-  var global$e = global$D;
-  var nativePromiseConstructor = global$e.Promise;
+  var classof$1 = classofRaw$1;
+  var global$f = global$D;
+  var engineIsNode = classof$1(global$f.process) == 'process';
 
-  var redefine$1 = redefine$4.exports;
+  var redefine$2 = redefine$5.exports;
 
   var redefineAll$1 = function (target, src, options) {
-    for (var key in src) redefine$1(target, key, src[key], options);
+    for (var key in src) redefine$2(target, key, src[key], options);
 
     return target;
   };
 
-  var global$d = global$D;
-  var isCallable$2 = isCallable$e;
-  var String$2 = global$d.String;
-  var TypeError$7 = global$d.TypeError;
+  var global$e = global$D;
+  var isCallable$4 = isCallable$h;
+  var String$2 = global$e.String;
+  var TypeError$7 = global$e.TypeError;
 
   var aPossiblePrototype$1 = function (argument) {
-    if (typeof argument == 'object' || isCallable$2(argument)) return argument;
+    if (typeof argument == 'object' || isCallable$4(argument)) return argument;
     throw TypeError$7("Can't set " + String$2(argument) + ' as a prototype');
   };
 
   /* eslint-disable no-proto -- safe */
-  var uncurryThis$3 = functionUncurryThis;
+  var uncurryThis$2 = functionUncurryThis;
   var anObject$5 = anObject$8;
   var aPossiblePrototype = aPossiblePrototype$1; // `Object.setPrototypeOf` method
   // https://tc39.es/ecma262/#sec-object.setprototypeof
   // Works with __proto__ only. Old v8 can't work with null proto objects.
-  // eslint-disable-next-line es/no-object-setprototypeof -- safe
+  // eslint-disable-next-line es-x/no-object-setprototypeof -- safe
 
   var objectSetPrototypeOf = Object.setPrototypeOf || ('__proto__' in {} ? function () {
     var CORRECT_SETTER = false;
@@ -1315,8 +1346,8 @@ this.google.maps.plugins.loader = (function (exports) {
     var setter;
 
     try {
-      // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
-      setter = uncurryThis$3(Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set);
+      // eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
+      setter = uncurryThis$2(Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set);
       setter(test, []);
       CORRECT_SETTER = test instanceof Array;
     } catch (error) {
@@ -1347,14 +1378,14 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   };
 
-  var getBuiltIn$2 = getBuiltIn$8;
+  var getBuiltIn$3 = getBuiltIn$9;
   var definePropertyModule = objectDefineProperty;
   var wellKnownSymbol$5 = wellKnownSymbol$d;
   var DESCRIPTORS = descriptors;
   var SPECIES$2 = wellKnownSymbol$5('species');
 
   var setSpecies$1 = function (CONSTRUCTOR_NAME) {
-    var Constructor = getBuiltIn$2(CONSTRUCTOR_NAME);
+    var Constructor = getBuiltIn$3(CONSTRUCTOR_NAME);
     var defineProperty = definePropertyModule.f;
 
     if (DESCRIPTORS && Constructor && !Constructor[SPECIES$2]) {
@@ -1367,22 +1398,44 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   };
 
-  var global$c = global$D;
+  var global$d = global$D;
   var isPrototypeOf$1 = objectIsPrototypeOf;
-  var TypeError$6 = global$c.TypeError;
+  var TypeError$6 = global$d.TypeError;
 
   var anInstance$1 = function (it, Prototype) {
     if (isPrototypeOf$1(Prototype, it)) return it;
     throw TypeError$6('Incorrect invocation');
   };
 
-  var uncurryThis$2 = functionUncurryThis;
-  var aCallable$3 = aCallable$5;
+  var global$c = global$D;
+  var isConstructor = isConstructor$2;
+  var tryToString$2 = tryToString$4;
+  var TypeError$5 = global$c.TypeError; // `Assert: IsConstructor(argument) is true`
+
+  var aConstructor$1 = function (argument) {
+    if (isConstructor(argument)) return argument;
+    throw TypeError$5(tryToString$2(argument) + ' is not a constructor');
+  };
+
+  var anObject$4 = anObject$8;
+  var aConstructor = aConstructor$1;
+  var wellKnownSymbol$4 = wellKnownSymbol$d;
+  var SPECIES$1 = wellKnownSymbol$4('species'); // `SpeciesConstructor` abstract operation
+  // https://tc39.es/ecma262/#sec-speciesconstructor
+
+  var speciesConstructor$1 = function (O, defaultConstructor) {
+    var C = anObject$4(O).constructor;
+    var S;
+    return C === undefined || (S = anObject$4(C)[SPECIES$1]) == undefined ? defaultConstructor : aConstructor(S);
+  };
+
+  var uncurryThis$1 = functionUncurryThis;
+  var aCallable$5 = aCallable$7;
   var NATIVE_BIND = functionBindNative;
-  var bind$5 = uncurryThis$2(uncurryThis$2.bind); // optional / simple context binding
+  var bind$5 = uncurryThis$1(uncurryThis$1.bind); // optional / simple context binding
 
   var functionBindContext = function (fn, that) {
-    aCallable$3(fn);
+    aCallable$5(fn);
     return that === undefined ? fn : NATIVE_BIND ? bind$5(fn, that) : function ()
     /* ...args */
     {
@@ -1390,260 +1443,39 @@ this.google.maps.plugins.loader = (function (exports) {
     };
   };
 
-  var iterators = {};
-
-  var wellKnownSymbol$4 = wellKnownSymbol$d;
-  var Iterators$1 = iterators;
-  var ITERATOR$2 = wellKnownSymbol$4('iterator');
-  var ArrayPrototype = Array.prototype; // check on default Array iterator
-
-  var isArrayIteratorMethod$1 = function (it) {
-    return it !== undefined && (Iterators$1.Array === it || ArrayPrototype[ITERATOR$2] === it);
-  };
-
-  var classof$1 = classof$4;
-  var getMethod$1 = getMethod$3;
-  var Iterators = iterators;
-  var wellKnownSymbol$3 = wellKnownSymbol$d;
-  var ITERATOR$1 = wellKnownSymbol$3('iterator');
-
-  var getIteratorMethod$2 = function (it) {
-    if (it != undefined) return getMethod$1(it, ITERATOR$1) || getMethod$1(it, '@@iterator') || Iterators[classof$1(it)];
-  };
+  var getBuiltIn$2 = getBuiltIn$9;
+  var html$1 = getBuiltIn$2('document', 'documentElement');
 
   var global$b = global$D;
-  var call$3 = functionCall;
-  var aCallable$2 = aCallable$5;
-  var anObject$4 = anObject$8;
-  var tryToString$2 = tryToString$4;
-  var getIteratorMethod$1 = getIteratorMethod$2;
-  var TypeError$5 = global$b.TypeError;
-
-  var getIterator$1 = function (argument, usingIterator) {
-    var iteratorMethod = arguments.length < 2 ? getIteratorMethod$1(argument) : usingIterator;
-    if (aCallable$2(iteratorMethod)) return anObject$4(call$3(iteratorMethod, argument));
-    throw TypeError$5(tryToString$2(argument) + ' is not iterable');
-  };
-
-  var call$2 = functionCall;
-  var anObject$3 = anObject$8;
-  var getMethod = getMethod$3;
-
-  var iteratorClose$1 = function (iterator, kind, value) {
-    var innerResult, innerError;
-    anObject$3(iterator);
-
-    try {
-      innerResult = getMethod(iterator, 'return');
-
-      if (!innerResult) {
-        if (kind === 'throw') throw value;
-        return value;
-      }
-
-      innerResult = call$2(innerResult, iterator);
-    } catch (error) {
-      innerError = true;
-      innerResult = error;
-    }
-
-    if (kind === 'throw') throw value;
-    if (innerError) throw innerResult;
-    anObject$3(innerResult);
-    return value;
-  };
-
-  var global$a = global$D;
-  var bind$4 = functionBindContext;
-  var call$1 = functionCall;
-  var anObject$2 = anObject$8;
-  var tryToString$1 = tryToString$4;
-  var isArrayIteratorMethod = isArrayIteratorMethod$1;
-  var lengthOfArrayLike$1 = lengthOfArrayLike$4;
-  var isPrototypeOf = objectIsPrototypeOf;
-  var getIterator = getIterator$1;
-  var getIteratorMethod = getIteratorMethod$2;
-  var iteratorClose = iteratorClose$1;
-  var TypeError$4 = global$a.TypeError;
-
-  var Result = function (stopped, result) {
-    this.stopped = stopped;
-    this.result = result;
-  };
-
-  var ResultPrototype = Result.prototype;
-
-  var iterate$1 = function (iterable, unboundFunction, options) {
-    var that = options && options.that;
-    var AS_ENTRIES = !!(options && options.AS_ENTRIES);
-    var IS_ITERATOR = !!(options && options.IS_ITERATOR);
-    var INTERRUPTED = !!(options && options.INTERRUPTED);
-    var fn = bind$4(unboundFunction, that);
-    var iterator, iterFn, index, length, result, next, step;
-
-    var stop = function (condition) {
-      if (iterator) iteratorClose(iterator, 'normal', condition);
-      return new Result(true, condition);
-    };
-
-    var callFn = function (value) {
-      if (AS_ENTRIES) {
-        anObject$2(value);
-        return INTERRUPTED ? fn(value[0], value[1], stop) : fn(value[0], value[1]);
-      }
-
-      return INTERRUPTED ? fn(value, stop) : fn(value);
-    };
-
-    if (IS_ITERATOR) {
-      iterator = iterable;
-    } else {
-      iterFn = getIteratorMethod(iterable);
-      if (!iterFn) throw TypeError$4(tryToString$1(iterable) + ' is not iterable'); // optimisation for array iterators
-
-      if (isArrayIteratorMethod(iterFn)) {
-        for (index = 0, length = lengthOfArrayLike$1(iterable); length > index; index++) {
-          result = callFn(iterable[index]);
-          if (result && isPrototypeOf(ResultPrototype, result)) return result;
-        }
-
-        return new Result(false);
-      }
-
-      iterator = getIterator(iterable, iterFn);
-    }
-
-    next = iterator.next;
-
-    while (!(step = call$1(next, iterator)).done) {
-      try {
-        result = callFn(step.value);
-      } catch (error) {
-        iteratorClose(iterator, 'throw', error);
-      }
-
-      if (typeof result == 'object' && result && isPrototypeOf(ResultPrototype, result)) return result;
-    }
-
-    return new Result(false);
-  };
-
-  var wellKnownSymbol$2 = wellKnownSymbol$d;
-  var ITERATOR = wellKnownSymbol$2('iterator');
-  var SAFE_CLOSING = false;
-
-  try {
-    var called = 0;
-    var iteratorWithReturn = {
-      next: function () {
-        return {
-          done: !!called++
-        };
-      },
-      'return': function () {
-        SAFE_CLOSING = true;
-      }
-    };
-
-    iteratorWithReturn[ITERATOR] = function () {
-      return this;
-    }; // eslint-disable-next-line es/no-array-from, no-throw-literal -- required for testing
-
-
-    Array.from(iteratorWithReturn, function () {
-      throw 2;
-    });
-  } catch (error) {
-    /* empty */
-  }
-
-  var checkCorrectnessOfIteration$1 = function (exec, SKIP_CLOSING) {
-    if (!SKIP_CLOSING && !SAFE_CLOSING) return false;
-    var ITERATION_SUPPORT = false;
-
-    try {
-      var object = {};
-
-      object[ITERATOR] = function () {
-        return {
-          next: function () {
-            return {
-              done: ITERATION_SUPPORT = true
-            };
-          }
-        };
-      };
-
-      exec(object);
-    } catch (error) {
-      /* empty */
-    }
-
-    return ITERATION_SUPPORT;
-  };
-
-  var global$9 = global$D;
-  var isConstructor = isConstructor$2;
-  var tryToString = tryToString$4;
-  var TypeError$3 = global$9.TypeError; // `Assert: IsConstructor(argument) is true`
-
-  var aConstructor$1 = function (argument) {
-    if (isConstructor(argument)) return argument;
-    throw TypeError$3(tryToString(argument) + ' is not a constructor');
-  };
-
-  var anObject$1 = anObject$8;
-  var aConstructor = aConstructor$1;
-  var wellKnownSymbol$1 = wellKnownSymbol$d;
-  var SPECIES$1 = wellKnownSymbol$1('species'); // `SpeciesConstructor` abstract operation
-  // https://tc39.es/ecma262/#sec-speciesconstructor
-
-  var speciesConstructor$1 = function (O, defaultConstructor) {
-    var C = anObject$1(O).constructor;
-    var S;
-    return C === undefined || (S = anObject$1(C)[SPECIES$1]) == undefined ? defaultConstructor : aConstructor(S);
-  };
-
-  var getBuiltIn$1 = getBuiltIn$8;
-  var html$1 = getBuiltIn$1('document', 'documentElement');
-
-  var uncurryThis$1 = functionUncurryThis;
-  var arraySlice$1 = uncurryThis$1([].slice);
-
-  var global$8 = global$D;
-  var TypeError$2 = global$8.TypeError;
+  var TypeError$4 = global$b.TypeError;
 
   var validateArgumentsLength$1 = function (passed, required) {
-    if (passed < required) throw TypeError$2('Not enough arguments');
+    if (passed < required) throw TypeError$4('Not enough arguments');
     return passed;
   };
 
   var userAgent$2 = engineUserAgent;
   var engineIsIos = /(?:ipad|iphone|ipod).*applewebkit/i.test(userAgent$2);
 
-  var classof = classofRaw$1;
-  var global$7 = global$D;
-  var engineIsNode = classof(global$7.process) == 'process';
-
-  var global$6 = global$D;
+  var global$a = global$D;
   var apply = functionApply;
-  var bind$3 = functionBindContext;
-  var isCallable$1 = isCallable$e;
+  var bind$4 = functionBindContext;
+  var isCallable$3 = isCallable$h;
   var hasOwn = hasOwnProperty_1;
   var fails = fails$d;
   var html = html$1;
-  var arraySlice = arraySlice$1;
+  var arraySlice = arraySlice$2;
   var createElement = documentCreateElement$1;
   var validateArgumentsLength = validateArgumentsLength$1;
   var IS_IOS$1 = engineIsIos;
   var IS_NODE$2 = engineIsNode;
-  var set = global$6.setImmediate;
-  var clear = global$6.clearImmediate;
-  var process$2 = global$6.process;
-  var Dispatch = global$6.Dispatch;
-  var Function$1 = global$6.Function;
-  var MessageChannel = global$6.MessageChannel;
-  var String$1 = global$6.String;
+  var set = global$a.setImmediate;
+  var clear = global$a.clearImmediate;
+  var process$2 = global$a.process;
+  var Dispatch = global$a.Dispatch;
+  var Function$1 = global$a.Function;
+  var MessageChannel = global$a.MessageChannel;
+  var String$1 = global$a.String;
   var counter = 0;
   var queue$1 = {};
   var ONREADYSTATECHANGE = 'onreadystatechange';
@@ -1651,7 +1483,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   try {
     // Deno throws a ReferenceError on `location` access without `--location` flag
-    location = global$6.location;
+    location = global$a.location;
   } catch (error) {
     /* empty */
   }
@@ -1676,14 +1508,14 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var post = function (id) {
     // old engines have not location.origin
-    global$6.postMessage(String$1(id), location.protocol + '//' + location.host);
+    global$a.postMessage(String$1(id), location.protocol + '//' + location.host);
   }; // Node.js 0.9+ & IE10+ has setImmediate, otherwise:
 
 
   if (!set || !clear) {
     set = function setImmediate(handler) {
       validateArgumentsLength(arguments.length, 1);
-      var fn = isCallable$1(handler) ? handler : Function$1(handler);
+      var fn = isCallable$3(handler) ? handler : Function$1(handler);
       var args = arraySlice(arguments, 1);
 
       queue$1[++counter] = function () {
@@ -1714,11 +1546,11 @@ this.google.maps.plugins.loader = (function (exports) {
       channel = new MessageChannel();
       port = channel.port2;
       channel.port1.onmessage = listener;
-      defer = bind$3(port.postMessage, port); // Browsers with postMessage, skip WebWorkers
+      defer = bind$4(port.postMessage, port); // Browsers with postMessage, skip WebWorkers
       // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
-    } else if (global$6.addEventListener && isCallable$1(global$6.postMessage) && !global$6.importScripts && location && location.protocol !== 'file:' && !fails(post)) {
+    } else if (global$a.addEventListener && isCallable$3(global$a.postMessage) && !global$a.importScripts && location && location.protocol !== 'file:' && !fails(post)) {
       defer = post;
-      global$6.addEventListener('message', listener, false); // IE8-
+      global$a.addEventListener('message', listener, false); // IE8-
     } else if (ONREADYSTATECHANGE in createElement('script')) {
       defer = function (id) {
         html.appendChild(createElement('script'))[ONREADYSTATECHANGE] = function () {
@@ -1740,26 +1572,26 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var userAgent$1 = engineUserAgent;
-  var global$5 = global$D;
-  var engineIsIosPebble = /ipad|iphone|ipod/i.test(userAgent$1) && global$5.Pebble !== undefined;
+  var global$9 = global$D;
+  var engineIsIosPebble = /ipad|iphone|ipod/i.test(userAgent$1) && global$9.Pebble !== undefined;
 
   var userAgent = engineUserAgent;
   var engineIsWebosWebkit = /web0s(?!.*chrome)/i.test(userAgent);
 
-  var global$4 = global$D;
-  var bind$2 = functionBindContext;
+  var global$8 = global$D;
+  var bind$3 = functionBindContext;
   var getOwnPropertyDescriptor = objectGetOwnPropertyDescriptor.f;
   var macrotask = task$1.set;
   var IS_IOS = engineIsIos;
   var IS_IOS_PEBBLE = engineIsIosPebble;
   var IS_WEBOS_WEBKIT = engineIsWebosWebkit;
   var IS_NODE$1 = engineIsNode;
-  var MutationObserver = global$4.MutationObserver || global$4.WebKitMutationObserver;
-  var document$2 = global$4.document;
-  var process$1 = global$4.process;
-  var Promise$1 = global$4.Promise; // Node.js 11 shows ExperimentalWarning on getting `queueMicrotask`
+  var MutationObserver = global$8.MutationObserver || global$8.WebKitMutationObserver;
+  var document$2 = global$8.document;
+  var process$1 = global$8.process;
+  var Promise$1 = global$8.Promise; // Node.js 11 shows ExperimentalWarning on getting `queueMicrotask`
 
-  var queueMicrotaskDescriptor = getOwnPropertyDescriptor(global$4, 'queueMicrotask');
+  var queueMicrotaskDescriptor = getOwnPropertyDescriptor(global$8, 'queueMicrotask');
   var queueMicrotask = queueMicrotaskDescriptor && queueMicrotaskDescriptor.value;
   var flush, head, last, notify$1, toggle, node, promise, then; // modern engines have queueMicrotask method
 
@@ -1802,7 +1634,7 @@ this.google.maps.plugins.loader = (function (exports) {
       promise = Promise$1.resolve(undefined); // workaround of WebKit ~ iOS Safari 10.1 bug
 
       promise.constructor = Promise$1;
-      then = bind$2(promise.then, promise);
+      then = bind$3(promise.then, promise);
 
       notify$1 = function () {
         then(flush);
@@ -1814,13 +1646,13 @@ this.google.maps.plugins.loader = (function (exports) {
       }; // for other environments - macrotask based on:
       // - setImmediate
       // - MessageChannel
-      // - window.postMessag
+      // - window.postMessage
       // - onreadystatechange
       // - setTimeout
 
     } else {
       // strange IE + webpack dev server bug - use .bind(global)
-      macrotask = bind$2(macrotask, global$4);
+      macrotask = bind$3(macrotask, global$8);
 
       notify$1 = function () {
         macrotask(flush);
@@ -1843,51 +1675,17 @@ this.google.maps.plugins.loader = (function (exports) {
     last = task;
   };
 
-  var newPromiseCapability$2 = {};
-
-  var aCallable$1 = aCallable$5;
-
-  var PromiseCapability = function (C) {
-    var resolve, reject;
-    this.promise = new C(function ($$resolve, $$reject) {
-      if (resolve !== undefined || reject !== undefined) throw TypeError('Bad Promise constructor');
-      resolve = $$resolve;
-      reject = $$reject;
-    });
-    this.resolve = aCallable$1(resolve);
-    this.reject = aCallable$1(reject);
-  }; // `NewPromiseCapability` abstract operation
-  // https://tc39.es/ecma262/#sec-newpromisecapability
-
-
-  newPromiseCapability$2.f = function (C) {
-    return new PromiseCapability(C);
-  };
-
-  var anObject = anObject$8;
-  var isObject$1 = isObject$9;
-  var newPromiseCapability$1 = newPromiseCapability$2;
-
-  var promiseResolve$1 = function (C, x) {
-    anObject(C);
-    if (isObject$1(x) && x.constructor === C) return x;
-    var promiseCapability = newPromiseCapability$1.f(C);
-    var resolve = promiseCapability.resolve;
-    resolve(x);
-    return promiseCapability.promise;
-  };
-
-  var global$3 = global$D;
+  var global$7 = global$D;
 
   var hostReportErrors$1 = function (a, b) {
-    var console = global$3.console;
+    var console = global$7.console;
 
     if (console && console.error) {
       arguments.length == 1 ? console.error(a) : console.error(a, b);
     }
   };
 
-  var perform$1 = function (exec) {
+  var perform$3 = function (exec) {
     try {
       return {
         error: false,
@@ -1927,76 +1725,36 @@ this.google.maps.plugins.loader = (function (exports) {
   };
   var queue = Queue$1;
 
-  var engineIsBrowser = typeof window == 'object';
+  var global$6 = global$D;
+  var promiseNativeConstructor = global$6.Promise;
 
-  var $ = _export;
-  var global$2 = global$D;
-  var getBuiltIn = getBuiltIn$8;
-  var call = functionCall;
-  var NativePromise = nativePromiseConstructor;
-  var redefine = redefine$4.exports;
-  var redefineAll = redefineAll$1;
-  var setPrototypeOf = objectSetPrototypeOf;
-  var setToStringTag = setToStringTag$1;
-  var setSpecies = setSpecies$1;
-  var aCallable = aCallable$5;
-  var isCallable = isCallable$e;
-  var isObject = isObject$9;
-  var anInstance = anInstance$1;
-  var inspectSource = inspectSource$4;
-  var iterate = iterate$1;
-  var checkCorrectnessOfIteration = checkCorrectnessOfIteration$1;
-  var speciesConstructor = speciesConstructor$1;
-  var task = task$1.set;
-  var microtask = microtask$1;
-  var promiseResolve = promiseResolve$1;
-  var hostReportErrors = hostReportErrors$1;
-  var newPromiseCapabilityModule = newPromiseCapability$2;
-  var perform = perform$1;
-  var Queue = queue;
-  var InternalStateModule = internalState;
+  var engineIsBrowser = typeof window == 'object' && typeof Deno != 'object';
+
+  var global$5 = global$D;
+  var NativePromiseConstructor$3 = promiseNativeConstructor;
+  var isCallable$2 = isCallable$h;
   var isForced = isForced_1;
-  var wellKnownSymbol = wellKnownSymbol$d;
+  var inspectSource = inspectSource$4;
+  var wellKnownSymbol$3 = wellKnownSymbol$d;
   var IS_BROWSER = engineIsBrowser;
-  var IS_NODE = engineIsNode;
   var V8_VERSION = engineV8Version;
-  var SPECIES = wellKnownSymbol('species');
-  var PROMISE = 'Promise';
-  var getInternalState = InternalStateModule.getterFor(PROMISE);
-  var setInternalState = InternalStateModule.set;
-  var getInternalPromiseState = InternalStateModule.getterFor(PROMISE);
-  var NativePromisePrototype = NativePromise && NativePromise.prototype;
-  var PromiseConstructor = NativePromise;
-  var PromisePrototype = NativePromisePrototype;
-  var TypeError$1 = global$2.TypeError;
-  var document$1 = global$2.document;
-  var process = global$2.process;
-  var newPromiseCapability = newPromiseCapabilityModule.f;
-  var newGenericPromiseCapability = newPromiseCapability;
-  var DISPATCH_EVENT = !!(document$1 && document$1.createEvent && global$2.dispatchEvent);
-  var NATIVE_REJECTION_EVENT = isCallable(global$2.PromiseRejectionEvent);
-  var UNHANDLED_REJECTION = 'unhandledrejection';
-  var REJECTION_HANDLED = 'rejectionhandled';
-  var PENDING = 0;
-  var FULFILLED = 1;
-  var REJECTED = 2;
-  var HANDLED = 1;
-  var UNHANDLED = 2;
+  NativePromiseConstructor$3 && NativePromiseConstructor$3.prototype;
+  var SPECIES = wellKnownSymbol$3('species');
   var SUBCLASSING = false;
-  var Internal, OwnPromiseCapability, PromiseWrapper, nativeThen;
-  var FORCED = isForced(PROMISE, function () {
-    var PROMISE_CONSTRUCTOR_SOURCE = inspectSource(PromiseConstructor);
-    var GLOBAL_CORE_JS_PROMISE = PROMISE_CONSTRUCTOR_SOURCE !== String(PromiseConstructor); // V8 6.6 (Node 10 and Chrome 66) have a bug with resolving custom thenables
+  var NATIVE_PROMISE_REJECTION_EVENT$1 = isCallable$2(global$5.PromiseRejectionEvent);
+  var FORCED_PROMISE_CONSTRUCTOR$5 = isForced('Promise', function () {
+    var PROMISE_CONSTRUCTOR_SOURCE = inspectSource(NativePromiseConstructor$3);
+    var GLOBAL_CORE_JS_PROMISE = PROMISE_CONSTRUCTOR_SOURCE !== String(NativePromiseConstructor$3); // V8 6.6 (Node 10 and Chrome 66) have a bug with resolving custom thenables
     // https://bugs.chromium.org/p/chromium/issues/detail?id=830565
     // We can't detect it synchronously, so just check versions
 
-    if (!GLOBAL_CORE_JS_PROMISE && V8_VERSION === 66) return true; // We need Promise#finally in the pure version for preventing prototype pollution
+    if (!GLOBAL_CORE_JS_PROMISE && V8_VERSION === 66) return true; // We need Promise#{ catch, finally } in the pure version for preventing prototype pollution
     // deoptimization and performance degradation
     // https://github.com/zloirock/core-js/issues/679
 
     if (V8_VERSION >= 51 && /native code/.test(PROMISE_CONSTRUCTOR_SOURCE)) return false; // Detect correctness of subclassing with @@species support
 
-    var promise = new PromiseConstructor(function (resolve) {
+    var promise = new NativePromiseConstructor$3(function (resolve) {
       resolve(1);
     });
 
@@ -2015,17 +1773,85 @@ this.google.maps.plugins.loader = (function (exports) {
     }) instanceof FakePromise;
     if (!SUBCLASSING) return true; // Unhandled rejections tracking support, NodeJS Promise without it fails @@species test
 
-    return !GLOBAL_CORE_JS_PROMISE && IS_BROWSER && !NATIVE_REJECTION_EVENT;
+    return !GLOBAL_CORE_JS_PROMISE && IS_BROWSER && !NATIVE_PROMISE_REJECTION_EVENT$1;
   });
-  var INCORRECT_ITERATION = FORCED || !checkCorrectnessOfIteration(function (iterable) {
-    PromiseConstructor.all(iterable)['catch'](function () {
-      /* empty */
+  var promiseConstructorDetection = {
+    CONSTRUCTOR: FORCED_PROMISE_CONSTRUCTOR$5,
+    REJECTION_EVENT: NATIVE_PROMISE_REJECTION_EVENT$1,
+    SUBCLASSING: SUBCLASSING
+  };
+
+  var newPromiseCapability$2 = {};
+
+  var aCallable$4 = aCallable$7;
+
+  var PromiseCapability = function (C) {
+    var resolve, reject;
+    this.promise = new C(function ($$resolve, $$reject) {
+      if (resolve !== undefined || reject !== undefined) throw TypeError('Bad Promise constructor');
+      resolve = $$resolve;
+      reject = $$reject;
     });
-  }); // helpers
+    this.resolve = aCallable$4(resolve);
+    this.reject = aCallable$4(reject);
+  }; // `NewPromiseCapability` abstract operation
+  // https://tc39.es/ecma262/#sec-newpromisecapability
+
+
+  newPromiseCapability$2.f = function (C) {
+    return new PromiseCapability(C);
+  };
+
+  var $$5 = _export;
+  var IS_NODE = engineIsNode;
+  var global$4 = global$D;
+  var call$6 = functionCall;
+  var redefine$1 = redefine$5.exports;
+  var redefineAll = redefineAll$1;
+  var setPrototypeOf = objectSetPrototypeOf;
+  var setToStringTag = setToStringTag$1;
+  var setSpecies = setSpecies$1;
+  var aCallable$3 = aCallable$7;
+  var isCallable$1 = isCallable$h;
+  var isObject$1 = isObject$a;
+  var anInstance = anInstance$1;
+  var speciesConstructor = speciesConstructor$1;
+  var task = task$1.set;
+  var microtask = microtask$1;
+  var hostReportErrors = hostReportErrors$1;
+  var perform$2 = perform$3;
+  var Queue = queue;
+  var InternalStateModule = internalState;
+  var NativePromiseConstructor$2 = promiseNativeConstructor;
+  var PromiseConstructorDetection = promiseConstructorDetection;
+  var newPromiseCapabilityModule$3 = newPromiseCapability$2;
+  var PROMISE = 'Promise';
+  var FORCED_PROMISE_CONSTRUCTOR$4 = PromiseConstructorDetection.CONSTRUCTOR;
+  var NATIVE_PROMISE_REJECTION_EVENT = PromiseConstructorDetection.REJECTION_EVENT;
+  var NATIVE_PROMISE_SUBCLASSING = PromiseConstructorDetection.SUBCLASSING;
+  var getInternalPromiseState = InternalStateModule.getterFor(PROMISE);
+  var setInternalState = InternalStateModule.set;
+  var NativePromisePrototype$1 = NativePromiseConstructor$2 && NativePromiseConstructor$2.prototype;
+  var PromiseConstructor = NativePromiseConstructor$2;
+  var PromisePrototype = NativePromisePrototype$1;
+  var TypeError$3 = global$4.TypeError;
+  var document$1 = global$4.document;
+  var process = global$4.process;
+  var newPromiseCapability$1 = newPromiseCapabilityModule$3.f;
+  var newGenericPromiseCapability = newPromiseCapability$1;
+  var DISPATCH_EVENT = !!(document$1 && document$1.createEvent && global$4.dispatchEvent);
+  var UNHANDLED_REJECTION = 'unhandledrejection';
+  var REJECTION_HANDLED = 'rejectionhandled';
+  var PENDING = 0;
+  var FULFILLED = 1;
+  var REJECTED = 2;
+  var HANDLED = 1;
+  var UNHANDLED = 2;
+  var Internal, OwnPromiseCapability, PromiseWrapper, nativeThen; // helpers
 
   var isThenable = function (it) {
     var then;
-    return isObject(it) && isCallable(then = it.then) ? then : false;
+    return isObject$1(it) && isCallable$1(then = it.then) ? then : false;
   };
 
   var callReaction = function (reaction, state) {
@@ -2055,9 +1881,9 @@ this.google.maps.plugins.loader = (function (exports) {
         }
 
         if (result === reaction.promise) {
-          reject(TypeError$1('Promise-chain cycle'));
+          reject(TypeError$3('Promise-chain cycle'));
         } else if (then = isThenable(result)) {
-          call(then, result, resolve, reject);
+          call$6(then, result, resolve, reject);
         } else resolve(result);
       } else reject(value);
     } catch (error) {
@@ -2090,24 +1916,24 @@ this.google.maps.plugins.loader = (function (exports) {
       event.promise = promise;
       event.reason = reason;
       event.initEvent(name, false, true);
-      global$2.dispatchEvent(event);
+      global$4.dispatchEvent(event);
     } else event = {
       promise: promise,
       reason: reason
     };
 
-    if (!NATIVE_REJECTION_EVENT && (handler = global$2['on' + name])) handler(event);else if (name === UNHANDLED_REJECTION) hostReportErrors('Unhandled promise rejection', reason);
+    if (!NATIVE_PROMISE_REJECTION_EVENT && (handler = global$4['on' + name])) handler(event);else if (name === UNHANDLED_REJECTION) hostReportErrors('Unhandled promise rejection', reason);
   };
 
   var onUnhandled = function (state) {
-    call(task, global$2, function () {
+    call$6(task, global$4, function () {
       var promise = state.facade;
       var value = state.value;
       var IS_UNHANDLED = isUnhandled(state);
       var result;
 
       if (IS_UNHANDLED) {
-        result = perform(function () {
+        result = perform$2(function () {
           if (IS_NODE) {
             process.emit('unhandledRejection', value, promise);
           } else dispatchEvent(UNHANDLED_REJECTION, promise, value);
@@ -2124,7 +1950,7 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var onHandleUnhandled = function (state) {
-    call(task, global$2, function () {
+    call$6(task, global$4, function () {
       var promise = state.facade;
 
       if (IS_NODE) {
@@ -2133,7 +1959,7 @@ this.google.maps.plugins.loader = (function (exports) {
     });
   };
 
-  var bind$1 = function (fn, state, unwrap) {
+  var bind$2 = function (fn, state, unwrap) {
     return function (value) {
       fn(state, value, unwrap);
     };
@@ -2154,7 +1980,7 @@ this.google.maps.plugins.loader = (function (exports) {
     if (unwrap) state = unwrap;
 
     try {
-      if (state.facade === value) throw TypeError$1("Promise can't be resolved itself");
+      if (state.facade === value) throw TypeError$3("Promise can't be resolved itself");
       var then = isThenable(value);
 
       if (then) {
@@ -2164,7 +1990,7 @@ this.google.maps.plugins.loader = (function (exports) {
           };
 
           try {
-            call(then, value, bind$1(internalResolve, wrapper, state), bind$1(internalReject, wrapper, state));
+            call$6(then, value, bind$2(internalResolve, wrapper, state), bind$2(internalReject, wrapper, state));
           } catch (error) {
             internalReject(wrapper, error, state);
           }
@@ -2182,16 +2008,16 @@ this.google.maps.plugins.loader = (function (exports) {
   }; // constructor polyfill
 
 
-  if (FORCED) {
+  if (FORCED_PROMISE_CONSTRUCTOR$4) {
     // 25.4.3.1 Promise(executor)
     PromiseConstructor = function Promise(executor) {
       anInstance(this, PromisePrototype);
-      aCallable(executor);
-      call(Internal, this);
-      var state = getInternalState(this);
+      aCallable$3(executor);
+      call$6(Internal, this);
+      var state = getInternalPromiseState(this);
 
       try {
-        executor(bind$1(internalResolve, state), bind$1(internalReject, state));
+        executor(bind$2(internalResolve, state), bind$2(internalReject, state));
       } catch (error) {
         internalReject(state, error);
       }
@@ -2218,125 +2044,299 @@ this.google.maps.plugins.loader = (function (exports) {
       // eslint-disable-next-line unicorn/no-thenable -- safe
       then: function then(onFulfilled, onRejected) {
         var state = getInternalPromiseState(this);
-        var reaction = newPromiseCapability(speciesConstructor(this, PromiseConstructor));
+        var reaction = newPromiseCapability$1(speciesConstructor(this, PromiseConstructor));
         state.parent = true;
-        reaction.ok = isCallable(onFulfilled) ? onFulfilled : true;
-        reaction.fail = isCallable(onRejected) && onRejected;
+        reaction.ok = isCallable$1(onFulfilled) ? onFulfilled : true;
+        reaction.fail = isCallable$1(onRejected) && onRejected;
         reaction.domain = IS_NODE ? process.domain : undefined;
         if (state.state == PENDING) state.reactions.add(reaction);else microtask(function () {
           callReaction(reaction, state);
         });
         return reaction.promise;
-      },
-      // `Promise.prototype.catch` method
-      // https://tc39.es/ecma262/#sec-promise.prototype.catch
-      'catch': function (onRejected) {
-        return this.then(undefined, onRejected);
       }
     });
 
     OwnPromiseCapability = function () {
       var promise = new Internal();
-      var state = getInternalState(promise);
+      var state = getInternalPromiseState(promise);
       this.promise = promise;
-      this.resolve = bind$1(internalResolve, state);
-      this.reject = bind$1(internalReject, state);
+      this.resolve = bind$2(internalResolve, state);
+      this.reject = bind$2(internalReject, state);
     };
 
-    newPromiseCapabilityModule.f = newPromiseCapability = function (C) {
+    newPromiseCapabilityModule$3.f = newPromiseCapability$1 = function (C) {
       return C === PromiseConstructor || C === PromiseWrapper ? new OwnPromiseCapability(C) : newGenericPromiseCapability(C);
     };
 
-    if (isCallable(NativePromise) && NativePromisePrototype !== Object.prototype) {
-      nativeThen = NativePromisePrototype.then;
+    if (isCallable$1(NativePromiseConstructor$2) && NativePromisePrototype$1 !== Object.prototype) {
+      nativeThen = NativePromisePrototype$1.then;
 
-      if (!SUBCLASSING) {
+      if (!NATIVE_PROMISE_SUBCLASSING) {
         // make `Promise#then` return a polyfilled `Promise` for native promise-based APIs
-        redefine(NativePromisePrototype, 'then', function then(onFulfilled, onRejected) {
+        redefine$1(NativePromisePrototype$1, 'then', function then(onFulfilled, onRejected) {
           var that = this;
           return new PromiseConstructor(function (resolve, reject) {
-            call(nativeThen, that, resolve, reject);
+            call$6(nativeThen, that, resolve, reject);
           }).then(onFulfilled, onRejected); // https://github.com/zloirock/core-js/issues/640
         }, {
-          unsafe: true
-        }); // makes sure that native promise-based APIs `Promise#catch` properly works with patched `Promise#then`
-
-        redefine(NativePromisePrototype, 'catch', PromisePrototype['catch'], {
           unsafe: true
         });
       } // make `.constructor === Promise` work for native promise-based APIs
 
 
       try {
-        delete NativePromisePrototype.constructor;
+        delete NativePromisePrototype$1.constructor;
       } catch (error) {
         /* empty */
       } // make `instanceof Promise` work for native promise-based APIs
 
 
       if (setPrototypeOf) {
-        setPrototypeOf(NativePromisePrototype, PromisePrototype);
+        setPrototypeOf(NativePromisePrototype$1, PromisePrototype);
       }
     }
   }
 
-  $({
+  $$5({
     global: true,
     wrap: true,
-    forced: FORCED
+    forced: FORCED_PROMISE_CONSTRUCTOR$4
   }, {
     Promise: PromiseConstructor
   });
   setToStringTag(PromiseConstructor, PROMISE, false);
   setSpecies(PROMISE);
-  PromiseWrapper = getBuiltIn(PROMISE); // statics
 
-  $({
-    target: PROMISE,
-    stat: true,
-    forced: FORCED
-  }, {
-    // `Promise.reject` method
-    // https://tc39.es/ecma262/#sec-promise.reject
-    reject: function reject(r) {
-      var capability = newPromiseCapability(this);
-      call(capability.reject, undefined, r);
-      return capability.promise;
+  var iterators = {};
+
+  var wellKnownSymbol$2 = wellKnownSymbol$d;
+  var Iterators$1 = iterators;
+  var ITERATOR$2 = wellKnownSymbol$2('iterator');
+  var ArrayPrototype = Array.prototype; // check on default Array iterator
+
+  var isArrayIteratorMethod$1 = function (it) {
+    return it !== undefined && (Iterators$1.Array === it || ArrayPrototype[ITERATOR$2] === it);
+  };
+
+  var classof = classof$4;
+  var getMethod$1 = getMethod$3;
+  var Iterators = iterators;
+  var wellKnownSymbol$1 = wellKnownSymbol$d;
+  var ITERATOR$1 = wellKnownSymbol$1('iterator');
+
+  var getIteratorMethod$2 = function (it) {
+    if (it != undefined) return getMethod$1(it, ITERATOR$1) || getMethod$1(it, '@@iterator') || Iterators[classof(it)];
+  };
+
+  var global$3 = global$D;
+  var call$5 = functionCall;
+  var aCallable$2 = aCallable$7;
+  var anObject$3 = anObject$8;
+  var tryToString$1 = tryToString$4;
+  var getIteratorMethod$1 = getIteratorMethod$2;
+  var TypeError$2 = global$3.TypeError;
+
+  var getIterator$1 = function (argument, usingIterator) {
+    var iteratorMethod = arguments.length < 2 ? getIteratorMethod$1(argument) : usingIterator;
+    if (aCallable$2(iteratorMethod)) return anObject$3(call$5(iteratorMethod, argument));
+    throw TypeError$2(tryToString$1(argument) + ' is not iterable');
+  };
+
+  var call$4 = functionCall;
+  var anObject$2 = anObject$8;
+  var getMethod = getMethod$3;
+
+  var iteratorClose$1 = function (iterator, kind, value) {
+    var innerResult, innerError;
+    anObject$2(iterator);
+
+    try {
+      innerResult = getMethod(iterator, 'return');
+
+      if (!innerResult) {
+        if (kind === 'throw') throw value;
+        return value;
+      }
+
+      innerResult = call$4(innerResult, iterator);
+    } catch (error) {
+      innerError = true;
+      innerResult = error;
     }
-  });
-  $({
-    target: PROMISE,
-    stat: true,
-    forced: FORCED
-  }, {
-    // `Promise.resolve` method
-    // https://tc39.es/ecma262/#sec-promise.resolve
-    resolve: function resolve(x) {
-      return promiseResolve(this, x);
+
+    if (kind === 'throw') throw value;
+    if (innerError) throw innerResult;
+    anObject$2(innerResult);
+    return value;
+  };
+
+  var global$2 = global$D;
+  var bind$1 = functionBindContext;
+  var call$3 = functionCall;
+  var anObject$1 = anObject$8;
+  var tryToString = tryToString$4;
+  var isArrayIteratorMethod = isArrayIteratorMethod$1;
+  var lengthOfArrayLike$1 = lengthOfArrayLike$4;
+  var isPrototypeOf = objectIsPrototypeOf;
+  var getIterator = getIterator$1;
+  var getIteratorMethod = getIteratorMethod$2;
+  var iteratorClose = iteratorClose$1;
+  var TypeError$1 = global$2.TypeError;
+
+  var Result = function (stopped, result) {
+    this.stopped = stopped;
+    this.result = result;
+  };
+
+  var ResultPrototype = Result.prototype;
+
+  var iterate$2 = function (iterable, unboundFunction, options) {
+    var that = options && options.that;
+    var AS_ENTRIES = !!(options && options.AS_ENTRIES);
+    var IS_ITERATOR = !!(options && options.IS_ITERATOR);
+    var INTERRUPTED = !!(options && options.INTERRUPTED);
+    var fn = bind$1(unboundFunction, that);
+    var iterator, iterFn, index, length, result, next, step;
+
+    var stop = function (condition) {
+      if (iterator) iteratorClose(iterator, 'normal', condition);
+      return new Result(true, condition);
+    };
+
+    var callFn = function (value) {
+      if (AS_ENTRIES) {
+        anObject$1(value);
+        return INTERRUPTED ? fn(value[0], value[1], stop) : fn(value[0], value[1]);
+      }
+
+      return INTERRUPTED ? fn(value, stop) : fn(value);
+    };
+
+    if (IS_ITERATOR) {
+      iterator = iterable;
+    } else {
+      iterFn = getIteratorMethod(iterable);
+      if (!iterFn) throw TypeError$1(tryToString(iterable) + ' is not iterable'); // optimisation for array iterators
+
+      if (isArrayIteratorMethod(iterFn)) {
+        for (index = 0, length = lengthOfArrayLike$1(iterable); length > index; index++) {
+          result = callFn(iterable[index]);
+          if (result && isPrototypeOf(ResultPrototype, result)) return result;
+        }
+
+        return new Result(false);
+      }
+
+      iterator = getIterator(iterable, iterFn);
     }
+
+    next = iterator.next;
+
+    while (!(step = call$3(next, iterator)).done) {
+      try {
+        result = callFn(step.value);
+      } catch (error) {
+        iteratorClose(iterator, 'throw', error);
+      }
+
+      if (typeof result == 'object' && result && isPrototypeOf(ResultPrototype, result)) return result;
+    }
+
+    return new Result(false);
+  };
+
+  var wellKnownSymbol = wellKnownSymbol$d;
+  var ITERATOR = wellKnownSymbol('iterator');
+  var SAFE_CLOSING = false;
+
+  try {
+    var called = 0;
+    var iteratorWithReturn = {
+      next: function () {
+        return {
+          done: !!called++
+        };
+      },
+      'return': function () {
+        SAFE_CLOSING = true;
+      }
+    };
+
+    iteratorWithReturn[ITERATOR] = function () {
+      return this;
+    }; // eslint-disable-next-line es-x/no-array-from, no-throw-literal -- required for testing
+
+
+    Array.from(iteratorWithReturn, function () {
+      throw 2;
+    });
+  } catch (error) {
+    /* empty */
+  }
+
+  var checkCorrectnessOfIteration$1 = function (exec, SKIP_CLOSING) {
+    if (!SKIP_CLOSING && !SAFE_CLOSING) return false;
+    var ITERATION_SUPPORT = false;
+
+    try {
+      var object = {};
+
+      object[ITERATOR] = function () {
+        return {
+          next: function () {
+            return {
+              done: ITERATION_SUPPORT = true
+            };
+          }
+        };
+      };
+
+      exec(object);
+    } catch (error) {
+      /* empty */
+    }
+
+    return ITERATION_SUPPORT;
+  };
+
+  var NativePromiseConstructor$1 = promiseNativeConstructor;
+  var checkCorrectnessOfIteration = checkCorrectnessOfIteration$1;
+  var FORCED_PROMISE_CONSTRUCTOR$3 = promiseConstructorDetection.CONSTRUCTOR;
+  var promiseStaticsIncorrectIteration = FORCED_PROMISE_CONSTRUCTOR$3 || !checkCorrectnessOfIteration(function (iterable) {
+    NativePromiseConstructor$1.all(iterable).then(undefined, function () {
+      /* empty */
+    });
   });
-  $({
-    target: PROMISE,
+
+  var $$4 = _export;
+  var call$2 = functionCall;
+  var aCallable$1 = aCallable$7;
+  var newPromiseCapabilityModule$2 = newPromiseCapability$2;
+  var perform$1 = perform$3;
+  var iterate$1 = iterate$2;
+  var PROMISE_STATICS_INCORRECT_ITERATION$1 = promiseStaticsIncorrectIteration; // `Promise.all` method
+  // https://tc39.es/ecma262/#sec-promise.all
+
+  $$4({
+    target: 'Promise',
     stat: true,
-    forced: INCORRECT_ITERATION
+    forced: PROMISE_STATICS_INCORRECT_ITERATION$1
   }, {
-    // `Promise.all` method
-    // https://tc39.es/ecma262/#sec-promise.all
     all: function all(iterable) {
       var C = this;
-      var capability = newPromiseCapability(C);
+      var capability = newPromiseCapabilityModule$2.f(C);
       var resolve = capability.resolve;
       var reject = capability.reject;
-      var result = perform(function () {
-        var $promiseResolve = aCallable(C.resolve);
+      var result = perform$1(function () {
+        var $promiseResolve = aCallable$1(C.resolve);
         var values = [];
         var counter = 0;
         var remaining = 1;
-        iterate(iterable, function (promise) {
+        iterate$1(iterable, function (promise) {
           var index = counter++;
           var alreadyCalled = false;
           remaining++;
-          call($promiseResolve, C, promise).then(function (value) {
+          call$2($promiseResolve, C, promise).then(function (value) {
             if (alreadyCalled) return;
             alreadyCalled = true;
             values[index] = value;
@@ -2347,21 +2347,113 @@ this.google.maps.plugins.loader = (function (exports) {
       });
       if (result.error) reject(result.value);
       return capability.promise;
-    },
-    // `Promise.race` method
-    // https://tc39.es/ecma262/#sec-promise.race
+    }
+  });
+
+  var $$3 = _export;
+  var FORCED_PROMISE_CONSTRUCTOR$2 = promiseConstructorDetection.CONSTRUCTOR;
+  var NativePromiseConstructor = promiseNativeConstructor;
+  var getBuiltIn$1 = getBuiltIn$9;
+  var isCallable = isCallable$h;
+  var redefine = redefine$5.exports;
+  var NativePromisePrototype = NativePromiseConstructor && NativePromiseConstructor.prototype; // `Promise.prototype.catch` method
+  // https://tc39.es/ecma262/#sec-promise.prototype.catch
+
+  $$3({
+    target: 'Promise',
+    proto: true,
+    forced: FORCED_PROMISE_CONSTRUCTOR$2,
+    real: true
+  }, {
+    'catch': function (onRejected) {
+      return this.then(undefined, onRejected);
+    }
+  }); // makes sure that native promise-based APIs `Promise#catch` properly works with patched `Promise#then`
+
+  if (isCallable(NativePromiseConstructor)) {
+    var method = getBuiltIn$1('Promise').prototype['catch'];
+
+    if (NativePromisePrototype['catch'] !== method) {
+      redefine(NativePromisePrototype, 'catch', method, {
+        unsafe: true
+      });
+    }
+  }
+
+  var $$2 = _export;
+  var call$1 = functionCall;
+  var aCallable = aCallable$7;
+  var newPromiseCapabilityModule$1 = newPromiseCapability$2;
+  var perform = perform$3;
+  var iterate = iterate$2;
+  var PROMISE_STATICS_INCORRECT_ITERATION = promiseStaticsIncorrectIteration; // `Promise.race` method
+  // https://tc39.es/ecma262/#sec-promise.race
+
+  $$2({
+    target: 'Promise',
+    stat: true,
+    forced: PROMISE_STATICS_INCORRECT_ITERATION
+  }, {
     race: function race(iterable) {
       var C = this;
-      var capability = newPromiseCapability(C);
+      var capability = newPromiseCapabilityModule$1.f(C);
       var reject = capability.reject;
       var result = perform(function () {
         var $promiseResolve = aCallable(C.resolve);
         iterate(iterable, function (promise) {
-          call($promiseResolve, C, promise).then(capability.resolve, reject);
+          call$1($promiseResolve, C, promise).then(capability.resolve, reject);
         });
       });
       if (result.error) reject(result.value);
       return capability.promise;
+    }
+  });
+
+  var $$1 = _export;
+  var call = functionCall;
+  var newPromiseCapabilityModule = newPromiseCapability$2;
+  var FORCED_PROMISE_CONSTRUCTOR$1 = promiseConstructorDetection.CONSTRUCTOR; // `Promise.reject` method
+  // https://tc39.es/ecma262/#sec-promise.reject
+
+  $$1({
+    target: 'Promise',
+    stat: true,
+    forced: FORCED_PROMISE_CONSTRUCTOR$1
+  }, {
+    reject: function reject(r) {
+      var capability = newPromiseCapabilityModule.f(this);
+      call(capability.reject, undefined, r);
+      return capability.promise;
+    }
+  });
+
+  var anObject = anObject$8;
+  var isObject = isObject$a;
+  var newPromiseCapability = newPromiseCapability$2;
+
+  var promiseResolve$1 = function (C, x) {
+    anObject(C);
+    if (isObject(x) && x.constructor === C) return x;
+    var promiseCapability = newPromiseCapability.f(C);
+    var resolve = promiseCapability.resolve;
+    resolve(x);
+    return promiseCapability.promise;
+  };
+
+  var $ = _export;
+  var getBuiltIn = getBuiltIn$9;
+  var FORCED_PROMISE_CONSTRUCTOR = promiseConstructorDetection.CONSTRUCTOR;
+  var promiseResolve = promiseResolve$1;
+  getBuiltIn('Promise');
+  // https://tc39.es/ecma262/#sec-promise.resolve
+
+  $({
+    target: 'Promise',
+    stat: true,
+    forced: FORCED_PROMISE_CONSTRUCTOR
+  }, {
+    resolve: function resolve(x) {
+      return promiseResolve(this, x);
     }
   });
 
@@ -2505,7 +2597,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var arrayForEach = !STRICT_METHOD ? function forEach(callbackfn
   /* , thisArg */
   ) {
-    return $forEach(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined); // eslint-disable-next-line es/no-array-prototype-foreach -- safe
+    return $forEach(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined); // eslint-disable-next-line es-x/no-array-prototype-foreach -- safe
   } : [].forEach;
 
   var global$1 = global$D;
