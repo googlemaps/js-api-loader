@@ -42,7 +42,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var objectGetOwnPropertyDescriptor = {};
 
-  var fails$d = function (exec) {
+  var fails$e = function (exec) {
     try {
       return !!exec();
     } catch (error) {
@@ -50,9 +50,9 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   };
 
-  var fails$c = fails$d; // Detect IE8's incomplete defineProperty implementation
+  var fails$d = fails$e; // Detect IE8's incomplete defineProperty implementation
 
-  var descriptors = !fails$c(function () {
+  var descriptors = !fails$d(function () {
     // eslint-disable-next-line es-x/no-object-defineproperty -- required for testing
     return Object.defineProperty({}, 1, {
       get: function () {
@@ -61,8 +61,8 @@ this.google.maps.plugins.loader = (function (exports) {
     })[1] != 7;
   });
 
-  var fails$b = fails$d;
-  var functionBindNative = !fails$b(function () {
+  var fails$c = fails$e;
+  var functionBindNative = !fails$c(function () {
     // eslint-disable-next-line es-x/no-function-prototype-bind -- safe
     var test = function () {
       /* empty */
@@ -126,12 +126,12 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var global$C = global$D;
   var uncurryThis$e = functionUncurryThis;
-  var fails$a = fails$d;
+  var fails$b = fails$e;
   var classof$6 = classofRaw$1;
   var Object$4 = global$C.Object;
   var split = uncurryThis$e(''.split); // fallback for non-array-like ES3 and non-enumerable old V8 strings
 
-  var indexedObject = fails$a(function () {
+  var indexedObject = fails$b(function () {
     // throws an error in rhino, see https://github.com/mozilla/rhino/issues/346
     // eslint-disable-next-line no-prototype-builtins -- safe
     return !Object$4('z').propertyIsEnumerable(0);
@@ -157,21 +157,21 @@ this.google.maps.plugins.loader = (function (exports) {
 
   // https://tc39.es/ecma262/#sec-iscallable
 
-  var isCallable$h = function (argument) {
+  var isCallable$i = function (argument) {
     return typeof argument == 'function';
   };
 
-  var isCallable$g = isCallable$h;
+  var isCallable$h = isCallable$i;
 
   var isObject$a = function (it) {
-    return typeof it == 'object' ? it !== null : isCallable$g(it);
+    return typeof it == 'object' ? it !== null : isCallable$h(it);
   };
 
   var global$A = global$D;
-  var isCallable$f = isCallable$h;
+  var isCallable$g = isCallable$i;
 
   var aFunction = function (argument) {
-    return isCallable$f(argument) ? argument : undefined;
+    return isCallable$g(argument) ? argument : undefined;
   };
 
   var getBuiltIn$9 = function (namespace, method) {
@@ -214,9 +214,9 @@ this.google.maps.plugins.loader = (function (exports) {
 
   /* eslint-disable es-x/no-symbol -- required for testing */
   var V8_VERSION$3 = engineV8Version;
-  var fails$9 = fails$d; // eslint-disable-next-line es-x/no-object-getownpropertysymbols -- required for testing
+  var fails$a = fails$e; // eslint-disable-next-line es-x/no-object-getownpropertysymbols -- required for testing
 
-  var nativeSymbol = !!Object.getOwnPropertySymbols && !fails$9(function () {
+  var nativeSymbol = !!Object.getOwnPropertySymbols && !fails$a(function () {
     var symbol = Symbol(); // Chrome 38 Symbol has incorrect toString conversion
     // `get-own-property-symbols` polyfill symbols converted to object are not Symbol instances
 
@@ -230,7 +230,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var global$y = global$D;
   var getBuiltIn$7 = getBuiltIn$9;
-  var isCallable$e = isCallable$h;
+  var isCallable$f = isCallable$i;
   var isPrototypeOf$2 = objectIsPrototypeOf;
   var USE_SYMBOL_AS_UID$1 = useSymbolAsUid;
   var Object$3 = global$y.Object;
@@ -238,7 +238,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return typeof it == 'symbol';
   } : function (it) {
     var $Symbol = getBuiltIn$7('Symbol');
-    return isCallable$e($Symbol) && isPrototypeOf$2($Symbol.prototype, Object$3(it));
+    return isCallable$f($Symbol) && isPrototypeOf$2($Symbol.prototype, Object$3(it));
   };
 
   var global$x = global$D;
@@ -253,12 +253,12 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var global$w = global$D;
-  var isCallable$d = isCallable$h;
+  var isCallable$e = isCallable$i;
   var tryToString$3 = tryToString$4;
   var TypeError$e = global$w.TypeError; // `Assert: IsCallable(argument) is true`
 
   var aCallable$7 = function (argument) {
-    if (isCallable$d(argument)) return argument;
+    if (isCallable$e(argument)) return argument;
     throw TypeError$e(tryToString$3(argument) + ' is not a function');
   };
 
@@ -272,16 +272,16 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var global$v = global$D;
   var call$b = functionCall;
-  var isCallable$c = isCallable$h;
+  var isCallable$d = isCallable$i;
   var isObject$9 = isObject$a;
   var TypeError$d = global$v.TypeError; // `OrdinaryToPrimitive` abstract operation
   // https://tc39.es/ecma262/#sec-ordinarytoprimitive
 
   var ordinaryToPrimitive$1 = function (input, pref) {
     var fn, val;
-    if (pref === 'string' && isCallable$c(fn = input.toString) && !isObject$9(val = call$b(fn, input))) return val;
-    if (isCallable$c(fn = input.valueOf) && !isObject$9(val = call$b(fn, input))) return val;
-    if (pref !== 'string' && isCallable$c(fn = input.toString) && !isObject$9(val = call$b(fn, input))) return val;
+    if (pref === 'string' && isCallable$d(fn = input.toString) && !isObject$9(val = call$b(fn, input))) return val;
+    if (isCallable$d(fn = input.valueOf) && !isObject$9(val = call$b(fn, input))) return val;
+    if (pref !== 'string' && isCallable$d(fn = input.toString) && !isObject$9(val = call$b(fn, input))) return val;
     throw TypeError$d("Can't convert object to primitive value");
   };
 
@@ -289,11 +289,11 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var global$u = global$D; // eslint-disable-next-line es-x/no-object-defineproperty -- safe
 
-  var defineProperty$1 = Object.defineProperty;
+  var defineProperty$2 = Object.defineProperty;
 
   var setGlobal$3 = function (key, value) {
     try {
-      defineProperty$1(global$u, key, {
+      defineProperty$2(global$u, key, {
         value: value,
         configurable: true,
         writable: true
@@ -315,10 +315,10 @@ this.google.maps.plugins.loader = (function (exports) {
   (shared$3.exports = function (key, value) {
     return store$2[key] || (store$2[key] = value !== undefined ? value : {});
   })('versions', []).push({
-    version: '3.22.2',
+    version: '3.22.4',
     mode: 'global',
     copyright: '© 2014-2022 Denis Pushkarev (zloirock.ru)',
-    license: 'https://github.com/zloirock/core-js/blob/v3.22.2/LICENSE',
+    license: 'https://github.com/zloirock/core-js/blob/v3.22.4/LICENSE',
     source: 'https://github.com/zloirock/core-js'
   });
 
@@ -424,10 +424,10 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var DESCRIPTORS$6 = descriptors;
-  var fails$8 = fails$d;
+  var fails$9 = fails$e;
   var createElement$1 = documentCreateElement$1; // Thanks to IE8 for its funny defineProperty
 
-  var ie8DomDefine = !DESCRIPTORS$6 && !fails$8(function () {
+  var ie8DomDefine = !DESCRIPTORS$6 && !fails$9(function () {
     // eslint-disable-next-line es-x/no-object-defineproperty -- required for testing
     return Object.defineProperty(createElement$1('div'), 'a', {
       get: function () {
@@ -462,10 +462,10 @@ this.google.maps.plugins.loader = (function (exports) {
   var objectDefineProperty = {};
 
   var DESCRIPTORS$4 = descriptors;
-  var fails$7 = fails$d; // V8 ~ Chrome 36-
+  var fails$8 = fails$e; // V8 ~ Chrome 36-
   // https://bugs.chromium.org/p/v8/issues/detail?id=3334
 
-  var v8PrototypeDefineBug = DESCRIPTORS$4 && fails$7(function () {
+  var v8PrototypeDefineBug = DESCRIPTORS$4 && fails$8(function () {
     // eslint-disable-next-line es-x/no-object-defineproperty -- required for testing
     return Object.defineProperty(function () {
       /* empty */
@@ -544,14 +544,32 @@ this.google.maps.plugins.loader = (function (exports) {
     return object;
   };
 
-  var redefine$5 = {exports: {}};
+  var makeBuiltIn$2 = {exports: {}};
+
+  var DESCRIPTORS$1 = descriptors;
+  var hasOwn$6 = hasOwnProperty_1;
+  var FunctionPrototype$1 = Function.prototype; // eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
+
+  var getDescriptor = DESCRIPTORS$1 && Object.getOwnPropertyDescriptor;
+  var EXISTS = hasOwn$6(FunctionPrototype$1, 'name'); // additional protection from minified / mangled / dropped function names
+
+  var PROPER = EXISTS && function something() {
+    /* empty */
+  }.name === 'something';
+
+  var CONFIGURABLE = EXISTS && (!DESCRIPTORS$1 || DESCRIPTORS$1 && getDescriptor(FunctionPrototype$1, 'name').configurable);
+  var functionName = {
+    EXISTS: EXISTS,
+    PROPER: PROPER,
+    CONFIGURABLE: CONFIGURABLE
+  };
 
   var uncurryThis$a = functionUncurryThis;
-  var isCallable$b = isCallable$h;
+  var isCallable$c = isCallable$i;
   var store$1 = sharedStore;
   var functionToString = uncurryThis$a(Function.toString); // this helper broken in `core-js@3.4.1-3.4.4`, so we can't use `shared` helper
 
-  if (!isCallable$b(store$1.inspectSource)) {
+  if (!isCallable$c(store$1.inspectSource)) {
     store$1.inspectSource = function (it) {
       return functionToString(it);
     };
@@ -560,10 +578,10 @@ this.google.maps.plugins.loader = (function (exports) {
   var inspectSource$4 = store$1.inspectSource;
 
   var global$m = global$D;
-  var isCallable$a = isCallable$h;
+  var isCallable$b = isCallable$i;
   var inspectSource$3 = inspectSource$4;
   var WeakMap$1 = global$m.WeakMap;
-  var nativeWeakMap = isCallable$a(WeakMap$1) && /native code/.test(inspectSource$3(WeakMap$1));
+  var nativeWeakMap = isCallable$b(WeakMap$1) && /native code/.test(inspectSource$3(WeakMap$1));
 
   var shared$1 = shared$3.exports;
   var uid = uid$2;
@@ -580,7 +598,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var uncurryThis$9 = functionUncurryThis;
   var isObject$5 = isObject$a;
   var createNonEnumerableProperty$3 = createNonEnumerableProperty$4;
-  var hasOwn$6 = hasOwnProperty_1;
+  var hasOwn$5 = hasOwnProperty_1;
   var shared = sharedStore;
   var sharedKey = sharedKey$1;
   var hiddenKeys$2 = hiddenKeys$3;
@@ -630,18 +648,18 @@ this.google.maps.plugins.loader = (function (exports) {
     hiddenKeys$2[STATE] = true;
 
     set$1 = function (it, metadata) {
-      if (hasOwn$6(it, STATE)) throw new TypeError$9(OBJECT_ALREADY_INITIALIZED);
+      if (hasOwn$5(it, STATE)) throw new TypeError$9(OBJECT_ALREADY_INITIALIZED);
       metadata.facade = it;
       createNonEnumerableProperty$3(it, STATE, metadata);
       return metadata;
     };
 
     get = function (it) {
-      return hasOwn$6(it, STATE) ? it[STATE] : {};
+      return hasOwn$5(it, STATE) ? it[STATE] : {};
     };
 
     has = function (it) {
-      return hasOwn$6(it, STATE);
+      return hasOwn$5(it, STATE);
     };
   }
 
@@ -653,71 +671,85 @@ this.google.maps.plugins.loader = (function (exports) {
     getterFor: getterFor
   };
 
-  var DESCRIPTORS$1 = descriptors;
-  var hasOwn$5 = hasOwnProperty_1;
-  var FunctionPrototype$1 = Function.prototype; // eslint-disable-next-line es-x/no-object-getownpropertydescriptor -- safe
-
-  var getDescriptor = DESCRIPTORS$1 && Object.getOwnPropertyDescriptor;
-  var EXISTS = hasOwn$5(FunctionPrototype$1, 'name'); // additional protection from minified / mangled / dropped function names
-
-  var PROPER = EXISTS && function something() {
-    /* empty */
-  }.name === 'something';
-
-  var CONFIGURABLE = EXISTS && (!DESCRIPTORS$1 || DESCRIPTORS$1 && getDescriptor(FunctionPrototype$1, 'name').configurable);
-  var functionName = {
-    EXISTS: EXISTS,
-    PROPER: PROPER,
-    CONFIGURABLE: CONFIGURABLE
-  };
-
-  var global$k = global$D;
-  var isCallable$9 = isCallable$h;
+  var fails$7 = fails$e;
+  var isCallable$a = isCallable$i;
   var hasOwn$4 = hasOwnProperty_1;
-  var createNonEnumerableProperty$2 = createNonEnumerableProperty$4;
-  var setGlobal$1 = setGlobal$3;
+  var defineProperty$1 = objectDefineProperty.f;
+  var CONFIGURABLE_FUNCTION_NAME = functionName.CONFIGURABLE;
   var inspectSource$2 = inspectSource$4;
   var InternalStateModule$1 = internalState;
-  var CONFIGURABLE_FUNCTION_NAME = functionName.CONFIGURABLE;
-  var getInternalState = InternalStateModule$1.get;
   var enforceInternalState = InternalStateModule$1.enforce;
+  var getInternalState = InternalStateModule$1.get;
+  var CONFIGURABLE_LENGTH = !fails$7(function () {
+    return defineProperty$1(function () {
+      /* empty */
+    }, 'length', {
+      value: 8
+    }).length !== 8;
+  });
   var TEMPLATE = String(String).split('String');
-  (redefine$5.exports = function (O, key, value, options) {
+
+  var makeBuiltIn$1 = makeBuiltIn$2.exports = function (value, name, options) {
+    if (String(name).slice(0, 7) === 'Symbol(') {
+      name = '[' + String(name).replace(/^Symbol\(([^)]*)\)/, '$1') + ']';
+    }
+
+    if (options && options.getter) name = 'get ' + name;
+    if (options && options.setter) name = 'set ' + name;
+
+    if (!hasOwn$4(value, 'name') || CONFIGURABLE_FUNCTION_NAME && value.name !== name) {
+      defineProperty$1(value, 'name', {
+        value: name,
+        configurable: true
+      });
+    }
+
+    if (CONFIGURABLE_LENGTH && options && hasOwn$4(options, 'arity') && value.length !== options.arity) {
+      defineProperty$1(value, 'length', {
+        value: options.arity
+      });
+    }
+
+    var state = enforceInternalState(value);
+
+    if (!hasOwn$4(state, 'source')) {
+      state.source = TEMPLATE.join(typeof name == 'string' ? name : '');
+    }
+
+    return value;
+  }; // add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
+  // eslint-disable-next-line no-extend-native -- required
+
+
+  Function.prototype.toString = makeBuiltIn$1(function toString() {
+    return isCallable$a(this) && getInternalState(this).source || inspectSource$2(this);
+  }, 'toString');
+
+  var global$k = global$D;
+  var isCallable$9 = isCallable$i;
+  var createNonEnumerableProperty$2 = createNonEnumerableProperty$4;
+  var makeBuiltIn = makeBuiltIn$2.exports;
+  var setGlobal$1 = setGlobal$3;
+
+  var defineBuiltIn$4 = function (O, key, value, options) {
     var unsafe = options ? !!options.unsafe : false;
     var simple = options ? !!options.enumerable : false;
     var noTargetGet = options ? !!options.noTargetGet : false;
     var name = options && options.name !== undefined ? options.name : key;
-    var state;
-
-    if (isCallable$9(value)) {
-      if (String(name).slice(0, 7) === 'Symbol(') {
-        name = '[' + String(name).replace(/^Symbol\(([^)]*)\)/, '$1') + ']';
-      }
-
-      if (!hasOwn$4(value, 'name') || CONFIGURABLE_FUNCTION_NAME && value.name !== name) {
-        createNonEnumerableProperty$2(value, 'name', name);
-      }
-
-      state = enforceInternalState(value);
-
-      if (!state.source) {
-        state.source = TEMPLATE.join(typeof name == 'string' ? name : '');
-      }
-    }
+    if (isCallable$9(value)) makeBuiltIn(value, name, options);
 
     if (O === global$k) {
       if (simple) O[key] = value;else setGlobal$1(key, value);
-      return;
+      return O;
     } else if (!unsafe) {
       delete O[key];
     } else if (!noTargetGet && O[key]) {
       simple = true;
     }
 
-    if (simple) O[key] = value;else createNonEnumerableProperty$2(O, key, value); // add fake Function#toString for correct work wrapped methods / constructors with methods like LoDash isNative
-  })(Function.prototype, 'toString', function toString() {
-    return isCallable$9(this) && getInternalState(this).source || inspectSource$2(this);
-  });
+    if (simple) O[key] = value;else createNonEnumerableProperty$2(O, key, value);
+    return O;
+  };
 
   var objectGetOwnPropertyNames = {};
 
@@ -860,8 +892,8 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   };
 
-  var fails$6 = fails$d;
-  var isCallable$8 = isCallable$h;
+  var fails$6 = fails$e;
+  var isCallable$8 = isCallable$i;
   var replacement = /#|\.prototype\./;
 
   var isForced$2 = function (feature, detection) {
@@ -881,7 +913,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var global$j = global$D;
   var getOwnPropertyDescriptor$1 = objectGetOwnPropertyDescriptor.f;
   var createNonEnumerableProperty$1 = createNonEnumerableProperty$4;
-  var redefine$4 = redefine$5.exports;
+  var defineBuiltIn$3 = defineBuiltIn$4;
   var setGlobal = setGlobal$3;
   var copyConstructorProperties = copyConstructorProperties$1;
   var isForced$1 = isForced_1;
@@ -933,10 +965,9 @@ this.google.maps.plugins.loader = (function (exports) {
 
       if (options.sham || targetProperty && targetProperty.sham) {
         createNonEnumerableProperty$1(sourceProperty, 'sham', true);
-      } // extend global
+      }
 
-
-      redefine$4(target, key, sourceProperty, options);
+      defineBuiltIn$3(target, key, sourceProperty, options);
     }
   };
 
@@ -965,7 +996,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var global$i = global$D;
   var TO_STRING_TAG_SUPPORT$2 = toStringTagSupport;
-  var isCallable$7 = isCallable$h;
+  var isCallable$7 = isCallable$i;
   var classofRaw = classofRaw$1;
   var wellKnownSymbol$a = wellKnownSymbol$d;
   var TO_STRING_TAG$1 = wellKnownSymbol$a('toStringTag');
@@ -993,8 +1024,8 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var uncurryThis$6 = functionUncurryThis;
-  var fails$5 = fails$d;
-  var isCallable$6 = isCallable$h;
+  var fails$5 = fails$e;
+  var isCallable$6 = isCallable$i;
   var classof$3 = classof$4;
   var getBuiltIn$5 = getBuiltIn$9;
   var inspectSource$1 = inspectSource$4;
@@ -1081,7 +1112,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return new (arraySpeciesConstructor(originalArray))(length === 0 ? 0 : length);
   };
 
-  var fails$4 = fails$d;
+  var fails$4 = fails$e;
   var wellKnownSymbol$8 = wellKnownSymbol$d;
   var V8_VERSION$2 = engineV8Version;
   var SPECIES$3 = wellKnownSymbol$8('species');
@@ -1106,7 +1137,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var $$8 = _export;
   var global$g = global$D;
-  var fails$3 = fails$d;
+  var fails$3 = fails$e;
   var isArray$1 = isArray$3;
   var isObject$3 = isObject$a;
   var toObject$1 = toObject$3;
@@ -1143,6 +1174,7 @@ this.google.maps.plugins.loader = (function (exports) {
   $$8({
     target: 'Array',
     proto: true,
+    arity: 1,
     forced: FORCED
   }, {
     // eslint-disable-next-line no-unused-vars -- required for `.length`
@@ -1188,9 +1220,9 @@ this.google.maps.plugins.loader = (function (exports) {
   var apply$1 = functionApply;
   var call$7 = functionCall;
   var uncurryThis$4 = functionUncurryThis;
-  var fails$2 = fails$d;
+  var fails$2 = fails$e;
   var isArray = isArray$3;
-  var isCallable$5 = isCallable$h;
+  var isCallable$5 = isCallable$i;
   var isObject$2 = isObject$a;
   var isSymbol = isSymbol$3;
   var arraySlice$1 = arraySlice$2;
@@ -1248,6 +1280,7 @@ this.google.maps.plugins.loader = (function (exports) {
     $$7({
       target: 'JSON',
       stat: true,
+      arity: 3,
       forced: WRONG_SYMBOLS_CONVERSION || ILL_FORMED_UNICODE
     }, {
       // eslint-disable-next-line no-unused-vars -- required for `.length`
@@ -1259,7 +1292,7 @@ this.google.maps.plugins.loader = (function (exports) {
     });
   }
 
-  var fails$1 = fails$d;
+  var fails$1 = fails$e;
 
   var arrayMethodIsStrict$2 = function (METHOD_NAME, argument) {
     var method = [][METHOD_NAME];
@@ -1300,12 +1333,12 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var TO_STRING_TAG_SUPPORT = toStringTagSupport;
-  var redefine$3 = redefine$5.exports;
+  var defineBuiltIn$2 = defineBuiltIn$4;
   var toString = objectToString; // `Object.prototype.toString` method
   // https://tc39.es/ecma262/#sec-object.prototype.tostring
 
   if (!TO_STRING_TAG_SUPPORT) {
-    redefine$3(Object.prototype, 'toString', toString, {
+    defineBuiltIn$2(Object.prototype, 'toString', toString, {
       unsafe: true
     });
   }
@@ -1314,16 +1347,8 @@ this.google.maps.plugins.loader = (function (exports) {
   var global$f = global$D;
   var engineIsNode = classof$1(global$f.process) == 'process';
 
-  var redefine$2 = redefine$5.exports;
-
-  var redefineAll$1 = function (target, src, options) {
-    for (var key in src) redefine$2(target, key, src[key], options);
-
-    return target;
-  };
-
   var global$e = global$D;
-  var isCallable$4 = isCallable$h;
+  var isCallable$4 = isCallable$i;
   var String$2 = global$e.String;
   var TypeError$7 = global$e.TypeError;
 
@@ -1460,9 +1485,9 @@ this.google.maps.plugins.loader = (function (exports) {
   var global$a = global$D;
   var apply = functionApply;
   var bind$4 = functionBindContext;
-  var isCallable$3 = isCallable$h;
+  var isCallable$3 = isCallable$i;
   var hasOwn = hasOwnProperty_1;
-  var fails = fails$d;
+  var fails = fails$e;
   var html = html$1;
   var arraySlice = arraySlice$2;
   var createElement = documentCreateElement$1;
@@ -1732,7 +1757,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var global$5 = global$D;
   var NativePromiseConstructor$3 = promiseNativeConstructor;
-  var isCallable$2 = isCallable$h;
+  var isCallable$2 = isCallable$i;
   var isForced = isForced_1;
   var inspectSource = inspectSource$4;
   var wellKnownSymbol$3 = wellKnownSymbol$d;
@@ -1806,13 +1831,12 @@ this.google.maps.plugins.loader = (function (exports) {
   var IS_NODE = engineIsNode;
   var global$4 = global$D;
   var call$6 = functionCall;
-  var redefine$1 = redefine$5.exports;
-  var redefineAll = redefineAll$1;
+  var defineBuiltIn$1 = defineBuiltIn$4;
   var setPrototypeOf = objectSetPrototypeOf;
   var setToStringTag = setToStringTag$1;
   var setSpecies = setSpecies$1;
   var aCallable$3 = aCallable$7;
-  var isCallable$1 = isCallable$h;
+  var isCallable$1 = isCallable$i;
   var isObject$1 = isObject$a;
   var anInstance = anInstance$1;
   var speciesConstructor = speciesConstructor$1;
@@ -2036,24 +2060,21 @@ this.google.maps.plugins.loader = (function (exports) {
         state: PENDING,
         value: undefined
       });
-    };
+    }; // `Promise.prototype.then` method
+    // https://tc39.es/ecma262/#sec-promise.prototype.then
 
-    Internal.prototype = redefineAll(PromisePrototype, {
-      // `Promise.prototype.then` method
-      // https://tc39.es/ecma262/#sec-promise.prototype.then
-      // eslint-disable-next-line unicorn/no-thenable -- safe
-      then: function then(onFulfilled, onRejected) {
-        var state = getInternalPromiseState(this);
-        var reaction = newPromiseCapability$1(speciesConstructor(this, PromiseConstructor));
-        state.parent = true;
-        reaction.ok = isCallable$1(onFulfilled) ? onFulfilled : true;
-        reaction.fail = isCallable$1(onRejected) && onRejected;
-        reaction.domain = IS_NODE ? process.domain : undefined;
-        if (state.state == PENDING) state.reactions.add(reaction);else microtask(function () {
-          callReaction(reaction, state);
-        });
-        return reaction.promise;
-      }
+
+    Internal.prototype = defineBuiltIn$1(PromisePrototype, 'then', function then(onFulfilled, onRejected) {
+      var state = getInternalPromiseState(this);
+      var reaction = newPromiseCapability$1(speciesConstructor(this, PromiseConstructor));
+      state.parent = true;
+      reaction.ok = isCallable$1(onFulfilled) ? onFulfilled : true;
+      reaction.fail = isCallable$1(onRejected) && onRejected;
+      reaction.domain = IS_NODE ? process.domain : undefined;
+      if (state.state == PENDING) state.reactions.add(reaction);else microtask(function () {
+        callReaction(reaction, state);
+      });
+      return reaction.promise;
     });
 
     OwnPromiseCapability = function () {
@@ -2073,7 +2094,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
       if (!NATIVE_PROMISE_SUBCLASSING) {
         // make `Promise#then` return a polyfilled `Promise` for native promise-based APIs
-        redefine$1(NativePromisePrototype$1, 'then', function then(onFulfilled, onRejected) {
+        defineBuiltIn$1(NativePromisePrototype$1, 'then', function then(onFulfilled, onRejected) {
           var that = this;
           return new PromiseConstructor(function (resolve, reject) {
             call$6(nativeThen, that, resolve, reject);
@@ -2354,8 +2375,8 @@ this.google.maps.plugins.loader = (function (exports) {
   var FORCED_PROMISE_CONSTRUCTOR$2 = promiseConstructorDetection.CONSTRUCTOR;
   var NativePromiseConstructor = promiseNativeConstructor;
   var getBuiltIn$1 = getBuiltIn$9;
-  var isCallable = isCallable$h;
-  var redefine = redefine$5.exports;
+  var isCallable = isCallable$i;
+  var defineBuiltIn = defineBuiltIn$4;
   var NativePromisePrototype = NativePromiseConstructor && NativePromiseConstructor.prototype; // `Promise.prototype.catch` method
   // https://tc39.es/ecma262/#sec-promise.prototype.catch
 
@@ -2374,7 +2395,7 @@ this.google.maps.plugins.loader = (function (exports) {
     var method = getBuiltIn$1('Promise').prototype['catch'];
 
     if (NativePromisePrototype['catch'] !== method) {
-      redefine(NativePromisePrototype, 'catch', method, {
+      defineBuiltIn(NativePromisePrototype, 'catch', method, {
         unsafe: true
       });
     }
