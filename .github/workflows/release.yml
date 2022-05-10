@@ -25,7 +25,10 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: '14'
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.SYNCED_GITHUB_TOKEN_REPO }}
       - uses: actions/cache@v2
         with:
           path: ~/.npm
