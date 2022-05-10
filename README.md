@@ -1,7 +1,7 @@
 # Google Maps JavaScript API Loader
 
 [![npm](https://img.shields.io/npm/v/@googlemaps/js-api-loader)](https://www.npmjs.com/package/@googlemaps/js-api-loader)
-![Build](https://github.com/googlemaps/js-api-loader/workflows/Build/badge.svg)
+![Build](https://github.com/googlemaps/js-api-loader/workflows/Test/badge.svg)
 ![Release](https://github.com/googlemaps/js-api-loader/workflows/Release/badge.svg)
 [![codecov](https://codecov.io/gh/googlemaps/js-api-loader/branch/main/graph/badge.svg)](https://codecov.io/gh/googlemaps/js-api-loader)
 ![GitHub contributors](https://img.shields.io/github/contributors/googlemaps/js-api-loader?color=green)
