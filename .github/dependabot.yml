@@ -18,5 +18,3 @@ updates:
     directory: "/"
     schedule:
       interval: "daily"
-    labels:
-      - "automatic" # see .github/workflows/dependabot.yml
