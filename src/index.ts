@@ -31,6 +31,7 @@ export type Libraries = (
   | "drawing"
   | "geometry"
   | "localContext"
+  | "marker"
   | "places"
   | "visualization"
 )[];
