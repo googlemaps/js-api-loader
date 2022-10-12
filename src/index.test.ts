@@ -33,11 +33,11 @@ test.each([
     {
       apiKey: "foo",
       version: "weekly",
-      libraries: ["places"],
+      libraries: ["marker", "places"],
       language: "language",
       region: "region",
     },
-    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&key=foo&libraries=places&language=language&region=region&v=weekly",
+    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&key=foo&libraries=marker,places&language=language&region=region&v=weekly",
   ],
   [
     { mapIds: ["foo", "bar"] },
