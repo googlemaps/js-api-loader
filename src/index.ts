@@ -27,14 +27,16 @@ declare global {
 
 export const DEFAULT_ID = "__googleMapsScriptId";
 
-export type Libraries = (
+export type Library = (
   | "drawing"
   | "geometry"
   | "localContext"
   | "marker"
   | "places"
   | "visualization"
-)[];
+);
+
+export type Libraries = Library[];
 
 /**
  * The Google Maps JavaScript API
@@ -439,6 +441,15 @@ export class Loader {
           reject(err.error);
         }
       });
+    });
+  }
+  
+  /**
+   * 
+   */
+  public importLibrary(name: Library): Promise<?> {
+    return load().then((google) => {
+      return google.maps.importLibrary(name);
     });
   }
 
