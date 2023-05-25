@@ -1,6 +1,6 @@
 {
   "name": "@googlemaps/js-api-loader",
-  "version": "1.15.1",
+  "version": "1.15.2",
   "description": "Wrapper for the loading of Google Maps JavaScript API script in the browser",
   "keywords": [
     "google",
@@ -42,7 +42,7 @@
     "@rollup/plugin-commonjs": "^22.0.0",
     "@rollup/plugin-node-resolve": "^13.0.0",
     "@rollup/plugin-typescript": "^8.3.0",
-    "@types/google.maps": "^3.43.0",
+    "@types/google.maps": "^3.53.1",
     "@types/jest": "^27.0.1",
     "@types/selenium-webdriver": "^4.0.9",
     "@typescript-eslint/eslint-plugin": "^5.18.0",
