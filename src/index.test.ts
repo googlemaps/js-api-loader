@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /* eslint @typescript-eslint/no-explicit-any: 0 */
-import { DEFAULT_ID, Loader, LoaderOptions, LoaderStatus } from ".";
+import { DEFAULT_ID, Loader, LoaderStatus } from ".";
 
 jest.useFakeTimers();
 
@@ -344,8 +344,8 @@ test("deleteScript removes script tag from head", async () => {
 });
 
 test("importLibrary resolves correctly", async () => {
-  window.google = {maps: {}} as any;
-  google.maps.importLibrary = async (name) => ({ [name]: "fake" }) as any;
+  window.google = { maps: {} } as any;
+  google.maps.importLibrary = async (name) => ({ [name]: "fake" } as any);
 
   const loader = new Loader({ apiKey: "foo" });
   const corePromise = loader.importLibrary("core");
