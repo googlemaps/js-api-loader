@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 /* eslint @typescript-eslint/no-explicit-any: 0 */
-import { DEFAULT_ID, Loader, LoaderStatus } from ".";
+import { DEFAULT_ID, Loader, LoaderOptions, LoaderStatus } from ".";
 
 jest.useFakeTimers();
 
@@ -22,6 +22,44 @@ afterEach(() => {
   document.getElementsByTagName("html")[0].innerHTML = "";
   delete Loader["instance"];
   if (window.google) delete window.google;
+});
+
+test.each([
+  [{}, "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback"],
+  [
+    { apiKey: "foo" },
+    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&key=foo",
+  ],
+  [
+    {
+      apiKey: "foo",
+      version: "weekly",
+      libraries: ["marker", "places"],
+      language: "language",
+      region: "region",
+    },
+    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&key=foo&libraries=marker,places&language=language&region=region&v=weekly",
+  ],
+  [
+    { mapIds: ["foo", "bar"] },
+    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&map_ids=foo,bar",
+  ],
+  [
+    { url: "https://example.com/js" },
+    "https://example.com/js?callback=__googleMapsCallback",
+  ],
+  [
+    { client: "bar", channel: "foo" },
+    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&channel=foo&client=bar",
+  ],
+  [
+    { authReferrerPolicy: "origin" },
+    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&auth_referrer_policy=origin",
+  ],
+])("createUrl is correct", (options: LoaderOptions, expected: string) => {
+  const loader = new Loader(options);
+  expect(loader.createUrl()).toEqual(expected);
+  expect(loader.status).toBe(LoaderStatus.INITIALIZED);
 });
 
 test("uses default id if empty string", () => {

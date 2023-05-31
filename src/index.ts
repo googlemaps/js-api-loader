@@ -360,6 +360,56 @@ export class Loader {
     return this.done && !this.loading && this.errors.length >= this.retries + 1;
   }
 
+  /**
+   * CreateUrl returns the Google Maps JavaScript API script url given the [[LoaderOptions]].
+   *
+   * @ignore
+   * @deprecated
+   */
+  public createUrl(): string {
+    let url = this.url;
+
+    url += `?callback=__googleMapsCallback`;
+
+    if (this.apiKey) {
+      url += `&key=${this.apiKey}`;
+    }
+
+    if (this.channel) {
+      url += `&channel=${this.channel}`;
+    }
+
+    if (this.client) {
+      url += `&client=${this.client}`;
+    }
+
+    if (this.libraries.length > 0) {
+      url += `&libraries=${this.libraries.join(",")}`;
+    }
+
+    if (this.language) {
+      url += `&language=${this.language}`;
+    }
+
+    if (this.region) {
+      url += `&region=${this.region}`;
+    }
+
+    if (this.version) {
+      url += `&v=${this.version}`;
+    }
+
+    if (this.mapIds) {
+      url += `&map_ids=${this.mapIds.join(",")}`;
+    }
+
+    if (this.authReferrerPolicy) {
+      url += `&auth_referrer_policy=${this.authReferrerPolicy}`;
+    }
+
+    return url;
+  }
+
   public deleteScript(): void {
     const script = document.getElementById(this.id);
     if (script) {
