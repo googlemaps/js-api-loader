@@ -22,7 +22,7 @@ npm i @googlemaps/js-api-loader
 Alternatively you may add the umd package directly to the html document using the unpkg link.
 
 ```html
-<script src="https://unpkg.com/@googlemaps/js-api-loader@1.0.0/dist/index.min.js"></script>
+<script src="https://unpkg.com/@googlemaps/js-api-loader@1.x/dist/index.min.js"></script>
 ```
 
 When adding via unpkg, the loader can be accessed at `google.maps.plugins.loader.Loader`.
@@ -59,6 +59,20 @@ const mapOptions = {
   zoom: 4
 };
 
+```
+
+Using a promise for a specific library.
+
+```javascript
+// Promise for a specific library
+loader
+  .importLibrary('maps')
+  .then(({Map}) => {
+    new Map(document.getElementById("map"), mapOptions);
+  })
+  .catch((e) => {
+    // do something
+  });
 ```
 
 Using a promise for when the script has loaded.

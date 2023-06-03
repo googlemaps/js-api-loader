@@ -492,6 +492,23 @@ export class Loader {
       return;
     }
 
+    const params = {
+      key: this.apiKey,
+      channel: this.channel,
+      client: this.client,
+      libraries: this.libraries,
+      v: this.version,
+      mapIds: this.mapIds,
+      language: this.language,
+      region: this.region,
+      authReferrerPolicy: this.authReferrerPolicy,
+    };
+    // keep the URL minimal:
+    Object.keys(params).forEach(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (key) => !(params as any)[key] && delete (params as any)[key]
+    );
+
     if (!window?.google?.maps?.importLibrary) {
       // tweaked copy of https://developers.google.com/maps/documentation/javascript/load-maps-js-api#dynamic-library-import
       // which also sets the url, the id, and the nonce
@@ -531,17 +548,7 @@ export class Loader {
             }));
         // @ts-ignore
         d[l] ? console.warn(p + " only loads once. Ignoring:", g) : (d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)));
-      })({
-        key: this.apiKey,
-        channel: this.channel,
-        client: this.client,
-        libraries: this.libraries,
-        v: this.version,
-        mapIds: this.mapIds,
-        language: this.language,
-        region: this.region,
-        authReferrerPolicy: this.authReferrerPolicy,
-      });
+      })(params);
       /* eslint-enable */
     }
 
