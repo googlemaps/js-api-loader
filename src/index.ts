@@ -16,25 +16,24 @@
 
 import isEqual from "fast-deep-equal";
 
-/**
- * @ignore
- */
-declare global {
-  interface Window {
-    __googleMapsCallback: (e: Event) => void;
-  }
-}
-
 export const DEFAULT_ID = "__googleMapsScriptId";
 
-export type Libraries = (
-  | "drawing"
-  | "geometry"
-  | "localContext"
-  | "marker"
+// https://developers.google.com/maps/documentation/javascript/libraries#libraries-for-dynamic-library-import
+export type Library =
+  | "core"
+  | "maps"
   | "places"
-  | "visualization"
-)[];
+  | "geocoding"
+  | "routes"
+  | "marker"
+  | "geometry"
+  | "elevation"
+  | "streetView"
+  | "journeySharing"
+  | "drawing"
+  | "visualization";
+
+export type Libraries = Library[];
 
 /**
  * The Google Maps JavaScript API
@@ -268,7 +267,6 @@ export class Loader {
    */
   public readonly authReferrerPolicy: "origin";
 
-  private CALLBACK = "__googleMapsCallback";
   private callbacks: ((e: ErrorEvent) => void)[] = [];
   private done = false;
   private loading = false;
@@ -366,11 +364,12 @@ export class Loader {
    * CreateUrl returns the Google Maps JavaScript API script url given the [[LoaderOptions]].
    *
    * @ignore
+   * @deprecated
    */
   public createUrl(): string {
     let url = this.url;
 
-    url += `?callback=${this.CALLBACK}`;
+    url += `?callback=__googleMapsCallback`;
 
     if (this.apiKey) {
       url += `&key=${this.apiKey}`;
@@ -420,6 +419,7 @@ export class Loader {
 
   /**
    * Load the Google Maps JavaScript API script and return a Promise.
+   * @deprecated, use importLibrary() instead.
    */
   public load(): Promise<typeof google> {
     return this.loadPromise();
@@ -429,6 +429,7 @@ export class Loader {
    * Load the Google Maps JavaScript API script and return a Promise.
    *
    * @ignore
+   * @deprecated, use importLibrary() instead.
    */
   public loadPromise(): Promise<typeof google> {
     return new Promise((resolve, reject) => {
@@ -443,7 +444,38 @@ export class Loader {
   }
 
   /**
+   * See https://developers.google.com/maps/documentation/javascript/reference/top-level#google.maps.importLibrary
+   */
+  public importLibrary(name: "core"): Promise<google.maps.CoreLibrary>;
+  public importLibrary(name: "maps"): Promise<google.maps.MapsLibrary>;
+  public importLibrary(name: "places"): Promise<google.maps.PlacesLibrary>;
+  public importLibrary(
+    name: "geocoding"
+  ): Promise<google.maps.GeocodingLibrary>;
+  public importLibrary(name: "routes"): Promise<google.maps.RoutesLibrary>;
+  public importLibrary(name: "marker"): Promise<google.maps.MarkerLibrary>;
+  public importLibrary(name: "geometry"): Promise<google.maps.GeometryLibrary>;
+  public importLibrary(
+    name: "elevation"
+  ): Promise<google.maps.ElevationLibrary>;
+  public importLibrary(
+    name: "streetView"
+  ): Promise<google.maps.StreetViewLibrary>;
+  public importLibrary(
+    name: "journeySharing"
+  ): Promise<google.maps.JourneySharingLibrary>;
+  public importLibrary(name: "drawing"): Promise<google.maps.DrawingLibrary>;
+  public importLibrary(
+    name: "visualization"
+  ): Promise<google.maps.VisualizationLibrary>;
+  public importLibrary(name: Library): Promise<unknown> {
+    this.execute();
+    return google.maps.importLibrary(name);
+  }
+
+  /**
    * Load the Google Maps JavaScript API script with a callback.
+   * @deprecated, use importLibrary() instead.
    */
   public loadCallback(fn: (e: ErrorEvent) => void): void {
     this.callbacks.push(fn);
@@ -460,20 +492,66 @@ export class Loader {
       return;
     }
 
-    const url = this.createUrl();
-    const script = document.createElement("script");
-    script.id = this.id;
-    script.type = "text/javascript";
-    script.src = url;
-    script.onerror = this.loadErrorCallback.bind(this);
-    script.defer = true;
-    script.async = true;
-
-    if (this.nonce) {
-      script.nonce = this.nonce;
+    if (!window?.google?.maps?.importLibrary) {
+      // tweaked copy of https://developers.google.com/maps/documentation/javascript/load-maps-js-api#dynamic-library-import
+      // which also sets the url, the id, and the nonce
+      /* eslint-disable */
+      ((g) => {
+        // @ts-ignore
+        let h,
+          a,
+          k,
+          p = "The Google Maps JavaScript API",
+          c = "google",
+          l = "importLibrary",
+          q = "__ib__",
+          m = document,
+          b = window;
+        // @ts-ignore
+        b = b[c] || (b[c] = {});
+        // @ts-ignore
+        const d = b.maps || (b.maps = {}),
+          r = new Set(),
+          e = new URLSearchParams(),
+          u = () =>
+            // @ts-ignore
+            h || (h = new Promise(async (f, n) => {
+              await (a = m.createElement("script"));
+              a.id = this.id;
+              e.set("libraries", [...r] + "");
+              // @ts-ignore
+              for (k in g) e.set(k.replace(/[A-Z]/g, (t) => "_" + t[0].toLowerCase()), g[k]);
+              e.set("callback", c + ".maps." + q);
+              a.src = this.url + `?` + e;
+              d[q] = f;
+              a.onerror = () => (h = n(Error(p + " could not load.")));
+              // @ts-ignore
+              a.nonce = this.nonce || m.querySelector("script[nonce]")?.nonce || "";
+              m.head.append(a);
+            }));
+        // @ts-ignore
+        d[l] ? console.warn(p + " only loads once. Ignoring:", g) : (d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)));
+      })({
+        key: this.apiKey,
+        channel: this.channel,
+        client: this.client,
+        libraries: this.libraries,
+        v: this.version,
+        mapIds: this.mapIds,
+        language: this.language,
+        region: this.region,
+        authReferrerPolicy: this.authReferrerPolicy,
+      });
+      /* eslint-enable */
     }
 
-    document.head.appendChild(script);
+    this.importLibrary("core").then(
+      () => this.callback(),
+      (error) => {
+        const event = new ErrorEvent("error", { error }); // for backwards compat
+        this.loadErrorCallback(event);
+      }
+    );
   }
 
   /**
@@ -499,7 +577,7 @@ export class Loader {
     if (this.errors.length <= this.retries) {
       const delay = this.errors.length * 2 ** this.errors.length;
 
-      console.log(
+      console.error(
         `Failed to load Google Maps script, retrying in ${delay} ms.`
       );
 
@@ -511,10 +589,6 @@ export class Loader {
       this.onerrorEvent = e;
       this.callback();
     }
-  }
-
-  private setCallback(): void {
-    window.__googleMapsCallback = this.callback.bind(this);
   }
 
   private callback(): void {
@@ -548,7 +622,7 @@ export class Loader {
         // do nothing but wait
       } else {
         this.loading = true;
-        this.setCallback();
+
         this.setScript();
       }
     }

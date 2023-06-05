@@ -21,6 +21,7 @@ jest.useFakeTimers();
 afterEach(() => {
   document.getElementsByTagName("html")[0].innerHTML = "";
   delete Loader["instance"];
+  if (window.google) delete window.google;
 });
 
 test.each([
@@ -65,59 +66,59 @@ test("uses default id if empty string", () => {
   expect(new Loader({ apiKey: "foo", id: "" }).id).toBe(DEFAULT_ID);
 });
 
-test("setScript adds a script to head with correct attributes", () => {
+test("setScript adds a script to head with correct attributes", async () => {
   const loader = new Loader({ apiKey: "foo" });
 
   loader["setScript"]();
+  await 0;
 
   const script = document.head.childNodes[0] as HTMLScriptElement;
 
   expect(script.id).toEqual(loader.id);
-  expect(script.src).toEqual(loader.createUrl());
-  expect(script.defer).toBeTruthy();
-  expect(script.async).toBeTruthy();
-  expect(script.onerror).toBeTruthy();
-  expect(script.type).toEqual("text/javascript");
 });
 
-test("setScript does not add second script with same id", () => {
+test("setScript adds a script with id", async () => {
+  const loader = new Loader({ apiKey: "foo", id: "bar" });
+  loader["setScript"]();
+  await 0;
+
+  const script = document.head.childNodes[0] as HTMLScriptElement;
+  expect(script.localName).toEqual("script");
+  expect(loader.id).toEqual("bar");
+  expect(script.id).toEqual("bar");
+});
+
+test("setScript does not add second script with same id", async () => {
   new Loader({ apiKey: "foo", id: "bar" })["setScript"]();
   new Loader({ apiKey: "foo", id: "bar" })["setScript"]();
+  await 0;
+  new Loader({ apiKey: "foo", id: "bar" })["setScript"]();
+  await 0;
 
   expect(document.head.childNodes.length).toBe(1);
 });
 
-test("setScript adds a script with id", () => {
-  const loader = new Loader({ apiKey: "foo", id: "bar" });
-  loader["setScript"]();
-
-  const script = document.head.childNodes[0] as HTMLScriptElement;
-  expect(script.id).toEqual(loader.id);
-});
-
 test("load should return a promise that resolves even if called twice", () => {
   const loader = new Loader({ apiKey: "foo" });
+  loader.importLibrary = (() => Promise.resolve()) as any;
 
   expect.assertions(1);
   const promise = Promise.all([loader.load(), loader.load()]).then(() => {
     expect(loader["done"]).toBeTruthy();
   });
 
-  window.__googleMapsCallback(null);
-
   return promise;
 });
 
 test("loadCallback callback should fire", () => {
   const loader = new Loader({ apiKey: "foo" });
+  loader.importLibrary = (() => Promise.resolve()) as any;
 
   expect.assertions(2);
   loader.loadCallback((e: Event) => {
     expect(loader["done"]).toBeTruthy();
     expect(e).toBeUndefined();
   });
-
-  window.__googleMapsCallback(null);
 });
 
 test("script onerror should reject promise", async () => {
@@ -163,74 +164,70 @@ test("script onerror should reject promise with multiple loaders", async () => {
 test("script onerror should retry", async () => {
   const loader = new Loader({ apiKey: "foo", retries: 1 });
   const deleteScript = jest.spyOn(loader, "deleteScript");
+  loader.importLibrary = (() => Promise.reject(new Error("fake error"))) as any;
   const rejection = expect(loader.load()).rejects.toBeInstanceOf(Error);
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  console.log = jest.fn();
+  console.error = jest.fn();
 
-  loader["loadErrorCallback"](
-    new ErrorEvent("ErrorEvent(", { error: new Error("") })
-  );
-  loader["loadErrorCallback"](
-    new ErrorEvent("ErrorEvent(", { error: new Error("") })
-  );
+  // wait for the first failure
+  await 0;
+  expect(loader["errors"].length).toBe(1);
+  // trigger the retry delay:
   jest.runAllTimers();
 
   await rejection;
-  expect(loader["done"]).toBeTruthy();
-  expect(loader["loading"]).toBeFalsy();
   expect(loader["errors"].length).toBe(2);
+  expect(loader["done"]).toBeTruthy();
+  expect(loader["failed"]).toBeTruthy();
+  expect(loader["loading"]).toBeFalsy();
   expect(deleteScript).toHaveBeenCalledTimes(1);
-  expect(console.log).toHaveBeenCalledTimes(loader.retries);
+  expect(console.error).toHaveBeenCalledTimes(loader.retries);
 });
 
 test("script onerror should reset retry mechanism with next loader", async () => {
   const loader = new Loader({ apiKey: "foo", retries: 1 });
   const deleteScript = jest.spyOn(loader, "deleteScript");
+  loader.importLibrary = (() => Promise.reject(new Error("fake error"))) as any;
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  console.log = jest.fn();
+  console.error = jest.fn();
 
   let rejection = expect(loader.load()).rejects.toBeInstanceOf(Error);
-  loader["loadErrorCallback"](
-    new ErrorEvent("ErrorEvent(", { error: new Error("") })
-  );
-  loader["loadErrorCallback"](
-    new ErrorEvent("ErrorEvent(", { error: new Error("") })
-  );
+  // wait for the first first failure
+  await 0;
+  expect(loader["errors"].length).toBe(1);
+  // trigger the retry delay:
   jest.runAllTimers();
   await rejection;
 
+  // try again...
   rejection = expect(loader.load()).rejects.toBeInstanceOf(Error);
   expect(loader["done"]).toBeFalsy();
+  expect(loader["failed"]).toBeFalsy();
   expect(loader["loading"]).toBeTruthy();
   expect(loader["errors"].length).toBe(0);
 
-  loader["loadErrorCallback"](
-    new ErrorEvent("ErrorEvent(", { error: new Error("") })
-  );
-  loader["loadErrorCallback"](
-    new ErrorEvent("ErrorEvent(", { error: new Error("") })
-  );
+  // wait for the second first failure
+  await 0;
+  expect(loader["errors"].length).toBe(1);
+  // trigger the retry delay:
   jest.runAllTimers();
 
   await rejection;
   expect(deleteScript).toHaveBeenCalledTimes(3);
-  expect(console.log).toHaveBeenCalledTimes(loader.retries * 2);
+  expect(console.error).toHaveBeenCalledTimes(loader.retries * 2);
 });
 
 test("script onerror should not reset retry mechanism with parallel loaders", async () => {
   const loader = new Loader({ apiKey: "foo", retries: 1 });
   const deleteScript = jest.spyOn(loader, "deleteScript");
+  loader.importLibrary = (() => Promise.reject(new Error("fake error"))) as any;
   // eslint-disable-next-line @typescript-eslint/no-empty-function
-  console.log = jest.fn();
+  console.error = jest.fn();
 
   const rejection1 = expect(loader.load()).rejects.toBeInstanceOf(Error);
   const rejection2 = expect(loader.load()).rejects.toBeInstanceOf(Error);
-  loader["loadErrorCallback"](
-    new ErrorEvent("ErrorEvent(", { error: new Error("") })
-  );
-  loader["loadErrorCallback"](
-    new ErrorEvent("ErrorEvent(", { error: new Error("") })
-  );
+  // wait for the first first failure
+  await 0;
   jest.runAllTimers();
 
   await Promise.all([rejection1, rejection2]);
@@ -238,7 +235,7 @@ test("script onerror should not reset retry mechanism with parallel loaders", as
   expect(loader["loading"]).toBeFalsy();
   expect(loader["errors"].length).toBe(2);
   expect(deleteScript).toHaveBeenCalledTimes(1);
-  expect(console.log).toHaveBeenCalledTimes(loader.retries);
+  expect(console.error).toHaveBeenCalledTimes(loader.retries);
 });
 
 test("reset should clear state", () => {
@@ -288,12 +285,12 @@ test("failed getter should be correct", () => {
   expect(loader["failed"]).toBeTruthy();
 });
 
-test("loader should not reset retry mechanism if successfully loaded", () => {
+test("loader should not reset retry mechanism if successfully loaded", async () => {
   const loader = new Loader({ apiKey: "foo", retries: 0 });
   const deleteScript = jest.spyOn(loader, "deleteScript");
+  loader.importLibrary = (() => Promise.resolve()) as any;
 
-  loader["done"] = true;
-  expect(loader.load()).resolves.toBeUndefined();
+  await expect(loader.load()).resolves.not.toBeUndefined();
 
   expect(loader["done"]).toBeTruthy();
   expect(loader["loading"]).toBeFalsy();
@@ -344,10 +341,11 @@ test("loader should wait if already loading", () => {
   loader.load();
 });
 
-test("setScript adds a nonce", () => {
+test("setScript adds a nonce", async () => {
   const nonce = "bar";
   const loader = new Loader({ apiKey: "foo", nonce });
   loader["setScript"]();
+  await 0;
   const script = document.head.childNodes[0] as HTMLScriptElement;
   expect(script.nonce).toBe(nonce);
 });
@@ -371,13 +369,25 @@ test("loader should not warn if done and google.maps is defined", async () => {
   expect(console.warn).toHaveBeenCalledTimes(0);
 });
 
-test("deleteScript removes script tag from head", () => {
+test("deleteScript removes script tag from head", async () => {
   const loader = new Loader({ apiKey: "foo" });
   loader["setScript"]();
+  await 0;
   expect(document.head.childNodes.length).toBe(1);
   loader.deleteScript();
   expect(document.head.childNodes.length).toBe(0);
   // should work without script existing
   loader.deleteScript();
   expect(document.head.childNodes.length).toBe(0);
+});
+
+test("importLibrary resolves correctly", async () => {
+  window.google = { maps: {} } as any;
+  google.maps.importLibrary = async (name) => ({ [name]: "fake" } as any);
+
+  const loader = new Loader({ apiKey: "foo" });
+  const corePromise = loader.importLibrary("core");
+
+  const core = await corePromise;
+  expect(core).toEqual({ core: "fake" });
 });
