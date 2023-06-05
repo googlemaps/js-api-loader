@@ -41,7 +41,7 @@ jobs:
           npm run lint
           npm test
       - name: Release
-        uses: cycjimmy/semantic-release-action
+        uses: cycjimmy/semantic-release-action@v3
         with:
           semantic_version: 19
           extra_plugins: |
