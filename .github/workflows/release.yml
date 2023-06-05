@@ -43,14 +43,14 @@ jobs:
       - name: Release
         uses: cycjimmy/semantic-release-action@v2
         with:
-          semantic_version: 19
+          semantic_version: 18
           extra_plugins: |
             @semantic-release/commit-analyzer
             semantic-release-interval
-            @semantic-release/release-notes-generator@10.0.3
+            @semantic-release/release-notes-generator^10
             @semantic-release/git
             @semantic-release/github
-            @semantic-release/npm@9.0.2
+            @semantic-release/npm^9
             @googlemaps/semantic-release-config
             semantic-release-npm-deprecate
         env:
