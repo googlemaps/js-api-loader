@@ -1,3 +1,28 @@
+/*! *****************************************************************************
+Copyright (c) Microsoft Corporation.
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES WITH
+REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY
+AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY SPECIAL, DIRECT,
+INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM
+LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+PERFORMANCE OF THIS SOFTWARE.
+***************************************************************************** */
+
+function __awaiter(thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+}
+
 // do not edit .js files directly - edit src/index.jst
 
 
@@ -99,7 +124,6 @@ class Loader {
      * ```
      */
     constructor({ apiKey, authReferrerPolicy, channel, client, id = DEFAULT_ID, language, libraries = [], mapIds, nonce, region, retries = 3, url = "https://maps.googleapis.com/maps/api/js", version, }) {
-        this.CALLBACK = "__googleMapsCallback";
         this.callbacks = [];
         this.done = false;
         this.loading = false;
@@ -160,10 +184,11 @@ class Loader {
      * CreateUrl returns the Google Maps JavaScript API script url given the [[LoaderOptions]].
      *
      * @ignore
+     * @deprecated
      */
     createUrl() {
         let url = this.url;
-        url += `?callback=${this.CALLBACK}`;
+        url += `?callback=__googleMapsCallback`;
         if (this.apiKey) {
             url += `&key=${this.apiKey}`;
         }
@@ -201,6 +226,7 @@ class Loader {
     }
     /**
      * Load the Google Maps JavaScript API script and return a Promise.
+     * @deprecated, use importLibrary() instead.
      */
     load() {
         return this.loadPromise();
@@ -209,6 +235,7 @@ class Loader {
      * Load the Google Maps JavaScript API script and return a Promise.
      *
      * @ignore
+     * @deprecated, use importLibrary() instead.
      */
     loadPromise() {
         return new Promise((resolve, reject) => {
@@ -222,8 +249,13 @@ class Loader {
             });
         });
     }
+    importLibrary(name) {
+        this.execute();
+        return google.maps.importLibrary(name);
+    }
     /**
      * Load the Google Maps JavaScript API script with a callback.
+     * @deprecated, use importLibrary() instead.
      */
     loadCallback(fn) {
         this.callbacks.push(fn);
@@ -233,23 +265,59 @@ class Loader {
      * Set the script on document.
      */
     setScript() {
+        var _a, _b;
         if (document.getElementById(this.id)) {
             // TODO wrap onerror callback for cases where the script was loaded elsewhere
             this.callback();
             return;
         }
-        const url = this.createUrl();
-        const script = document.createElement("script");
-        script.id = this.id;
-        script.type = "text/javascript";
-        script.src = url;
-        script.onerror = this.loadErrorCallback.bind(this);
-        script.defer = true;
-        script.async = true;
-        if (this.nonce) {
-            script.nonce = this.nonce;
+        if (!((_b = (_a = window === null || window === void 0 ? void 0 : window.google) === null || _a === void 0 ? void 0 : _a.maps) === null || _b === void 0 ? void 0 : _b.importLibrary)) {
+            // tweaked copy of https://developers.google.com/maps/documentation/javascript/load-maps-js-api#dynamic-library-import
+            // which also sets the url, the id, and the nonce
+            /* eslint-disable */
+            ((g) => {
+                // @ts-ignore
+                let h, a, k, p = "The Google Maps JavaScript API", c = "google", l = "importLibrary", q = "__ib__", m = document, b = window;
+                // @ts-ignore
+                b = b[c] || (b[c] = {});
+                // @ts-ignore
+                const d = b.maps || (b.maps = {}), r = new Set(), e = new URLSearchParams(), u = () => 
+                // @ts-ignore
+                h || (h = new Promise((f, n) => __awaiter(this, void 0, void 0, function* () {
+                    var _a;
+                    yield (a = m.createElement("script"));
+                    a.id = this.id;
+                    e.set("libraries", [...r] + "");
+                    // @ts-ignore
+                    for (k in g)
+                        e.set(k.replace(/[A-Z]/g, (t) => "_" + t[0].toLowerCase()), g[k]);
+                    e.set("callback", c + ".maps." + q);
+                    a.src = this.url + `?` + e;
+                    d[q] = f;
+                    a.onerror = () => (h = n(Error(p + " could not load.")));
+                    // @ts-ignore
+                    a.nonce = this.nonce || ((_a = m.querySelector("script[nonce]")) === null || _a === void 0 ? void 0 : _a.nonce) || "";
+                    m.head.append(a);
+                })));
+                // @ts-ignore
+                d[l] ? console.warn(p + " only loads once. Ignoring:", g) : (d[l] = (f, ...n) => r.add(f) && u().then(() => d[l](f, ...n)));
+            })({
+                key: this.apiKey,
+                channel: this.channel,
+                client: this.client,
+                libraries: this.libraries,
+                v: this.version,
+                mapIds: this.mapIds,
+                language: this.language,
+                region: this.region,
+                authReferrerPolicy: this.authReferrerPolicy,
+            });
+            /* eslint-enable */
         }
-        document.head.appendChild(script);
+        this.importLibrary("core").then(() => this.callback(), (error) => {
+            const event = new ErrorEvent("error", { error }); // for backwards compat
+            this.loadErrorCallback(event);
+        });
     }
     /**
      * Reset the loader state.
@@ -270,7 +338,7 @@ class Loader {
         this.errors.push(e);
         if (this.errors.length <= this.retries) {
             const delay = this.errors.length * Math.pow(2, this.errors.length);
-            console.log(`Failed to load Google Maps script, retrying in ${delay} ms.`);
+            console.error(`Failed to load Google Maps script, retrying in ${delay} ms.`);
             setTimeout(() => {
                 this.deleteScript();
                 this.setScript();
@@ -280,9 +348,6 @@ class Loader {
             this.onerrorEvent = e;
             this.callback();
         }
-    }
-    setCallback() {
-        window.__googleMapsCallback = this.callback.bind(this);
     }
     callback() {
         this.done = true;
@@ -308,7 +373,6 @@ class Loader {
             if (this.loading) ;
             else {
                 this.loading = true;
-                this.setCallback();
                 this.setScript();
             }
         }

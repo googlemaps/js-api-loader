@@ -14,16 +14,9 @@
  * limitations under the License.
  */
 /// <reference types="google.maps" />
-/**
- * @ignore
- */
-declare global {
-    interface Window {
-        __googleMapsCallback: (e: Event) => void;
-    }
-}
 export declare const DEFAULT_ID = "__googleMapsScriptId";
-export declare type Libraries = ("drawing" | "geometry" | "localContext" | "marker" | "places" | "visualization")[];
+export type Library = "core" | "maps" | "places" | "geocoding" | "routes" | "marker" | "geometry" | "elevation" | "streetView" | "journeySharing" | "drawing" | "visualization";
+export type Libraries = Library[];
 /**
  * The Google Maps JavaScript API
  * [documentation](https://developers.google.com/maps/documentation/javascript/tutorial)
@@ -248,7 +241,6 @@ export declare class Loader {
      * See [[LoaderOptions.authReferrerPolicy]]
      */
     readonly authReferrerPolicy: "origin";
-    private CALLBACK;
     private callbacks;
     private done;
     private loading;
@@ -271,21 +263,40 @@ export declare class Loader {
      * CreateUrl returns the Google Maps JavaScript API script url given the [[LoaderOptions]].
      *
      * @ignore
+     * @deprecated
      */
     createUrl(): string;
     deleteScript(): void;
     /**
      * Load the Google Maps JavaScript API script and return a Promise.
+     * @deprecated, use importLibrary() instead.
      */
     load(): Promise<typeof google>;
     /**
      * Load the Google Maps JavaScript API script and return a Promise.
      *
      * @ignore
+     * @deprecated, use importLibrary() instead.
      */
     loadPromise(): Promise<typeof google>;
     /**
+     * See https://developers.google.com/maps/documentation/javascript/reference/top-level#google.maps.importLibrary
+     */
+    importLibrary(name: "core"): Promise<google.maps.CoreLibrary>;
+    importLibrary(name: "maps"): Promise<google.maps.MapsLibrary>;
+    importLibrary(name: "places"): Promise<google.maps.PlacesLibrary>;
+    importLibrary(name: "geocoding"): Promise<google.maps.GeocodingLibrary>;
+    importLibrary(name: "routes"): Promise<google.maps.RoutesLibrary>;
+    importLibrary(name: "marker"): Promise<google.maps.MarkerLibrary>;
+    importLibrary(name: "geometry"): Promise<google.maps.GeometryLibrary>;
+    importLibrary(name: "elevation"): Promise<google.maps.ElevationLibrary>;
+    importLibrary(name: "streetView"): Promise<google.maps.StreetViewLibrary>;
+    importLibrary(name: "journeySharing"): Promise<google.maps.JourneySharingLibrary>;
+    importLibrary(name: "drawing"): Promise<google.maps.DrawingLibrary>;
+    importLibrary(name: "visualization"): Promise<google.maps.VisualizationLibrary>;
+    /**
      * Load the Google Maps JavaScript API script with a callback.
+     * @deprecated, use importLibrary() instead.
      */
     loadCallback(fn: (e: ErrorEvent) => void): void;
     /**
@@ -298,7 +309,6 @@ export declare class Loader {
     private reset;
     private resetIfRetryingFailed;
     private loadErrorCallback;
-    private setCallback;
     private callback;
     private execute;
 }
