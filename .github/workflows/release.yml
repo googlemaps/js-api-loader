@@ -41,16 +41,16 @@ jobs:
           npm run lint
           npm test
       - name: Release
-        uses: cycjimmy/semantic-release-action@v3.4.1
+        uses: cycjimmy/semantic-release-action
         with:
           semantic_version: 19
           extra_plugins: |
-            @semantic-release/commit-analyzer
+            @semantic-release/commit-analyzer@^9
             semantic-release-interval
             @semantic-release/release-notes-generator@^10
             @semantic-release/git
             @semantic-release/github
-            @semantic-release/npm@^9.0.2
+            @semantic-release/npm@^9
             @googlemaps/semantic-release-config
             semantic-release-npm-deprecate
         env:
