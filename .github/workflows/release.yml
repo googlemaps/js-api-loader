@@ -47,10 +47,10 @@ jobs:
           extra_plugins: |
             @semantic-release/commit-analyzer
             semantic-release-interval
-            @semantic-release/release-notes-generator
+            @semantic-release/release-notes-generator@10.0.3
             @semantic-release/git
             @semantic-release/github
-            @semantic-release/npm
+            @semantic-release/npm@9.0.2
             @googlemaps/semantic-release-config
             semantic-release-npm-deprecate
         env:
