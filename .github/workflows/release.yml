@@ -49,7 +49,7 @@ jobs:
             semantic-release-interval
             @semantic-release/release-notes-generator@^10
             @semantic-release/git
-            @semantic-release/github
+            @semantic-release/github@^8
             @semantic-release/npm@^9
             @googlemaps/semantic-release-config
             semantic-release-npm-deprecate
