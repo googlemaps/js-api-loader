@@ -386,7 +386,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var objectGetOwnPropertyDescriptor = {};
 
-  var fails$q = function (exec) {
+  var fails$r = function (exec) {
     try {
       return !!exec();
     } catch (error) {
@@ -394,10 +394,10 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   };
 
-  var fails$p = fails$q;
+  var fails$q = fails$r;
 
   // Detect IE8's incomplete defineProperty implementation
-  var descriptors = !fails$p(function () {
+  var descriptors = !fails$q(function () {
     // eslint-disable-next-line es/no-object-defineproperty -- required for testing
     return Object.defineProperty({}, 1, {
       get: function () {
@@ -406,8 +406,8 @@ this.google.maps.plugins.loader = (function (exports) {
     })[1] != 7;
   });
 
-  var fails$o = fails$q;
-  var functionBindNative = !fails$o(function () {
+  var fails$p = fails$r;
+  var functionBindNative = !fails$p(function () {
     // eslint-disable-next-line es/no-function-prototype-bind -- safe
     var test = function () {/* empty */}.bind();
     // eslint-disable-next-line no-prototype-builtins -- safe
@@ -465,13 +465,13 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var uncurryThis$n = functionUncurryThis;
-  var fails$n = fails$q;
+  var fails$o = fails$r;
   var classof$c = classofRaw$2;
   var $Object$4 = Object;
   var split$1 = uncurryThis$n(''.split);
 
   // fallback for non-array-like ES3 and non-enumerable old V8 strings
-  var indexedObject = fails$n(function () {
+  var indexedObject = fails$o(function () {
     // throws an error in rhino, see https://github.com/mozilla/rhino/issues/346
     // eslint-disable-next-line no-prototype-builtins -- safe
     return !$Object$4('z').propertyIsEnumerable(0);
@@ -573,12 +573,12 @@ this.google.maps.plugins.loader = (function (exports) {
 
   /* eslint-disable es/no-symbol -- required for testing */
   var V8_VERSION$3 = engineV8Version;
-  var fails$m = fails$q;
+  var fails$n = fails$r;
   var global$k = global$n;
   var $String$6 = global$k.String;
 
   // eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
-  var symbolConstructorDetection = !!Object.getOwnPropertySymbols && !fails$m(function () {
+  var symbolConstructorDetection = !!Object.getOwnPropertySymbols && !fails$n(function () {
     var symbol = Symbol();
     // Chrome 38 Symbol has incorrect toString conversion
     // `get-own-property-symbols` polyfill symbols converted to object are not Symbol instances
@@ -692,19 +692,19 @@ this.google.maps.plugins.loader = (function (exports) {
 
   // `ToObject` abstract operation
   // https://tc39.es/ecma262/#sec-toobject
-  var toObject$5 = function (argument) {
+  var toObject$6 = function (argument) {
     return $Object$2(requireObjectCoercible$2(argument));
   };
 
   var uncurryThis$l = functionUncurryThis;
-  var toObject$4 = toObject$5;
+  var toObject$5 = toObject$6;
   var hasOwnProperty = uncurryThis$l({}.hasOwnProperty);
 
   // `HasOwnProperty` abstract operation
   // https://tc39.es/ecma262/#sec-hasownproperty
   // eslint-disable-next-line es/no-object-hasown -- safe
   var hasOwnProperty_1 = Object.hasOwn || function hasOwn(it, key) {
-    return hasOwnProperty(toObject$4(it), key);
+    return hasOwnProperty(toObject$5(it), key);
   };
 
   var uncurryThis$k = functionUncurryThis;
@@ -776,11 +776,11 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var DESCRIPTORS$c = descriptors;
-  var fails$l = fails$q;
+  var fails$m = fails$r;
   var createElement$1 = documentCreateElement$2;
 
   // Thanks to IE8 for its funny defineProperty
-  var ie8DomDefine = !DESCRIPTORS$c && !fails$l(function () {
+  var ie8DomDefine = !DESCRIPTORS$c && !fails$m(function () {
     // eslint-disable-next-line es/no-object-defineproperty -- required for testing
     return Object.defineProperty(createElement$1('div'), 'a', {
       get: function () {
@@ -815,11 +815,11 @@ this.google.maps.plugins.loader = (function (exports) {
   var objectDefineProperty = {};
 
   var DESCRIPTORS$a = descriptors;
-  var fails$k = fails$q;
+  var fails$l = fails$r;
 
   // V8 ~ Chrome 36-
   // https://bugs.chromium.org/p/v8/issues/detail?id=3334
-  var v8PrototypeDefineBug = DESCRIPTORS$a && fails$k(function () {
+  var v8PrototypeDefineBug = DESCRIPTORS$a && fails$l(function () {
     // eslint-disable-next-line es/no-object-defineproperty -- required for testing
     return Object.defineProperty(function () {/* empty */}, 'prototype', {
       value: 42,
@@ -1003,7 +1003,7 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var uncurryThis$i = functionUncurryThis;
-  var fails$j = fails$q;
+  var fails$k = fails$r;
   var isCallable$j = isCallable$r;
   var hasOwn$7 = hasOwnProperty_1;
   var DESCRIPTORS$6 = descriptors;
@@ -1018,7 +1018,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var stringSlice$5 = uncurryThis$i(''.slice);
   var replace$4 = uncurryThis$i(''.replace);
   var join$1 = uncurryThis$i([].join);
-  var CONFIGURABLE_LENGTH = DESCRIPTORS$6 && !fails$j(function () {
+  var CONFIGURABLE_LENGTH = DESCRIPTORS$6 && !fails$k(function () {
     return defineProperty$5(function () {/* empty */}, 'length', {
       value: 8
     }).length !== 8;
@@ -1240,12 +1240,12 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   };
 
-  var fails$i = fails$q;
+  var fails$j = fails$r;
   var isCallable$h = isCallable$r;
   var replacement = /#|\.prototype\./;
   var isForced$3 = function (feature, detection) {
     var value = data[normalize(feature)];
-    return value == POLYFILL ? true : value == NATIVE ? false : isCallable$h(detection) ? fails$i(detection) : !!detection;
+    return value == POLYFILL ? true : value == NATIVE ? false : isCallable$h(detection) ? fails$j(detection) : !!detection;
   };
   var normalize = isForced$3.normalize = function (string) {
     return String(string).replace(replacement, '.').toLowerCase();
@@ -1373,7 +1373,7 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var uncurryThis$f = functionUncurryThis;
-  var fails$h = fails$q;
+  var fails$i = fails$r;
   var isCallable$f = isCallable$r;
   var classof$9 = classof$a;
   var getBuiltIn$5 = getBuiltIn$8;
@@ -1414,7 +1414,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   // `IsConstructor` abstract operation
   // https://tc39.es/ecma262/#sec-isconstructor
-  var isConstructor$2 = !construct || fails$h(function () {
+  var isConstructor$2 = !construct || fails$i(function () {
     var called;
     return isConstructorModern(isConstructorModern.call) || !isConstructorModern(Object) || !isConstructorModern(function () {
       called = true;
@@ -1451,7 +1451,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return new (arraySpeciesConstructor(originalArray))(length === 0 ? 0 : length);
   };
 
-  var fails$g = fails$q;
+  var fails$h = fails$r;
   var wellKnownSymbol$g = wellKnownSymbol$l;
   var V8_VERSION$2 = engineV8Version;
   var SPECIES$4 = wellKnownSymbol$g('species');
@@ -1459,7 +1459,7 @@ this.google.maps.plugins.loader = (function (exports) {
     // We can't use this feature detection in V8 since it causes
     // deoptimization and serious performance degradation
     // https://github.com/zloirock/core-js/issues/677
-    return V8_VERSION$2 >= 51 || !fails$g(function () {
+    return V8_VERSION$2 >= 51 || !fails$h(function () {
       var array = [];
       var constructor = array.constructor = {};
       constructor[SPECIES$4] = function () {
@@ -1471,11 +1471,11 @@ this.google.maps.plugins.loader = (function (exports) {
     });
   };
 
-  var $$c = _export;
-  var fails$f = fails$q;
+  var $$d = _export;
+  var fails$g = fails$r;
   var isArray$1 = isArray$3;
   var isObject$8 = isObject$f;
-  var toObject$3 = toObject$5;
+  var toObject$4 = toObject$6;
   var lengthOfArrayLike$3 = lengthOfArrayLike$5;
   var doesNotExceedSafeInteger = doesNotExceedSafeInteger$1;
   var createProperty$1 = createProperty$2;
@@ -1488,7 +1488,7 @@ this.google.maps.plugins.loader = (function (exports) {
   // We can't use this feature detection in V8 since it causes
   // deoptimization and serious performance degradation
   // https://github.com/zloirock/core-js/issues/679
-  var IS_CONCAT_SPREADABLE_SUPPORT = V8_VERSION$1 >= 51 || !fails$f(function () {
+  var IS_CONCAT_SPREADABLE_SUPPORT = V8_VERSION$1 >= 51 || !fails$g(function () {
     var array = [];
     array[IS_CONCAT_SPREADABLE] = false;
     return array.concat()[0] !== array;
@@ -1503,7 +1503,7 @@ this.google.maps.plugins.loader = (function (exports) {
   // `Array.prototype.concat` method
   // https://tc39.es/ecma262/#sec-array.prototype.concat
   // with adding support of @@isConcatSpreadable and @@species
-  $$c({
+  $$d({
     target: 'Array',
     proto: true,
     arity: 1,
@@ -1511,7 +1511,7 @@ this.google.maps.plugins.loader = (function (exports) {
   }, {
     // eslint-disable-next-line no-unused-vars -- required for `.length`
     concat: function concat(arg) {
-      var O = toObject$3(this);
+      var O = toObject$4(this);
       var A = arraySpeciesCreate$1(O, 0);
       var n = 0;
       var i, k, length, len, E;
@@ -1578,12 +1578,12 @@ this.google.maps.plugins.loader = (function (exports) {
     };
   };
 
-  var $$b = _export;
+  var $$c = _export;
   var getBuiltIn$4 = getBuiltIn$8;
   var apply$2 = functionApply;
   var call$c = functionCall;
   var uncurryThis$c = functionUncurryThis;
-  var fails$e = fails$q;
+  var fails$f = fails$r;
   var isCallable$d = isCallable$r;
   var isSymbol = isSymbol$3;
   var arraySlice$3 = arraySlice$4;
@@ -1599,7 +1599,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var tester = /[\uD800-\uDFFF]/g;
   var low = /^[\uD800-\uDBFF]$/;
   var hi = /^[\uDC00-\uDFFF]$/;
-  var WRONG_SYMBOLS_CONVERSION = !NATIVE_SYMBOL || fails$e(function () {
+  var WRONG_SYMBOLS_CONVERSION = !NATIVE_SYMBOL || fails$f(function () {
     var symbol = getBuiltIn$4('Symbol')();
     // MS Edge converts symbol values to JSON as {}
     return $stringify([symbol]) != '[null]'
@@ -1612,7 +1612,7 @@ this.google.maps.plugins.loader = (function (exports) {
   });
 
   // https://github.com/tc39/proposal-well-formed-stringify
-  var ILL_FORMED_UNICODE = fails$e(function () {
+  var ILL_FORMED_UNICODE = fails$f(function () {
     return $stringify('\uDF06\uD834') !== '"\\udf06\\ud834"' || $stringify('\uDEAD') !== '"\\udead"';
   });
   var stringifyWithSymbolsFix = function (it, replacer) {
@@ -1637,7 +1637,7 @@ this.google.maps.plugins.loader = (function (exports) {
   if ($stringify) {
     // `JSON.stringify` method
     // https://tc39.es/ecma262/#sec-json.stringify
-    $$b({
+    $$c({
       target: 'JSON',
       stat: true,
       arity: 3,
@@ -1835,7 +1835,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var bind$6 = functionBindContext;
   var isCallable$b = isCallable$r;
   var hasOwn$3 = hasOwnProperty_1;
-  var fails$d = fails$q;
+  var fails$e = fails$r;
   var html$1 = html$2;
   var arraySlice$2 = arraySlice$4;
   var createElement = documentCreateElement$2;
@@ -1853,7 +1853,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var queue$2 = {};
   var ONREADYSTATECHANGE = 'onreadystatechange';
   var $location, defer, channel, port;
-  fails$d(function () {
+  fails$e(function () {
     // Deno throws a ReferenceError on `location` access without `--location` flag
     $location = global$c.location;
   });
@@ -1911,7 +1911,7 @@ this.google.maps.plugins.loader = (function (exports) {
       defer = bind$6(port.postMessage, port);
       // Browsers with postMessage, skip WebWorkers
       // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
-    } else if (global$c.addEventListener && isCallable$b(global$c.postMessage) && !global$c.importScripts && $location && $location.protocol !== 'file:' && !fails$d(globalPostMessageDefer)) {
+    } else if (global$c.addEventListener && isCallable$b(global$c.postMessage) && !global$c.importScripts && $location && $location.protocol !== 'file:' && !fails$e(globalPostMessageDefer)) {
       defer = globalPostMessageDefer;
       global$c.addEventListener('message', eventListener, false);
       // IE8-
@@ -2141,7 +2141,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return new PromiseCapability(C);
   };
 
-  var $$a = _export;
+  var $$b = _export;
   var IS_NODE = engineIsNode;
   var global$8 = global$n;
   var call$b = functionCall;
@@ -2404,7 +2404,7 @@ this.google.maps.plugins.loader = (function (exports) {
       }
     }
   }
-  $$a({
+  $$b({
     global: true,
     constructor: true,
     wrap: true,
@@ -2585,7 +2585,7 @@ this.google.maps.plugins.loader = (function (exports) {
     NativePromiseConstructor$1.all(iterable).then(undefined, function () {/* empty */});
   });
 
-  var $$9 = _export;
+  var $$a = _export;
   var call$7 = functionCall;
   var aCallable$1 = aCallable$8;
   var newPromiseCapabilityModule$2 = newPromiseCapability$2;
@@ -2595,7 +2595,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   // `Promise.all` method
   // https://tc39.es/ecma262/#sec-promise.all
-  $$9({
+  $$a({
     target: 'Promise',
     stat: true,
     forced: PROMISE_STATICS_INCORRECT_ITERATION$1
@@ -2628,7 +2628,7 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   });
 
-  var $$8 = _export;
+  var $$9 = _export;
   var FORCED_PROMISE_CONSTRUCTOR$2 = promiseConstructorDetection.CONSTRUCTOR;
   var NativePromiseConstructor = promiseNativeConstructor;
   var getBuiltIn$1 = getBuiltIn$8;
@@ -2638,7 +2638,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   // `Promise.prototype.catch` method
   // https://tc39.es/ecma262/#sec-promise.prototype.catch
-  $$8({
+  $$9({
     target: 'Promise',
     proto: true,
     forced: FORCED_PROMISE_CONSTRUCTOR$2,
@@ -2659,7 +2659,7 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   }
 
-  var $$7 = _export;
+  var $$8 = _export;
   var call$6 = functionCall;
   var aCallable = aCallable$8;
   var newPromiseCapabilityModule$1 = newPromiseCapability$2;
@@ -2669,7 +2669,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   // `Promise.race` method
   // https://tc39.es/ecma262/#sec-promise.race
-  $$7({
+  $$8({
     target: 'Promise',
     stat: true,
     forced: PROMISE_STATICS_INCORRECT_ITERATION
@@ -2689,14 +2689,14 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   });
 
-  var $$6 = _export;
+  var $$7 = _export;
   var call$5 = functionCall;
   var newPromiseCapabilityModule = newPromiseCapability$2;
   var FORCED_PROMISE_CONSTRUCTOR$1 = promiseConstructorDetection.CONSTRUCTOR;
 
   // `Promise.reject` method
   // https://tc39.es/ecma262/#sec-promise.reject
-  $$6({
+  $$7({
     target: 'Promise',
     stat: true,
     forced: FORCED_PROMISE_CONSTRUCTOR$1
@@ -2720,7 +2720,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return promiseCapability.promise;
   };
 
-  var $$5 = _export;
+  var $$6 = _export;
   var getBuiltIn = getBuiltIn$8;
   var FORCED_PROMISE_CONSTRUCTOR = promiseConstructorDetection.CONSTRUCTOR;
   var promiseResolve = promiseResolve$1;
@@ -2728,7 +2728,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   // `Promise.resolve` method
   // https://tc39.es/ecma262/#sec-promise.resolve
-  $$5({
+  $$6({
     target: 'Promise',
     stat: true,
     forced: FORCED_PROMISE_CONSTRUCTOR
@@ -2738,7 +2738,174 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   });
 
-  var objectDefineProperties = {};
+  // iterable DOM collections
+  // flag - `iterable` interface - 'entries', 'keys', 'values', 'forEach' methods
+  var domIterables = {
+    CSSRuleList: 0,
+    CSSStyleDeclaration: 0,
+    CSSValueList: 0,
+    ClientRectList: 0,
+    DOMRectList: 0,
+    DOMStringList: 0,
+    DOMTokenList: 1,
+    DataTransferItemList: 0,
+    FileList: 0,
+    HTMLAllCollection: 0,
+    HTMLCollection: 0,
+    HTMLFormElement: 0,
+    HTMLSelectElement: 0,
+    MediaList: 0,
+    MimeTypeArray: 0,
+    NamedNodeMap: 0,
+    NodeList: 1,
+    PaintRequestList: 0,
+    Plugin: 0,
+    PluginArray: 0,
+    SVGLengthList: 0,
+    SVGNumberList: 0,
+    SVGPathSegList: 0,
+    SVGPointList: 0,
+    SVGStringList: 0,
+    SVGTransformList: 0,
+    SourceBufferList: 0,
+    StyleSheetList: 0,
+    TextTrackCueList: 0,
+    TextTrackList: 0,
+    TouchList: 0
+  };
+
+  // in old WebKit versions, `element.classList` is not an instance of global `DOMTokenList`
+  var documentCreateElement$1 = documentCreateElement$2;
+  var classList = documentCreateElement$1('span').classList;
+  var DOMTokenListPrototype$2 = classList && classList.constructor && classList.constructor.prototype;
+  var domTokenListPrototype = DOMTokenListPrototype$2 === Object.prototype ? undefined : DOMTokenListPrototype$2;
+
+  var bind$2 = functionBindContext;
+  var uncurryThis$8 = functionUncurryThis;
+  var IndexedObject = indexedObject;
+  var toObject$3 = toObject$6;
+  var lengthOfArrayLike$1 = lengthOfArrayLike$5;
+  var arraySpeciesCreate = arraySpeciesCreate$2;
+  var push$2 = uncurryThis$8([].push);
+
+  // `Array.prototype.{ forEach, map, filter, some, every, find, findIndex, filterReject }` methods implementation
+  var createMethod$1 = function (TYPE) {
+    var IS_MAP = TYPE == 1;
+    var IS_FILTER = TYPE == 2;
+    var IS_SOME = TYPE == 3;
+    var IS_EVERY = TYPE == 4;
+    var IS_FIND_INDEX = TYPE == 6;
+    var IS_FILTER_REJECT = TYPE == 7;
+    var NO_HOLES = TYPE == 5 || IS_FIND_INDEX;
+    return function ($this, callbackfn, that, specificCreate) {
+      var O = toObject$3($this);
+      var self = IndexedObject(O);
+      var boundFunction = bind$2(callbackfn, that);
+      var length = lengthOfArrayLike$1(self);
+      var index = 0;
+      var create = specificCreate || arraySpeciesCreate;
+      var target = IS_MAP ? create($this, length) : IS_FILTER || IS_FILTER_REJECT ? create($this, 0) : undefined;
+      var value, result;
+      for (; length > index; index++) if (NO_HOLES || index in self) {
+        value = self[index];
+        result = boundFunction(value, index, O);
+        if (TYPE) {
+          if (IS_MAP) target[index] = result; // map
+          else if (result) switch (TYPE) {
+            case 3:
+              return true;
+            // some
+            case 5:
+              return value;
+            // find
+            case 6:
+              return index;
+            // findIndex
+            case 2:
+              push$2(target, value);
+            // filter
+          } else switch (TYPE) {
+            case 4:
+              return false;
+            // every
+            case 7:
+              push$2(target, value);
+            // filterReject
+          }
+        }
+      }
+
+      return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : target;
+    };
+  };
+  var arrayIteration = {
+    // `Array.prototype.forEach` method
+    // https://tc39.es/ecma262/#sec-array.prototype.foreach
+    forEach: createMethod$1(0),
+    // `Array.prototype.map` method
+    // https://tc39.es/ecma262/#sec-array.prototype.map
+    map: createMethod$1(1),
+    // `Array.prototype.filter` method
+    // https://tc39.es/ecma262/#sec-array.prototype.filter
+    filter: createMethod$1(2),
+    // `Array.prototype.some` method
+    // https://tc39.es/ecma262/#sec-array.prototype.some
+    some: createMethod$1(3),
+    // `Array.prototype.every` method
+    // https://tc39.es/ecma262/#sec-array.prototype.every
+    every: createMethod$1(4),
+    // `Array.prototype.find` method
+    // https://tc39.es/ecma262/#sec-array.prototype.find
+    find: createMethod$1(5),
+    // `Array.prototype.findIndex` method
+    // https://tc39.es/ecma262/#sec-array.prototype.findIndex
+    findIndex: createMethod$1(6),
+    // `Array.prototype.filterReject` method
+    // https://github.com/tc39/proposal-array-filtering
+    filterReject: createMethod$1(7)
+  };
+
+  var fails$d = fails$r;
+  var arrayMethodIsStrict$1 = function (METHOD_NAME, argument) {
+    var method = [][METHOD_NAME];
+    return !!method && fails$d(function () {
+      // eslint-disable-next-line no-useless-call -- required for testing
+      method.call(null, argument || function () {
+        return 1;
+      }, 1);
+    });
+  };
+
+  var $forEach = arrayIteration.forEach;
+  var arrayMethodIsStrict = arrayMethodIsStrict$1;
+  var STRICT_METHOD = arrayMethodIsStrict('forEach');
+
+  // `Array.prototype.forEach` method implementation
+  // https://tc39.es/ecma262/#sec-array.prototype.foreach
+  var arrayForEach = !STRICT_METHOD ? function forEach(callbackfn /* , thisArg */) {
+    return $forEach(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+    // eslint-disable-next-line es/no-array-prototype-foreach -- safe
+  } : [].forEach;
+
+  var global$7 = global$n;
+  var DOMIterables$1 = domIterables;
+  var DOMTokenListPrototype$1 = domTokenListPrototype;
+  var forEach = arrayForEach;
+  var createNonEnumerableProperty$3 = createNonEnumerableProperty$6;
+  var handlePrototype$1 = function (CollectionPrototype) {
+    // some Chrome versions have non-configurable methods on DOMTokenList
+    if (CollectionPrototype && CollectionPrototype.forEach !== forEach) try {
+      createNonEnumerableProperty$3(CollectionPrototype, 'forEach', forEach);
+    } catch (error) {
+      CollectionPrototype.forEach = forEach;
+    }
+  };
+  for (var COLLECTION_NAME$1 in DOMIterables$1) {
+    if (DOMIterables$1[COLLECTION_NAME$1]) {
+      handlePrototype$1(global$7[COLLECTION_NAME$1] && global$7[COLLECTION_NAME$1].prototype);
+    }
+  }
+  handlePrototype$1(DOMTokenListPrototype$1);
 
   var internalObjectKeys = objectKeysInternal;
   var enumBugKeys$1 = enumBugKeys$3;
@@ -2749,6 +2916,28 @@ this.google.maps.plugins.loader = (function (exports) {
   var objectKeys$1 = Object.keys || function keys(O) {
     return internalObjectKeys(O, enumBugKeys$1);
   };
+
+  var $$5 = _export;
+  var toObject$2 = toObject$6;
+  var nativeKeys = objectKeys$1;
+  var fails$c = fails$r;
+  var FAILS_ON_PRIMITIVES$1 = fails$c(function () {
+    nativeKeys(1);
+  });
+
+  // `Object.keys` method
+  // https://tc39.es/ecma262/#sec-object.keys
+  $$5({
+    target: 'Object',
+    stat: true,
+    forced: FAILS_ON_PRIMITIVES$1
+  }, {
+    keys: function keys(it) {
+      return nativeKeys(toObject$2(it));
+    }
+  });
+
+  var objectDefineProperties = {};
 
   var DESCRIPTORS$4 = descriptors;
   var V8_PROTOTYPE_DEFINE_BUG = v8PrototypeDefineBug;
@@ -2777,7 +2966,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var enumBugKeys = enumBugKeys$3;
   var hiddenKeys$1 = hiddenKeys$5;
   var html = html$2;
-  var documentCreateElement$1 = documentCreateElement$2;
+  var documentCreateElement = documentCreateElement$2;
   var sharedKey$1 = sharedKey$3;
   var GT = '>';
   var LT = '<';
@@ -2801,7 +2990,7 @@ this.google.maps.plugins.loader = (function (exports) {
   // Create object with fake `null` prototype: use iframe Object with cleared prototype
   var NullProtoObjectViaIFrame = function () {
     // Thrash, waste and sodomy: IE GC bug
-    var iframe = documentCreateElement$1('iframe');
+    var iframe = documentCreateElement('iframe');
     var JS = 'java' + SCRIPT + ':';
     var iframeDocument;
     iframe.style.display = 'none';
@@ -2868,8 +3057,8 @@ this.google.maps.plugins.loader = (function (exports) {
     ArrayPrototype[UNSCOPABLES][key] = true;
   };
 
-  var fails$c = fails$q;
-  var correctPrototypeGetter = !fails$c(function () {
+  var fails$b = fails$r;
+  var correctPrototypeGetter = !fails$b(function () {
     function F() {/* empty */}
     F.prototype.constructor = null;
     // eslint-disable-next-line es/no-object-getprototypeof -- required for testing
@@ -2878,7 +3067,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var hasOwn$2 = hasOwnProperty_1;
   var isCallable$7 = isCallable$r;
-  var toObject$2 = toObject$5;
+  var toObject$1 = toObject$6;
   var sharedKey = sharedKey$3;
   var CORRECT_PROTOTYPE_GETTER = correctPrototypeGetter;
   var IE_PROTO = sharedKey('IE_PROTO');
@@ -2889,7 +3078,7 @@ this.google.maps.plugins.loader = (function (exports) {
   // https://tc39.es/ecma262/#sec-object.getprototypeof
   // eslint-disable-next-line es/no-object-getprototypeof -- safe
   var objectGetPrototypeOf = CORRECT_PROTOTYPE_GETTER ? $Object.getPrototypeOf : function (O) {
-    var object = toObject$2(O);
+    var object = toObject$1(O);
     if (hasOwn$2(object, IE_PROTO)) return object[IE_PROTO];
     var constructor = object.constructor;
     if (isCallable$7(constructor) && object instanceof constructor) {
@@ -2898,7 +3087,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return object instanceof $Object ? ObjectPrototype : null;
   };
 
-  var fails$b = fails$q;
+  var fails$a = fails$r;
   var isCallable$6 = isCallable$r;
   var isObject$5 = isObject$f;
   var getPrototypeOf$1 = objectGetPrototypeOf;
@@ -2920,7 +3109,7 @@ this.google.maps.plugins.loader = (function (exports) {
       if (PrototypeOfArrayIteratorPrototype !== Object.prototype) IteratorPrototype$2 = PrototypeOfArrayIteratorPrototype;
     }
   }
-  var NEW_ITERATOR_PROTOTYPE = !isObject$5(IteratorPrototype$2) || fails$b(function () {
+  var NEW_ITERATOR_PROTOTYPE = !isObject$5(IteratorPrototype$2) || fails$a(function () {
     var test = {};
     // FF44- legacy iterators case
     return IteratorPrototype$2[ITERATOR$4].call(test) !== test;
@@ -2965,7 +3154,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var getPrototypeOf = objectGetPrototypeOf;
   var setPrototypeOf$1 = objectSetPrototypeOf;
   var setToStringTag$2 = setToStringTag$5;
-  var createNonEnumerableProperty$3 = createNonEnumerableProperty$6;
+  var createNonEnumerableProperty$2 = createNonEnumerableProperty$6;
   var defineBuiltIn$4 = defineBuiltIn$a;
   var wellKnownSymbol$5 = wellKnownSymbol$l;
   var Iterators$1 = iterators;
@@ -3031,7 +3220,7 @@ this.google.maps.plugins.loader = (function (exports) {
     // fix Array.prototype.{ values, @@iterator }.name in V8 / FF
     if (PROPER_FUNCTION_NAME && DEFAULT == VALUES && nativeIterator && nativeIterator.name !== VALUES) {
       if (CONFIGURABLE_FUNCTION_NAME) {
-        createNonEnumerableProperty$3(IterablePrototype, 'name', VALUES);
+        createNonEnumerableProperty$2(IterablePrototype, 'name', VALUES);
       } else {
         INCORRECT_VALUES_NAME = true;
         defaultIterator = function values() {
@@ -3146,12 +3335,12 @@ this.google.maps.plugins.loader = (function (exports) {
   var objectGetOwnPropertyNamesExternal = {};
 
   var toAbsoluteIndex = toAbsoluteIndex$2;
-  var lengthOfArrayLike$1 = lengthOfArrayLike$5;
+  var lengthOfArrayLike = lengthOfArrayLike$5;
   var createProperty = createProperty$2;
   var $Array = Array;
   var max$1 = Math.max;
   var arraySliceSimple = function (O, start, end) {
-    var length = lengthOfArrayLike$1(O);
+    var length = lengthOfArrayLike(O);
     var k = toAbsoluteIndex(start, length);
     var fin = toAbsoluteIndex(end === undefined ? length : end, length);
     var result = $Array(max$1(fin - k, 0));
@@ -3180,8 +3369,8 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   // FF26- bug: ArrayBuffers are non-extensible, but Object.isExtensible does not report it
-  var fails$a = fails$q;
-  var arrayBufferNonExtensible = fails$a(function () {
+  var fails$9 = fails$r;
+  var arrayBufferNonExtensible = fails$9(function () {
     if (typeof ArrayBuffer == 'function') {
       var buffer = new ArrayBuffer(8);
       // eslint-disable-next-line es/no-object-isextensible, es/no-object-defineproperty -- safe
@@ -3191,14 +3380,14 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   });
 
-  var fails$9 = fails$q;
+  var fails$8 = fails$r;
   var isObject$4 = isObject$f;
   var classof$2 = classofRaw$2;
   var ARRAY_BUFFER_NON_EXTENSIBLE = arrayBufferNonExtensible;
 
   // eslint-disable-next-line es/no-object-isextensible -- safe
   var $isExtensible = Object.isExtensible;
-  var FAILS_ON_PRIMITIVES = fails$9(function () {
+  var FAILS_ON_PRIMITIVES = fails$8(function () {
     $isExtensible(1);
   });
 
@@ -3210,14 +3399,14 @@ this.google.maps.plugins.loader = (function (exports) {
     return $isExtensible ? $isExtensible(it) : true;
   } : $isExtensible;
 
-  var fails$8 = fails$q;
-  var freezing = !fails$8(function () {
+  var fails$7 = fails$r;
+  var freezing = !fails$7(function () {
     // eslint-disable-next-line es/no-object-isextensible, es/no-object-preventextensions -- required for testing
     return Object.isExtensible(Object.preventExtensions({}));
   });
 
   var $$3 = _export;
-  var uncurryThis$8 = functionUncurryThis;
+  var uncurryThis$7 = functionUncurryThis;
   var hiddenKeys = hiddenKeys$5;
   var isObject$3 = isObject$f;
   var hasOwn$1 = hasOwnProperty_1;
@@ -3276,7 +3465,7 @@ this.google.maps.plugins.loader = (function (exports) {
     meta.enable = function () {/* empty */};
     REQUIRED = true;
     var getOwnPropertyNames = getOwnPropertyNamesModule.f;
-    var splice = uncurryThis$8([].splice);
+    var splice = uncurryThis$7([].splice);
     var test = {};
     test[METADATA] = 1;
 
@@ -3325,8 +3514,8 @@ this.google.maps.plugins.loader = (function (exports) {
   };
 
   var $$2 = _export;
-  var global$7 = global$n;
-  var uncurryThis$7 = functionUncurryThis;
+  var global$6 = global$n;
+  var uncurryThis$6 = functionUncurryThis;
   var isForced = isForced_1;
   var defineBuiltIn$3 = defineBuiltIn$a;
   var InternalMetadataModule = internalMetadata.exports;
@@ -3335,7 +3524,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var isCallable$3 = isCallable$r;
   var isNullOrUndefined$2 = isNullOrUndefined$7;
   var isObject$1 = isObject$f;
-  var fails$7 = fails$q;
+  var fails$6 = fails$r;
   var checkCorrectnessOfIteration = checkCorrectnessOfIteration$2;
   var setToStringTag$1 = setToStringTag$5;
   var inheritIfRequired = inheritIfRequired$1;
@@ -3343,12 +3532,12 @@ this.google.maps.plugins.loader = (function (exports) {
     var IS_MAP = CONSTRUCTOR_NAME.indexOf('Map') !== -1;
     var IS_WEAK = CONSTRUCTOR_NAME.indexOf('Weak') !== -1;
     var ADDER = IS_MAP ? 'set' : 'add';
-    var NativeConstructor = global$7[CONSTRUCTOR_NAME];
+    var NativeConstructor = global$6[CONSTRUCTOR_NAME];
     var NativePrototype = NativeConstructor && NativeConstructor.prototype;
     var Constructor = NativeConstructor;
     var exported = {};
     var fixMethod = function (KEY) {
-      var uncurriedNativeMethod = uncurryThis$7(NativePrototype[KEY]);
+      var uncurriedNativeMethod = uncurryThis$6(NativePrototype[KEY]);
       defineBuiltIn$3(NativePrototype, KEY, KEY == 'add' ? function add(value) {
         uncurriedNativeMethod(this, value === 0 ? 0 : value);
         return this;
@@ -3363,7 +3552,7 @@ this.google.maps.plugins.loader = (function (exports) {
         return this;
       });
     };
-    var REPLACE = isForced(CONSTRUCTOR_NAME, !isCallable$3(NativeConstructor) || !(IS_WEAK || NativePrototype.forEach && !fails$7(function () {
+    var REPLACE = isForced(CONSTRUCTOR_NAME, !isCallable$3(NativeConstructor) || !(IS_WEAK || NativePrototype.forEach && !fails$6(function () {
       new NativeConstructor().entries().next();
     })));
     if (REPLACE) {
@@ -3375,7 +3564,7 @@ this.google.maps.plugins.loader = (function (exports) {
       // early implementations not supports chaining
       var HASNT_CHAINING = instance[ADDER](IS_WEAK ? {} : -0, 1) != instance;
       // V8 ~ Chromium 40- weak-collections throws on primitives, but should return false
-      var THROWS_ON_PRIMITIVES = fails$7(function () {
+      var THROWS_ON_PRIMITIVES = fails$6(function () {
         instance.has(1);
       });
       // most early implementations doesn't supports iterables, most modern - not close it correctly
@@ -3384,7 +3573,7 @@ this.google.maps.plugins.loader = (function (exports) {
         new NativeConstructor(iterable);
       });
       // for early implementations -0 and +0 not the same
-      var BUGGY_ZERO = !IS_WEAK && fails$7(function () {
+      var BUGGY_ZERO = !IS_WEAK && fails$6(function () {
         // V8 ~ Chromium 42- fails only with 5+ elements
         var $instance = new NativeConstructor();
         var index = 5;
@@ -3434,7 +3623,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var create$2 = objectCreate;
   var defineBuiltInAccessor$1 = defineBuiltInAccessor$3;
   var defineBuiltIns$1 = defineBuiltIns$2;
-  var bind$2 = functionBindContext;
+  var bind$1 = functionBindContext;
   var anInstance$1 = anInstance$4;
   var isNullOrUndefined$1 = isNullOrUndefined$7;
   var iterate = iterate$4;
@@ -3544,7 +3733,7 @@ this.google.maps.plugins.loader = (function (exports) {
         // https://tc39.es/ecma262/#sec-set.prototype.foreach
         forEach: function forEach(callbackfn /* , that = undefined */) {
           var state = getInternalState(this);
-          var boundFunction = bind$2(callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+          var boundFunction = bind$1(callbackfn, arguments.length > 1 ? arguments[1] : undefined);
           var entry;
           while (entry = entry ? entry.next : state.first) {
             boundFunction(entry.value, entry.key, this);
@@ -3643,14 +3832,14 @@ this.google.maps.plugins.loader = (function (exports) {
     };
   }, collectionStrong);
 
-  var uncurryThis$6 = functionUncurryThis;
+  var uncurryThis$5 = functionUncurryThis;
   var toIntegerOrInfinity$1 = toIntegerOrInfinity$4;
   var toString$3 = toString$6;
   var requireObjectCoercible$1 = requireObjectCoercible$4;
-  var charAt$5 = uncurryThis$6(''.charAt);
-  var charCodeAt = uncurryThis$6(''.charCodeAt);
-  var stringSlice$4 = uncurryThis$6(''.slice);
-  var createMethod$1 = function (CONVERT_TO_STRING) {
+  var charAt$5 = uncurryThis$5(''.charAt);
+  var charCodeAt = uncurryThis$5(''.charCodeAt);
+  var stringSlice$4 = uncurryThis$5(''.slice);
+  var createMethod = function (CONVERT_TO_STRING) {
     return function ($this, pos) {
       var S = toString$3(requireObjectCoercible$1($this));
       var position = toIntegerOrInfinity$1(pos);
@@ -3664,10 +3853,10 @@ this.google.maps.plugins.loader = (function (exports) {
   var stringMultibyte = {
     // `String.prototype.codePointAt` method
     // https://tc39.es/ecma262/#sec-string.prototype.codepointat
-    codeAt: createMethod$1(false),
+    codeAt: createMethod(false),
     // `String.prototype.at` method
     // https://github.com/mathiasbynens/String.prototype.at
-    charAt: createMethod$1(true)
+    charAt: createMethod(true)
   };
 
   var charAt$4 = stringMultibyte.charAt;
@@ -3700,89 +3889,47 @@ this.google.maps.plugins.loader = (function (exports) {
     return createIterResultObject(point, false);
   });
 
-  // iterable DOM collections
-  // flag - `iterable` interface - 'entries', 'keys', 'values', 'forEach' methods
-  var domIterables = {
-    CSSRuleList: 0,
-    CSSStyleDeclaration: 0,
-    CSSValueList: 0,
-    ClientRectList: 0,
-    DOMRectList: 0,
-    DOMStringList: 0,
-    DOMTokenList: 1,
-    DataTransferItemList: 0,
-    FileList: 0,
-    HTMLAllCollection: 0,
-    HTMLCollection: 0,
-    HTMLFormElement: 0,
-    HTMLSelectElement: 0,
-    MediaList: 0,
-    MimeTypeArray: 0,
-    NamedNodeMap: 0,
-    NodeList: 1,
-    PaintRequestList: 0,
-    Plugin: 0,
-    PluginArray: 0,
-    SVGLengthList: 0,
-    SVGNumberList: 0,
-    SVGPathSegList: 0,
-    SVGPointList: 0,
-    SVGStringList: 0,
-    SVGTransformList: 0,
-    SourceBufferList: 0,
-    StyleSheetList: 0,
-    TextTrackCueList: 0,
-    TextTrackList: 0,
-    TouchList: 0
-  };
-
-  // in old WebKit versions, `element.classList` is not an instance of global `DOMTokenList`
-  var documentCreateElement = documentCreateElement$2;
-  var classList = documentCreateElement('span').classList;
-  var DOMTokenListPrototype$2 = classList && classList.constructor && classList.constructor.prototype;
-  var domTokenListPrototype = DOMTokenListPrototype$2 === Object.prototype ? undefined : DOMTokenListPrototype$2;
-
-  var global$6 = global$n;
-  var DOMIterables$1 = domIterables;
-  var DOMTokenListPrototype$1 = domTokenListPrototype;
+  var global$5 = global$n;
+  var DOMIterables = domIterables;
+  var DOMTokenListPrototype = domTokenListPrototype;
   var ArrayIteratorMethods = es_array_iterator;
-  var createNonEnumerableProperty$2 = createNonEnumerableProperty$6;
+  var createNonEnumerableProperty$1 = createNonEnumerableProperty$6;
   var wellKnownSymbol$4 = wellKnownSymbol$l;
   var ITERATOR$2 = wellKnownSymbol$4('iterator');
   var TO_STRING_TAG = wellKnownSymbol$4('toStringTag');
   var ArrayValues = ArrayIteratorMethods.values;
-  var handlePrototype$1 = function (CollectionPrototype, COLLECTION_NAME) {
+  var handlePrototype = function (CollectionPrototype, COLLECTION_NAME) {
     if (CollectionPrototype) {
       // some Chrome versions have non-configurable methods on DOMTokenList
       if (CollectionPrototype[ITERATOR$2] !== ArrayValues) try {
-        createNonEnumerableProperty$2(CollectionPrototype, ITERATOR$2, ArrayValues);
+        createNonEnumerableProperty$1(CollectionPrototype, ITERATOR$2, ArrayValues);
       } catch (error) {
         CollectionPrototype[ITERATOR$2] = ArrayValues;
       }
       if (!CollectionPrototype[TO_STRING_TAG]) {
-        createNonEnumerableProperty$2(CollectionPrototype, TO_STRING_TAG, COLLECTION_NAME);
+        createNonEnumerableProperty$1(CollectionPrototype, TO_STRING_TAG, COLLECTION_NAME);
       }
-      if (DOMIterables$1[COLLECTION_NAME]) for (var METHOD_NAME in ArrayIteratorMethods) {
+      if (DOMIterables[COLLECTION_NAME]) for (var METHOD_NAME in ArrayIteratorMethods) {
         // some Chrome versions have non-configurable methods on DOMTokenList
         if (CollectionPrototype[METHOD_NAME] !== ArrayIteratorMethods[METHOD_NAME]) try {
-          createNonEnumerableProperty$2(CollectionPrototype, METHOD_NAME, ArrayIteratorMethods[METHOD_NAME]);
+          createNonEnumerableProperty$1(CollectionPrototype, METHOD_NAME, ArrayIteratorMethods[METHOD_NAME]);
         } catch (error) {
           CollectionPrototype[METHOD_NAME] = ArrayIteratorMethods[METHOD_NAME];
         }
       }
     }
   };
-  for (var COLLECTION_NAME$1 in DOMIterables$1) {
-    handlePrototype$1(global$6[COLLECTION_NAME$1] && global$6[COLLECTION_NAME$1].prototype, COLLECTION_NAME$1);
+  for (var COLLECTION_NAME in DOMIterables) {
+    handlePrototype(global$5[COLLECTION_NAME] && global$5[COLLECTION_NAME].prototype, COLLECTION_NAME);
   }
-  handlePrototype$1(DOMTokenListPrototype$1, 'DOMTokenList');
+  handlePrototype(DOMTokenListPrototype, 'DOMTokenList');
 
-  var fails$6 = fails$q;
+  var fails$5 = fails$r;
   var wellKnownSymbol$3 = wellKnownSymbol$l;
   var DESCRIPTORS$1 = descriptors;
   var IS_PURE = isPure;
   var ITERATOR$1 = wellKnownSymbol$3('iterator');
-  var urlConstructorDetection = !fails$6(function () {
+  var urlConstructorDetection = !fails$5(function () {
     // eslint-disable-next-line unicorn/relative-url-style -- required for testing
     var url = new URL('b?a=1&b=2&c=3', 'http://a');
     var searchParams = url.searchParams;
@@ -3841,9 +3988,9 @@ this.google.maps.plugins.loader = (function (exports) {
   // TODO: in core-js@4, move /modules/ dependencies to public entries for better optimization by tools like `preset-env`
 
   var $$1 = _export;
-  var global$5 = global$n;
+  var global$4 = global$n;
   var call$3 = functionCall;
-  var uncurryThis$5 = functionUncurryThis;
+  var uncurryThis$4 = functionUncurryThis;
   var DESCRIPTORS = descriptors;
   var USE_NATIVE_URL = urlConstructorDetection;
   var defineBuiltIn$1 = defineBuiltIn$a;
@@ -3855,7 +4002,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var anInstance = anInstance$4;
   var isCallable$2 = isCallable$r;
   var hasOwn = hasOwnProperty_1;
-  var bind$1 = functionBindContext;
+  var bind = functionBindContext;
   var classof$1 = classof$a;
   var anObject$3 = anObject$e;
   var isObject = isObject$f;
@@ -3878,8 +4025,8 @@ this.google.maps.plugins.loader = (function (exports) {
 
   // Avoid NodeJS experimental warning
   var safeGetBuiltIn = function (name) {
-    if (!DESCRIPTORS) return global$5[name];
-    var descriptor = getOwnPropertyDescriptor(global$5, name);
+    if (!DESCRIPTORS) return global$4[name];
+    var descriptor = getOwnPropertyDescriptor(global$4, name);
     return descriptor && descriptor.value;
   };
   var nativeFetch = safeGetBuiltIn('fetch');
@@ -3887,18 +4034,18 @@ this.google.maps.plugins.loader = (function (exports) {
   var Headers = safeGetBuiltIn('Headers');
   var RequestPrototype = NativeRequest && NativeRequest.prototype;
   var HeadersPrototype = Headers && Headers.prototype;
-  var RegExp$1 = global$5.RegExp;
-  var TypeError$1 = global$5.TypeError;
-  var decodeURIComponent = global$5.decodeURIComponent;
-  var encodeURIComponent = global$5.encodeURIComponent;
-  var charAt$3 = uncurryThis$5(''.charAt);
-  var join = uncurryThis$5([].join);
-  var push$2 = uncurryThis$5([].push);
-  var replace$2 = uncurryThis$5(''.replace);
-  var shift = uncurryThis$5([].shift);
-  var splice = uncurryThis$5([].splice);
-  var split = uncurryThis$5(''.split);
-  var stringSlice$3 = uncurryThis$5(''.slice);
+  var RegExp$1 = global$4.RegExp;
+  var TypeError$1 = global$4.TypeError;
+  var decodeURIComponent = global$4.decodeURIComponent;
+  var encodeURIComponent = global$4.encodeURIComponent;
+  var charAt$3 = uncurryThis$4(''.charAt);
+  var join = uncurryThis$4([].join);
+  var push$1 = uncurryThis$4([].push);
+  var replace$2 = uncurryThis$4(''.replace);
+  var shift = uncurryThis$4([].shift);
+  var splice = uncurryThis$4([].splice);
+  var split = uncurryThis$4(''.split);
+  var stringSlice$3 = uncurryThis$4(''.slice);
   var plus = /\+/g;
   var sequences = Array(4);
   var percentSequence = function (bytes) {
@@ -3977,13 +4124,13 @@ this.google.maps.plugins.loader = (function (exports) {
           entryIterator = getIterator(anObject$3(step.value));
           entryNext = entryIterator.next;
           if ((first = call$3(entryNext, entryIterator)).done || (second = call$3(entryNext, entryIterator)).done || !call$3(entryNext, entryIterator).done) throw TypeError$1('Expected sequence with length 2');
-          push$2(this.entries, {
+          push$1(this.entries, {
             key: $toString(first.value),
             value: $toString(second.value)
           });
         }
       } else for (var key in object) if (hasOwn(object, key)) {
-        push$2(this.entries, {
+        push$1(this.entries, {
           key: key,
           value: $toString(object[key])
         });
@@ -3998,7 +4145,7 @@ this.google.maps.plugins.loader = (function (exports) {
           attribute = attributes[index++];
           if (attribute.length) {
             entry = split(attribute, '=');
-            push$2(this.entries, {
+            push$1(this.entries, {
               key: deserialize(shift(entry)),
               value: deserialize(join(entry, '='))
             });
@@ -4013,7 +4160,7 @@ this.google.maps.plugins.loader = (function (exports) {
       var entry;
       while (index < entries.length) {
         entry = entries[index++];
-        push$2(result, serialize(entry.key) + '=' + serialize(entry.value));
+        push$1(result, serialize(entry.key) + '=' + serialize(entry.value));
       }
       return join(result, '&');
     },
@@ -4042,7 +4189,7 @@ this.google.maps.plugins.loader = (function (exports) {
     append: function append(name, value) {
       validateArgumentsLength(arguments.length, 2);
       var state = getInternalParamsState(this);
-      push$2(state.entries, {
+      push$1(state.entries, {
         key: $toString(name),
         value: $toString(value)
       });
@@ -4084,7 +4231,7 @@ this.google.maps.plugins.loader = (function (exports) {
       var result = [];
       var index = 0;
       for (; index < entries.length; index++) {
-        if (entries[index].key === key) push$2(result, entries[index].value);
+        if (entries[index].key === key) push$1(result, entries[index].value);
       }
       return result;
     },
@@ -4120,7 +4267,7 @@ this.google.maps.plugins.loader = (function (exports) {
           }
         }
       }
-      if (!found) push$2(entries, {
+      if (!found) push$1(entries, {
         key: key,
         value: val
       });
@@ -4139,7 +4286,7 @@ this.google.maps.plugins.loader = (function (exports) {
     // `URLSearchParams.prototype.forEach` method
     forEach: function forEach(callback /* , thisArg */) {
       var entries = getInternalParamsState(this).entries;
-      var boundFunction = bind$1(callback, arguments.length > 1 ? arguments[1] : undefined);
+      var boundFunction = bind(callback, arguments.length > 1 ? arguments[1] : undefined);
       var index = 0;
       var entry;
       while (index < entries.length) {
@@ -4196,8 +4343,8 @@ this.google.maps.plugins.loader = (function (exports) {
 
   // Wrap `fetch` and `Request` for correct work with polyfilled `URLSearchParams`
   if (!USE_NATIVE_URL && isCallable$2(Headers)) {
-    var headersHas = uncurryThis$5(HeadersPrototype.has);
-    var headersSet = uncurryThis$5(HeadersPrototype.set);
+    var headersHas = uncurryThis$4(HeadersPrototype.has);
+    var headersSet = uncurryThis$4(HeadersPrototype.set);
     var wrapRequestOptions = function (init) {
       if (isObject(init)) {
         var body = init.body;
@@ -4263,12 +4410,12 @@ this.google.maps.plugins.loader = (function (exports) {
     return result;
   };
 
-  var fails$5 = fails$q;
-  var global$4 = global$n;
+  var fails$4 = fails$r;
+  var global$3 = global$n;
 
   // babel-minify and Closure Compiler transpiles RegExp('a', 'y') -> /a/y and it causes SyntaxError
-  var $RegExp$2 = global$4.RegExp;
-  var UNSUPPORTED_Y$1 = fails$5(function () {
+  var $RegExp$2 = global$3.RegExp;
+  var UNSUPPORTED_Y$1 = fails$4(function () {
     var re = $RegExp$2('a', 'y');
     re.lastIndex = 2;
     return re.exec('abcd') != null;
@@ -4276,10 +4423,10 @@ this.google.maps.plugins.loader = (function (exports) {
 
   // UC Browser bug
   // https://github.com/zloirock/core-js/issues/1008
-  var MISSED_STICKY = UNSUPPORTED_Y$1 || fails$5(function () {
+  var MISSED_STICKY = UNSUPPORTED_Y$1 || fails$4(function () {
     return !$RegExp$2('a', 'y').sticky;
   });
-  var BROKEN_CARET = UNSUPPORTED_Y$1 || fails$5(function () {
+  var BROKEN_CARET = UNSUPPORTED_Y$1 || fails$4(function () {
     // https://bugzilla.mozilla.org/show_bug.cgi?id=773687
     var re = $RegExp$2('^r', 'gy');
     re.lastIndex = 2;
@@ -4291,22 +4438,22 @@ this.google.maps.plugins.loader = (function (exports) {
     UNSUPPORTED_Y: UNSUPPORTED_Y$1
   };
 
-  var fails$4 = fails$q;
-  var global$3 = global$n;
+  var fails$3 = fails$r;
+  var global$2 = global$n;
 
   // babel-minify and Closure Compiler transpiles RegExp('.', 's') -> /./s and it causes SyntaxError
-  var $RegExp$1 = global$3.RegExp;
-  var regexpUnsupportedDotAll = fails$4(function () {
+  var $RegExp$1 = global$2.RegExp;
+  var regexpUnsupportedDotAll = fails$3(function () {
     var re = $RegExp$1('.', 's');
     return !(re.dotAll && re.exec('\n') && re.flags === 's');
   });
 
-  var fails$3 = fails$q;
-  var global$2 = global$n;
+  var fails$2 = fails$r;
+  var global$1 = global$n;
 
   // babel-minify and Closure Compiler transpiles RegExp('(?<a>b)', 'g') -> /(?<a>b)/g and it causes SyntaxError
-  var $RegExp = global$2.RegExp;
-  var regexpUnsupportedNcg = fails$3(function () {
+  var $RegExp = global$1.RegExp;
+  var regexpUnsupportedNcg = fails$2(function () {
     var re = $RegExp('(?<a>b)', 'g');
     return re.exec('b').groups.a !== 'b' || 'b'.replace(re, '$<a>c') !== 'bc';
   });
@@ -4314,7 +4461,7 @@ this.google.maps.plugins.loader = (function (exports) {
   /* eslint-disable regexp/no-empty-capturing-group, regexp/no-empty-group, regexp/no-lazy-ends -- testing */
   /* eslint-disable regexp/no-useless-quantifier -- testing */
   var call$2 = functionCall;
-  var uncurryThis$4 = functionUncurryThis;
+  var uncurryThis$3 = functionUncurryThis;
   var toString$1 = toString$6;
   var regexpFlags = regexpFlags$1;
   var stickyHelpers = regexpStickyHelpers;
@@ -4326,10 +4473,10 @@ this.google.maps.plugins.loader = (function (exports) {
   var nativeReplace = shared('native-string-replace', String.prototype.replace);
   var nativeExec = RegExp.prototype.exec;
   var patchedExec = nativeExec;
-  var charAt$2 = uncurryThis$4(''.charAt);
-  var indexOf = uncurryThis$4(''.indexOf);
-  var replace$1 = uncurryThis$4(''.replace);
-  var stringSlice$2 = uncurryThis$4(''.slice);
+  var charAt$2 = uncurryThis$3(''.charAt);
+  var indexOf = uncurryThis$3(''.indexOf);
+  var replace$1 = uncurryThis$3(''.replace);
+  var stringSlice$2 = uncurryThis$3(''.slice);
   var UPDATES_LAST_INDEX_WRONG = function () {
     var re1 = /a/;
     var re2 = /b*/g;
@@ -4428,17 +4575,17 @@ this.google.maps.plugins.loader = (function (exports) {
 
   // TODO: Remove from `core-js@4` since it's moved to entry points
 
-  var uncurryThis$3 = functionUncurryThisClause;
+  var uncurryThis$2 = functionUncurryThisClause;
   var defineBuiltIn = defineBuiltIn$a;
   var regexpExec$1 = regexpExec$2;
-  var fails$2 = fails$q;
+  var fails$1 = fails$r;
   var wellKnownSymbol$1 = wellKnownSymbol$l;
-  var createNonEnumerableProperty$1 = createNonEnumerableProperty$6;
+  var createNonEnumerableProperty = createNonEnumerableProperty$6;
   var SPECIES = wellKnownSymbol$1('species');
   var RegExpPrototype = RegExp.prototype;
   var fixRegexpWellKnownSymbolLogic = function (KEY, exec, FORCED, SHAM) {
     var SYMBOL = wellKnownSymbol$1(KEY);
-    var DELEGATES_TO_SYMBOL = !fails$2(function () {
+    var DELEGATES_TO_SYMBOL = !fails$1(function () {
       // String methods call symbol-named RegEp methods
       var O = {};
       O[SYMBOL] = function () {
@@ -4446,7 +4593,7 @@ this.google.maps.plugins.loader = (function (exports) {
       };
       return ''[KEY](O) != 7;
     });
-    var DELEGATES_TO_EXEC = DELEGATES_TO_SYMBOL && !fails$2(function () {
+    var DELEGATES_TO_EXEC = DELEGATES_TO_SYMBOL && !fails$1(function () {
       // Symbol-named RegExp methods call .exec
       var execCalled = false;
       var re = /a/;
@@ -4472,9 +4619,9 @@ this.google.maps.plugins.loader = (function (exports) {
       return !execCalled;
     });
     if (!DELEGATES_TO_SYMBOL || !DELEGATES_TO_EXEC || FORCED) {
-      var uncurriedNativeRegExpMethod = uncurryThis$3(/./[SYMBOL]);
+      var uncurriedNativeRegExpMethod = uncurryThis$2(/./[SYMBOL]);
       var methods = exec(SYMBOL, ''[KEY], function (nativeMethod, regexp, str, arg2, forceStringMethod) {
-        var uncurriedNativeMethod = uncurryThis$3(nativeMethod);
+        var uncurriedNativeMethod = uncurryThis$2(nativeMethod);
         var $exec = regexp.exec;
         if ($exec === regexpExec$1 || $exec === RegExpPrototype.exec) {
           if (DELEGATES_TO_SYMBOL && !forceStringMethod) {
@@ -4498,7 +4645,7 @@ this.google.maps.plugins.loader = (function (exports) {
       defineBuiltIn(String.prototype, KEY, methods[0]);
       defineBuiltIn(RegExpPrototype, SYMBOL, methods[1]);
     }
-    if (SHAM) createNonEnumerableProperty$1(RegExpPrototype[SYMBOL], 'sham', true);
+    if (SHAM) createNonEnumerableProperty(RegExpPrototype[SYMBOL], 'sham', true);
   };
 
   var charAt$1 = stringMultibyte.charAt;
@@ -4509,12 +4656,12 @@ this.google.maps.plugins.loader = (function (exports) {
     return index + (unicode ? charAt$1(S, index).length : 1);
   };
 
-  var uncurryThis$2 = functionUncurryThis;
-  var toObject$1 = toObject$5;
+  var uncurryThis$1 = functionUncurryThis;
+  var toObject = toObject$6;
   var floor = Math.floor;
-  var charAt = uncurryThis$2(''.charAt);
-  var replace = uncurryThis$2(''.replace);
-  var stringSlice$1 = uncurryThis$2(''.slice);
+  var charAt = uncurryThis$1(''.charAt);
+  var replace = uncurryThis$1(''.replace);
+  var stringSlice$1 = uncurryThis$1(''.slice);
   // eslint-disable-next-line redos/no-vulnerable -- safe
   var SUBSTITUTION_SYMBOLS = /\$([$&'`]|\d{1,2}|<[^>]*>)/g;
   var SUBSTITUTION_SYMBOLS_NO_NAMED = /\$([$&'`]|\d{1,2})/g;
@@ -4526,7 +4673,7 @@ this.google.maps.plugins.loader = (function (exports) {
     var m = captures.length;
     var symbols = SUBSTITUTION_SYMBOLS_NO_NAMED;
     if (namedCaptures !== undefined) {
-      namedCaptures = toObject$1(namedCaptures);
+      namedCaptures = toObject(namedCaptures);
       symbols = SUBSTITUTION_SYMBOLS;
     }
     return replace(replacement, symbols, function (match, ch) {
@@ -4581,9 +4728,9 @@ this.google.maps.plugins.loader = (function (exports) {
 
   var apply = functionApply;
   var call = functionCall;
-  var uncurryThis$1 = functionUncurryThis;
+  var uncurryThis = functionUncurryThis;
   var fixRegExpWellKnownSymbolLogic = fixRegexpWellKnownSymbolLogic;
-  var fails$1 = fails$q;
+  var fails = fails$r;
   var anObject = anObject$e;
   var isCallable = isCallable$r;
   var isNullOrUndefined = isNullOrUndefined$7;
@@ -4599,10 +4746,10 @@ this.google.maps.plugins.loader = (function (exports) {
   var REPLACE = wellKnownSymbol('replace');
   var max = Math.max;
   var min = Math.min;
-  var concat = uncurryThis$1([].concat);
-  var push$1 = uncurryThis$1([].push);
-  var stringIndexOf = uncurryThis$1(''.indexOf);
-  var stringSlice = uncurryThis$1(''.slice);
+  var concat = uncurryThis([].concat);
+  var push = uncurryThis([].push);
+  var stringIndexOf = uncurryThis(''.indexOf);
+  var stringSlice = uncurryThis(''.slice);
   var maybeToString = function (it) {
     return it === undefined ? it : String(it);
   };
@@ -4621,7 +4768,7 @@ this.google.maps.plugins.loader = (function (exports) {
     }
     return false;
   }();
-  var REPLACE_SUPPORTS_NAMED_GROUPS = !fails$1(function () {
+  var REPLACE_SUPPORTS_NAMED_GROUPS = !fails(function () {
     var re = /./;
     re.exec = function () {
       var result = [];
@@ -4665,7 +4812,7 @@ this.google.maps.plugins.loader = (function (exports) {
       while (true) {
         var result = regExpExec(rx, S);
         if (result === null) break;
-        push$1(results, result);
+        push(results, result);
         if (!global) break;
         var matchStr = toString(result[0]);
         if (matchStr === '') rx.lastIndex = advanceStringIndex(S, toLength(rx.lastIndex), fullUnicode);
@@ -4682,11 +4829,11 @@ this.google.maps.plugins.loader = (function (exports) {
         // but for some reason `nativeSlice.call(result, 1, result.length)` (called in
         // the slice polyfill when slicing native arrays) "doesn't work" in safari 9 and
         // causes a crash (https://pastebin.com/N21QzeQA) when trying to debug it.
-        for (var j = 1; j < result.length; j++) push$1(captures, maybeToString(result[j]));
+        for (var j = 1; j < result.length; j++) push(captures, maybeToString(result[j]));
         var namedCaptures = result.groups;
         if (functionalReplace) {
           var replacerArgs = concat([matched], captures, position, S);
-          if (namedCaptures !== undefined) push$1(replacerArgs, namedCaptures);
+          if (namedCaptures !== undefined) push(replacerArgs, namedCaptures);
           var replacement = toString(apply(replaceValue, undefined, replacerArgs));
         } else {
           replacement = getSubstitution(matched, S, position, captures, namedCaptures, replaceValue);
@@ -4699,133 +4846,6 @@ this.google.maps.plugins.loader = (function (exports) {
       return accumulatedResult + stringSlice(S, nextSourcePosition);
     }];
   }, !REPLACE_SUPPORTS_NAMED_GROUPS || !REPLACE_KEEPS_$0 || REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE);
-
-  var bind = functionBindContext;
-  var uncurryThis = functionUncurryThis;
-  var IndexedObject = indexedObject;
-  var toObject = toObject$5;
-  var lengthOfArrayLike = lengthOfArrayLike$5;
-  var arraySpeciesCreate = arraySpeciesCreate$2;
-  var push = uncurryThis([].push);
-
-  // `Array.prototype.{ forEach, map, filter, some, every, find, findIndex, filterReject }` methods implementation
-  var createMethod = function (TYPE) {
-    var IS_MAP = TYPE == 1;
-    var IS_FILTER = TYPE == 2;
-    var IS_SOME = TYPE == 3;
-    var IS_EVERY = TYPE == 4;
-    var IS_FIND_INDEX = TYPE == 6;
-    var IS_FILTER_REJECT = TYPE == 7;
-    var NO_HOLES = TYPE == 5 || IS_FIND_INDEX;
-    return function ($this, callbackfn, that, specificCreate) {
-      var O = toObject($this);
-      var self = IndexedObject(O);
-      var boundFunction = bind(callbackfn, that);
-      var length = lengthOfArrayLike(self);
-      var index = 0;
-      var create = specificCreate || arraySpeciesCreate;
-      var target = IS_MAP ? create($this, length) : IS_FILTER || IS_FILTER_REJECT ? create($this, 0) : undefined;
-      var value, result;
-      for (; length > index; index++) if (NO_HOLES || index in self) {
-        value = self[index];
-        result = boundFunction(value, index, O);
-        if (TYPE) {
-          if (IS_MAP) target[index] = result; // map
-          else if (result) switch (TYPE) {
-            case 3:
-              return true;
-            // some
-            case 5:
-              return value;
-            // find
-            case 6:
-              return index;
-            // findIndex
-            case 2:
-              push(target, value);
-            // filter
-          } else switch (TYPE) {
-            case 4:
-              return false;
-            // every
-            case 7:
-              push(target, value);
-            // filterReject
-          }
-        }
-      }
-
-      return IS_FIND_INDEX ? -1 : IS_SOME || IS_EVERY ? IS_EVERY : target;
-    };
-  };
-  var arrayIteration = {
-    // `Array.prototype.forEach` method
-    // https://tc39.es/ecma262/#sec-array.prototype.foreach
-    forEach: createMethod(0),
-    // `Array.prototype.map` method
-    // https://tc39.es/ecma262/#sec-array.prototype.map
-    map: createMethod(1),
-    // `Array.prototype.filter` method
-    // https://tc39.es/ecma262/#sec-array.prototype.filter
-    filter: createMethod(2),
-    // `Array.prototype.some` method
-    // https://tc39.es/ecma262/#sec-array.prototype.some
-    some: createMethod(3),
-    // `Array.prototype.every` method
-    // https://tc39.es/ecma262/#sec-array.prototype.every
-    every: createMethod(4),
-    // `Array.prototype.find` method
-    // https://tc39.es/ecma262/#sec-array.prototype.find
-    find: createMethod(5),
-    // `Array.prototype.findIndex` method
-    // https://tc39.es/ecma262/#sec-array.prototype.findIndex
-    findIndex: createMethod(6),
-    // `Array.prototype.filterReject` method
-    // https://github.com/tc39/proposal-array-filtering
-    filterReject: createMethod(7)
-  };
-
-  var fails = fails$q;
-  var arrayMethodIsStrict$1 = function (METHOD_NAME, argument) {
-    var method = [][METHOD_NAME];
-    return !!method && fails(function () {
-      // eslint-disable-next-line no-useless-call -- required for testing
-      method.call(null, argument || function () {
-        return 1;
-      }, 1);
-    });
-  };
-
-  var $forEach = arrayIteration.forEach;
-  var arrayMethodIsStrict = arrayMethodIsStrict$1;
-  var STRICT_METHOD = arrayMethodIsStrict('forEach');
-
-  // `Array.prototype.forEach` method implementation
-  // https://tc39.es/ecma262/#sec-array.prototype.foreach
-  var arrayForEach = !STRICT_METHOD ? function forEach(callbackfn /* , thisArg */) {
-    return $forEach(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
-    // eslint-disable-next-line es/no-array-prototype-foreach -- safe
-  } : [].forEach;
-
-  var global$1 = global$n;
-  var DOMIterables = domIterables;
-  var DOMTokenListPrototype = domTokenListPrototype;
-  var forEach = arrayForEach;
-  var createNonEnumerableProperty = createNonEnumerableProperty$6;
-  var handlePrototype = function (CollectionPrototype) {
-    // some Chrome versions have non-configurable methods on DOMTokenList
-    if (CollectionPrototype && CollectionPrototype.forEach !== forEach) try {
-      createNonEnumerableProperty(CollectionPrototype, 'forEach', forEach);
-    } catch (error) {
-      CollectionPrototype.forEach = forEach;
-    }
-  };
-  for (var COLLECTION_NAME in DOMIterables) {
-    if (DOMIterables[COLLECTION_NAME]) {
-      handlePrototype(global$1[COLLECTION_NAME] && global$1[COLLECTION_NAME].prototype);
-    }
-  }
-  handlePrototype(DOMTokenListPrototype);
 
   /*! *****************************************************************************
   Copyright (c) Microsoft Corporation.
@@ -5127,6 +5147,23 @@ this.google.maps.plugins.loader = (function (exports) {
           this.callback();
           return;
         }
+        var params = {
+          key: this.apiKey,
+          channel: this.channel,
+          client: this.client,
+          libraries: this.libraries,
+          v: this.version,
+          mapIds: this.mapIds,
+          language: this.language,
+          region: this.region,
+          authReferrerPolicy: this.authReferrerPolicy
+        };
+        // keep the URL minimal:
+        Object.keys(params).forEach(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        function (key) {
+          return !params[key] && delete params[key];
+        });
         if (!((_b = (_a = window === null || window === void 0 ? void 0 : window.google) === null || _a === void 0 ? void 0 : _a.maps) === null || _b === void 0 ? void 0 : _b.importLibrary)) {
           // tweaked copy of https://developers.google.com/maps/documentation/javascript/load-maps-js-api#dynamic-library-import
           // which also sets the url, the id, and the nonce
@@ -5193,17 +5230,7 @@ this.google.maps.plugins.loader = (function (exports) {
                 return d[l].apply(d, [f].concat(n));
               });
             };
-          })({
-            key: this.apiKey,
-            channel: this.channel,
-            client: this.client,
-            libraries: this.libraries,
-            v: this.version,
-            mapIds: this.mapIds,
-            language: this.language,
-            region: this.region,
-            authReferrerPolicy: this.authReferrerPolicy
-          });
+          })(params);
           /* eslint-enable */
         }
 

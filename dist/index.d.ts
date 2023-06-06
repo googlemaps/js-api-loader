@@ -15,8 +15,8 @@
  */
 /// <reference types="google.maps" />
 export declare const DEFAULT_ID = "__googleMapsScriptId";
-export type Library = "core" | "maps" | "places" | "geocoding" | "routes" | "marker" | "geometry" | "elevation" | "streetView" | "journeySharing" | "drawing" | "visualization";
-export type Libraries = Library[];
+export declare type Library = "core" | "maps" | "places" | "geocoding" | "routes" | "marker" | "geometry" | "elevation" | "streetView" | "journeySharing" | "drawing" | "visualization";
+export declare type Libraries = Library[];
 /**
  * The Google Maps JavaScript API
  * [documentation](https://developers.google.com/maps/documentation/javascript/tutorial)

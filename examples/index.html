@@ -35,7 +35,6 @@
     </style>
     <script
       nonce="caffe67d7b989af3a1c7f4a1a6c79bd9fb2b4eb0"
-      type="text/javascript"
       src="../dist/index.umd.js"
     ></script>
 
@@ -55,14 +54,23 @@
         apiKey: "",
         version: "weekly",
         libraries: ["places"],
-        nonce: "caffe67d7b989af3a1c7f4a1a6c79bd9fb2b4eb0",
       });
+
+      // Promise for a specific library
+      loader
+        .importLibrary('maps')
+        .then(({Map}) => {
+          new Map(document.getElementById("map"), mapOptions);
+        })
+        .catch((e) => {
+          // do something
+        });
 
       // Promise
       loader
         .load()
         .then((google) => {
-          new google.maps.Map(document.getElementById("map"), mapOptions);
+          // new google.maps.Map(document.getElementById("map"), mapOptions);
         })
         .catch((e) => {
           // do something
