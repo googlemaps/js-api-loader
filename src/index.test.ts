@@ -98,6 +98,19 @@ test("setScript does not add second script with same id", async () => {
   expect(document.head.childNodes.length).toBe(1);
 });
 
+test("setScript adds a script to head with valid src", async () => {
+  const loader = new Loader({ apiKey: "foo" });
+
+  loader["setScript"]();
+  await 0;
+
+  const script = document.head.childNodes[0] as HTMLScriptElement;
+
+  expect(script.src).toEqual(
+    "https://maps.googleapis.com/maps/api/js?libraries=&key=foo&callback=google.maps.__ib__"
+  );
+});
+
 test("load should return a promise that resolves even if called twice", () => {
   const loader = new Loader({ apiKey: "foo" });
   loader.importLibrary = (() => Promise.resolve()) as any;
