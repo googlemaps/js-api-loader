@@ -48,6 +48,7 @@
           lng: 0,
         },
         zoom: 4,
+        mapId: "DEMO_MAP_ID"
       };
 
       const loader = new google.maps.plugins.loader.Loader({
@@ -59,8 +60,10 @@
       // Promise for a specific library
       loader
         .importLibrary('maps')
-        .then(({Map}) => {
-          new Map(document.getElementById("map"), mapOptions);
+        .then(async ({Map}) => {
+          const map = new Map(document.getElementById("map"), mapOptions);
+          const {AdvancedMarkerElement} = await loader.importLibrary('marker');
+          new AdvancedMarkerElement({map, position: mapOptions.center});
         })
         .catch((e) => {
           // do something
