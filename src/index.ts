@@ -560,8 +560,9 @@ export class Loader {
       this.importLibrary(library)
     );
     // ensure at least one library, to kick off loading...
-    if (!libraryPromises.length)
+    if (!libraryPromises.length) {
       libraryPromises.push(this.importLibrary("core"));
+    }
     Promise.all(libraryPromises).then(
       () => this.callback(),
       (error) => {
