@@ -512,7 +512,7 @@ export class Loader {
 
     if (!window?.google?.maps?.importLibrary) {
       // tweaked copy of https://developers.google.com/maps/documentation/javascript/load-maps-js-api#dynamic-library-import
-      // which also sets the url, the id, and the nonce
+      // which also sets the base url, the id, and the nonce
       /* eslint-disable */
       ((g) => {
         // @ts-ignore
