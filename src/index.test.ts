@@ -107,7 +107,20 @@ test("setScript adds a script to head with valid src", async () => {
   const script = document.head.childNodes[0] as HTMLScriptElement;
 
   expect(script.src).toEqual(
-    "https://maps.googleapis.com/maps/api/js?libraries=&key=foo&callback=google.maps.__ib__"
+    "https://maps.googleapis.com/maps/api/js?libraries=core&key=foo&callback=google.maps.__ib__"
+  );
+});
+
+test("setScript adds a script to head with valid src with libraries", async () => {
+  const loader = new Loader({ apiKey: "foo", libraries: ["marker", "places"] });
+
+  loader["setScript"]();
+  await 0;
+
+  const script = document.head.childNodes[0] as HTMLScriptElement;
+
+  expect(script.src).toEqual(
+    "https://maps.googleapis.com/maps/api/js?libraries=marker%2Cplaces&key=foo&callback=google.maps.__ib__"
   );
 });
 
@@ -184,6 +197,7 @@ test("script onerror should retry", async () => {
 
   // wait for the first failure
   await 0;
+  await 0;
   expect(loader["errors"].length).toBe(1);
   // trigger the retry delay:
   jest.runAllTimers();
@@ -207,6 +221,7 @@ test("script onerror should reset retry mechanism with next loader", async () =>
   let rejection = expect(loader.load()).rejects.toBeInstanceOf(Error);
   // wait for the first first failure
   await 0;
+  await 0;
   expect(loader["errors"].length).toBe(1);
   // trigger the retry delay:
   jest.runAllTimers();
@@ -220,6 +235,7 @@ test("script onerror should reset retry mechanism with next loader", async () =>
   expect(loader["errors"].length).toBe(0);
 
   // wait for the second first failure
+  await 0;
   await 0;
   expect(loader["errors"].length).toBe(1);
   // trigger the retry delay:
@@ -240,6 +256,7 @@ test("script onerror should not reset retry mechanism with parallel loaders", as
   const rejection1 = expect(loader.load()).rejects.toBeInstanceOf(Error);
   const rejection2 = expect(loader.load()).rejects.toBeInstanceOf(Error);
   // wait for the first first failure
+  await 0;
   await 0;
   jest.runAllTimers();
 
@@ -403,4 +420,30 @@ test("importLibrary resolves correctly", async () => {
 
   const core = await corePromise;
   expect(core).toEqual({ core: "fake" });
+});
+
+test("importLibrary can also set up bootstrap libraries (if bootstrap libraries empty)", async () => {
+  const loader = new Loader({ apiKey: "foo" });
+  loader.importLibrary("marker");
+  loader.importLibrary("places");
+
+  await 0;
+
+  const script = document.head.childNodes[0] as HTMLScriptElement;
+
+  expect(script.src).toEqual(
+    "https://maps.googleapis.com/maps/api/js?libraries=core%2Cmarker%2Cplaces&key=foo&callback=google.maps.__ib__"
+  );
+});
+
+test("importLibrary resolves correctly even with different bootstrap libraries", async () => {
+  window.google = { maps: {} } as any;
+  google.maps.importLibrary = async (name) => ({ [name]: "fake" } as any);
+
+  const loader = new Loader({ apiKey: "foo", libraries: ["places"] });
+  const corePromise = loader.importLibrary("core");
+
+  const core = await corePromise;
+  expect(core).toEqual({ core: "fake" });
+  expect(await loader.importLibrary("places")).toEqual({ places: "fake" });
 });

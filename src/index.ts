@@ -468,6 +468,7 @@ export class Loader {
   public importLibrary(
     name: "visualization"
   ): Promise<google.maps.VisualizationLibrary>;
+  public importLibrary(name: Library): Promise<unknown>;
   public importLibrary(name: Library): Promise<unknown> {
     this.execute();
     return google.maps.importLibrary(name);
@@ -496,7 +497,7 @@ export class Loader {
       key: this.apiKey,
       channel: this.channel,
       client: this.client,
-      libraries: this.libraries,
+      libraries: this.libraries.length && this.libraries,
       v: this.version,
       mapIds: this.mapIds,
       language: this.language,
@@ -511,7 +512,7 @@ export class Loader {
 
     if (!window?.google?.maps?.importLibrary) {
       // tweaked copy of https://developers.google.com/maps/documentation/javascript/load-maps-js-api#dynamic-library-import
-      // which also sets the url, the id, and the nonce
+      // which also sets the base url, the id, and the nonce
       /* eslint-disable */
       ((g) => {
         // @ts-ignore
@@ -552,7 +553,17 @@ export class Loader {
       /* eslint-enable */
     }
 
-    this.importLibrary("core").then(
+    // While most libraries populate the global namespace when loaded via bootstrap params,
+    // this is not the case for "marker" when used with the inline bootstrap loader
+    // (and maybe others in the future). So ensure there is an importLibrary for each:
+    const libraryPromises = this.libraries.map((library) =>
+      this.importLibrary(library)
+    );
+    // ensure at least one library, to kick off loading...
+    if (!libraryPromises.length) {
+      libraryPromises.push(this.importLibrary("core"));
+    }
+    Promise.all(libraryPromises).then(
       () => this.callback(),
       (error) => {
         const event = new ErrorEvent("error", { error }); // for backwards compat
