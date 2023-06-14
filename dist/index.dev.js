@@ -1455,7 +1455,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var wellKnownSymbol$g = wellKnownSymbol$l;
   var V8_VERSION$2 = engineV8Version;
   var SPECIES$4 = wellKnownSymbol$g('species');
-  var arrayMethodHasSpeciesSupport$1 = function (METHOD_NAME) {
+  var arrayMethodHasSpeciesSupport$2 = function (METHOD_NAME) {
     // We can't use this feature detection in V8 since it causes
     // deoptimization and serious performance degradation
     // https://github.com/zloirock/core-js/issues/677
@@ -1471,7 +1471,7 @@ this.google.maps.plugins.loader = (function (exports) {
     });
   };
 
-  var $$d = _export;
+  var $$e = _export;
   var fails$g = fails$r;
   var isArray$1 = isArray$3;
   var isObject$8 = isObject$f;
@@ -1480,7 +1480,7 @@ this.google.maps.plugins.loader = (function (exports) {
   var doesNotExceedSafeInteger = doesNotExceedSafeInteger$1;
   var createProperty$1 = createProperty$2;
   var arraySpeciesCreate$1 = arraySpeciesCreate$2;
-  var arrayMethodHasSpeciesSupport = arrayMethodHasSpeciesSupport$1;
+  var arrayMethodHasSpeciesSupport$1 = arrayMethodHasSpeciesSupport$2;
   var wellKnownSymbol$f = wellKnownSymbol$l;
   var V8_VERSION$1 = engineV8Version;
   var IS_CONCAT_SPREADABLE = wellKnownSymbol$f('isConcatSpreadable');
@@ -1498,12 +1498,12 @@ this.google.maps.plugins.loader = (function (exports) {
     var spreadable = O[IS_CONCAT_SPREADABLE];
     return spreadable !== undefined ? !!spreadable : isArray$1(O);
   };
-  var FORCED = !IS_CONCAT_SPREADABLE_SUPPORT || !arrayMethodHasSpeciesSupport('concat');
+  var FORCED = !IS_CONCAT_SPREADABLE_SUPPORT || !arrayMethodHasSpeciesSupport$1('concat');
 
   // `Array.prototype.concat` method
   // https://tc39.es/ecma262/#sec-array.prototype.concat
   // with adding support of @@isConcatSpreadable and @@species
-  $$d({
+  $$e({
     target: 'Array',
     proto: true,
     arity: 1,
@@ -1578,7 +1578,7 @@ this.google.maps.plugins.loader = (function (exports) {
     };
   };
 
-  var $$c = _export;
+  var $$d = _export;
   var getBuiltIn$4 = getBuiltIn$8;
   var apply$2 = functionApply;
   var call$c = functionCall;
@@ -1637,7 +1637,7 @@ this.google.maps.plugins.loader = (function (exports) {
   if ($stringify) {
     // `JSON.stringify` method
     // https://tc39.es/ecma262/#sec-json.stringify
-    $$c({
+    $$d({
       target: 'JSON',
       stat: true,
       arity: 3,
@@ -2141,7 +2141,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return new PromiseCapability(C);
   };
 
-  var $$b = _export;
+  var $$c = _export;
   var IS_NODE = engineIsNode;
   var global$8 = global$n;
   var call$b = functionCall;
@@ -2404,7 +2404,7 @@ this.google.maps.plugins.loader = (function (exports) {
       }
     }
   }
-  $$b({
+  $$c({
     global: true,
     constructor: true,
     wrap: true,
@@ -2585,7 +2585,7 @@ this.google.maps.plugins.loader = (function (exports) {
     NativePromiseConstructor$1.all(iterable).then(undefined, function () {/* empty */});
   });
 
-  var $$a = _export;
+  var $$b = _export;
   var call$7 = functionCall;
   var aCallable$1 = aCallable$8;
   var newPromiseCapabilityModule$2 = newPromiseCapability$2;
@@ -2595,7 +2595,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   // `Promise.all` method
   // https://tc39.es/ecma262/#sec-promise.all
-  $$a({
+  $$b({
     target: 'Promise',
     stat: true,
     forced: PROMISE_STATICS_INCORRECT_ITERATION$1
@@ -2628,7 +2628,7 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   });
 
-  var $$9 = _export;
+  var $$a = _export;
   var FORCED_PROMISE_CONSTRUCTOR$2 = promiseConstructorDetection.CONSTRUCTOR;
   var NativePromiseConstructor = promiseNativeConstructor;
   var getBuiltIn$1 = getBuiltIn$8;
@@ -2638,7 +2638,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   // `Promise.prototype.catch` method
   // https://tc39.es/ecma262/#sec-promise.prototype.catch
-  $$9({
+  $$a({
     target: 'Promise',
     proto: true,
     forced: FORCED_PROMISE_CONSTRUCTOR$2,
@@ -2659,7 +2659,7 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   }
 
-  var $$8 = _export;
+  var $$9 = _export;
   var call$6 = functionCall;
   var aCallable = aCallable$8;
   var newPromiseCapabilityModule$1 = newPromiseCapability$2;
@@ -2669,7 +2669,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   // `Promise.race` method
   // https://tc39.es/ecma262/#sec-promise.race
-  $$8({
+  $$9({
     target: 'Promise',
     stat: true,
     forced: PROMISE_STATICS_INCORRECT_ITERATION
@@ -2689,14 +2689,14 @@ this.google.maps.plugins.loader = (function (exports) {
     }
   });
 
-  var $$7 = _export;
+  var $$8 = _export;
   var call$5 = functionCall;
   var newPromiseCapabilityModule = newPromiseCapability$2;
   var FORCED_PROMISE_CONSTRUCTOR$1 = promiseConstructorDetection.CONSTRUCTOR;
 
   // `Promise.reject` method
   // https://tc39.es/ecma262/#sec-promise.reject
-  $$7({
+  $$8({
     target: 'Promise',
     stat: true,
     forced: FORCED_PROMISE_CONSTRUCTOR$1
@@ -2720,7 +2720,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return promiseCapability.promise;
   };
 
-  var $$6 = _export;
+  var $$7 = _export;
   var getBuiltIn = getBuiltIn$8;
   var FORCED_PROMISE_CONSTRUCTOR = promiseConstructorDetection.CONSTRUCTOR;
   var promiseResolve = promiseResolve$1;
@@ -2728,7 +2728,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   // `Promise.resolve` method
   // https://tc39.es/ecma262/#sec-promise.resolve
-  $$6({
+  $$7({
     target: 'Promise',
     stat: true,
     forced: FORCED_PROMISE_CONSTRUCTOR
@@ -2917,7 +2917,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return internalObjectKeys(O, enumBugKeys$1);
   };
 
-  var $$5 = _export;
+  var $$6 = _export;
   var toObject$2 = toObject$6;
   var nativeKeys = objectKeys$1;
   var fails$c = fails$r;
@@ -2927,7 +2927,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   // `Object.keys` method
   // https://tc39.es/ecma262/#sec-object.keys
-  $$5({
+  $$6({
     target: 'Object',
     stat: true,
     forced: FAILS_ON_PRIMITIVES$1
@@ -3146,7 +3146,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return IteratorConstructor;
   };
 
-  var $$4 = _export;
+  var $$5 = _export;
   var call$4 = functionCall;
   var FunctionName = functionName;
   var isCallable$5 = isCallable$r;
@@ -3240,7 +3240,7 @@ this.google.maps.plugins.loader = (function (exports) {
         if (BUGGY_SAFARI_ITERATORS || INCORRECT_VALUES_NAME || !(KEY in IterablePrototype)) {
           defineBuiltIn$4(IterablePrototype, KEY, methods[KEY]);
         }
-      } else $$4({
+      } else $$5({
         target: NAME,
         proto: true,
         forced: BUGGY_SAFARI_ITERATORS || INCORRECT_VALUES_NAME
@@ -3405,7 +3405,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return Object.isExtensible(Object.preventExtensions({}));
   });
 
-  var $$3 = _export;
+  var $$4 = _export;
   var uncurryThis$7 = functionUncurryThis;
   var hiddenKeys = hiddenKeys$5;
   var isObject$3 = isObject$f;
@@ -3481,7 +3481,7 @@ this.google.maps.plugins.loader = (function (exports) {
         }
         return result;
       };
-      $$3({
+      $$4({
         target: 'Object',
         stat: true,
         forced: true
@@ -3513,7 +3513,7 @@ this.google.maps.plugins.loader = (function (exports) {
     return $this;
   };
 
-  var $$2 = _export;
+  var $$3 = _export;
   var global$6 = global$n;
   var uncurryThis$6 = functionUncurryThis;
   var isForced = isForced_1;
@@ -3604,7 +3604,7 @@ this.google.maps.plugins.loader = (function (exports) {
       if (IS_WEAK && NativePrototype.clear) delete NativePrototype.clear;
     }
     exported[CONSTRUCTOR_NAME] = Constructor;
-    $$2({
+    $$3({
       global: true,
       constructor: true,
       forced: Constructor != NativeConstructor
@@ -3987,7 +3987,7 @@ this.google.maps.plugins.loader = (function (exports) {
 
   // TODO: in core-js@4, move /modules/ dependencies to public entries for better optimization by tools like `preset-env`
 
-  var $$1 = _export;
+  var $$2 = _export;
   var global$4 = global$n;
   var call$3 = functionCall;
   var uncurryThis$4 = functionUncurryThis;
@@ -4333,7 +4333,7 @@ this.google.maps.plugins.loader = (function (exports) {
     enumerable: true
   });
   setToStringTag(URLSearchParamsConstructor, URL_SEARCH_PARAMS);
-  $$1({
+  $$2({
     global: true,
     constructor: true,
     forced: !USE_NATIVE_URL
@@ -4363,7 +4363,7 @@ this.google.maps.plugins.loader = (function (exports) {
       return init;
     };
     if (isCallable$2(nativeFetch)) {
-      $$1({
+      $$2({
         global: true,
         enumerable: true,
         dontCallGetSet: true,
@@ -4381,7 +4381,7 @@ this.google.maps.plugins.loader = (function (exports) {
       };
       RequestPrototype.constructor = RequestConstructor;
       RequestConstructor.prototype = RequestPrototype;
-      $$1({
+      $$2({
         global: true,
         constructor: true,
         dontCallGetSet: true,
@@ -4560,12 +4560,12 @@ this.google.maps.plugins.loader = (function (exports) {
   }
   var regexpExec$2 = patchedExec;
 
-  var $ = _export;
+  var $$1 = _export;
   var exec = regexpExec$2;
 
   // `RegExp.prototype.exec` method
   // https://tc39.es/ecma262/#sec-regexp.prototype.exec
-  $({
+  $$1({
     target: 'RegExp',
     proto: true,
     forced: /./.exec !== exec
@@ -4846,6 +4846,24 @@ this.google.maps.plugins.loader = (function (exports) {
       return accumulatedResult + stringSlice(S, nextSourcePosition);
     }];
   }, !REPLACE_SUPPORTS_NAMED_GROUPS || !REPLACE_KEEPS_$0 || REGEXP_REPLACE_SUBSTITUTES_UNDEFINED_CAPTURE);
+
+  var $ = _export;
+  var $map = arrayIteration.map;
+  var arrayMethodHasSpeciesSupport = arrayMethodHasSpeciesSupport$2;
+  var HAS_SPECIES_SUPPORT = arrayMethodHasSpeciesSupport('map');
+
+  // `Array.prototype.map` method
+  // https://tc39.es/ecma262/#sec-array.prototype.map
+  // with adding support of @@species
+  $({
+    target: 'Array',
+    proto: true,
+    forced: !HAS_SPECIES_SUPPORT
+  }, {
+    map: function map(callbackfn /* , thisArg */) {
+      return $map(this, callbackfn, arguments.length > 1 ? arguments[1] : undefined);
+    }
+  });
 
   /*! *****************************************************************************
   Copyright (c) Microsoft Corporation.
@@ -5151,7 +5169,7 @@ this.google.maps.plugins.loader = (function (exports) {
           key: this.apiKey,
           channel: this.channel,
           client: this.client,
-          libraries: this.libraries,
+          libraries: this.libraries.length && this.libraries,
           v: this.version,
           mapIds: this.mapIds,
           language: this.language,
@@ -5166,7 +5184,7 @@ this.google.maps.plugins.loader = (function (exports) {
         });
         if (!((_b = (_a = window === null || window === void 0 ? void 0 : window.google) === null || _a === void 0 ? void 0 : _a.maps) === null || _b === void 0 ? void 0 : _b.importLibrary)) {
           // tweaked copy of https://developers.google.com/maps/documentation/javascript/load-maps-js-api#dynamic-library-import
-          // which also sets the url, the id, and the nonce
+          // which also sets the base url, the id, and the nonce
           /* eslint-disable */
           (function (g) {
             // @ts-ignore
@@ -5233,8 +5251,17 @@ this.google.maps.plugins.loader = (function (exports) {
           })(params);
           /* eslint-enable */
         }
-
-        this.importLibrary("core").then(function () {
+        // While most libraries populate the global namespace when loaded via bootstrap params,
+        // this is not the case for "marker" when used with the inline bootstrap loader
+        // (and maybe others in the future). So ensure there is an importLibrary for each:
+        var libraryPromises = this.libraries.map(function (library) {
+          return _this2.importLibrary(library);
+        });
+        // ensure at least one library, to kick off loading...
+        if (!libraryPromises.length) {
+          libraryPromises.push(this.importLibrary("core"));
+        }
+        Promise.all(libraryPromises).then(function () {
           return _this2.callback();
         }, function (error) {
           var event = new ErrorEvent("error", {

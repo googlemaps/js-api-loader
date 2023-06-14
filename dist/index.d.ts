@@ -294,6 +294,7 @@ export declare class Loader {
     importLibrary(name: "journeySharing"): Promise<google.maps.JourneySharingLibrary>;
     importLibrary(name: "drawing"): Promise<google.maps.DrawingLibrary>;
     importLibrary(name: "visualization"): Promise<google.maps.VisualizationLibrary>;
+    importLibrary(name: Library): Promise<unknown>;
     /**
      * Load the Google Maps JavaScript API script with a callback.
      * @deprecated, use importLibrary() instead.
