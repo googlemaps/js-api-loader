@@ -413,7 +413,7 @@ test("deleteScript removes script tag from head", async () => {
 
 test("importLibrary resolves correctly", async () => {
   window.google = { maps: {} } as any;
-  google.maps.importLibrary = async (name) => ({ [name]: "fake" } as any);
+  google.maps.importLibrary = async (name) => ({ [name]: "fake" }) as any;
 
   const loader = new Loader({ apiKey: "foo" });
   const corePromise = loader.importLibrary("core");
@@ -438,7 +438,7 @@ test("importLibrary can also set up bootstrap libraries (if bootstrap libraries 
 
 test("importLibrary resolves correctly even with different bootstrap libraries", async () => {
   window.google = { maps: {} } as any;
-  google.maps.importLibrary = async (name) => ({ [name]: "fake" } as any);
+  google.maps.importLibrary = async (name) => ({ [name]: "fake" }) as any;
 
   const loader = new Loader({ apiKey: "foo", libraries: ["places"] });
   const corePromise = loader.importLibrary("core");
