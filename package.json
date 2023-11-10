@@ -47,7 +47,7 @@
     "@types/selenium-webdriver": "^4.0.9",
     "@typescript-eslint/eslint-plugin": "^5.18.0",
     "@typescript-eslint/parser": "^5.18.0",
-    "chromedriver": "^101.0.0",
+    "chromedriver": "^119.0.1",
     "core-js": "^3.6.4",
     "eslint": "^8.12.0",
     "eslint-config-prettier": "^8.5.0",
