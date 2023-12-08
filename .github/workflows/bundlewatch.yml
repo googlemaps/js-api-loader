@@ -27,9 +27,20 @@ jobs:
     env:
       CI_BRANCH_BASE: main
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install Dependencies
+        run: npm ci
+
       - uses: jackyef/bundlewatch-gh-action@b9753bc9b3ea458ff21069eaf6206e01e046f0b5
         with:
-          build-script: npm i
+          build-script: npm run prepare
           bundlewatch-github-token: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
           bundlewatch-config: .github/bundlewatch.config.json
