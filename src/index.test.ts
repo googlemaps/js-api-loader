@@ -25,7 +25,10 @@ afterEach(() => {
 });
 
 test.each([
-  [{}, "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&loading=async"],
+  [
+    {},
+    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&loading=async",
+  ],
   [
     { apiKey: "foo" },
     "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&loading=async&key=foo",
