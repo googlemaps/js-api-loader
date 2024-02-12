@@ -25,10 +25,10 @@ afterEach(() => {
 });
 
 test.each([
-  [{}, "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback"],
+  [{}, "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&loading=async"],
   [
     { apiKey: "foo" },
-    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&key=foo",
+    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&loading=async&key=foo",
   ],
   [
     {
@@ -38,23 +38,23 @@ test.each([
       language: "language",
       region: "region",
     },
-    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&key=foo&libraries=marker,places&language=language&region=region&v=weekly",
+    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&loading=async&key=foo&libraries=marker,places&language=language&region=region&v=weekly",
   ],
   [
     { mapIds: ["foo", "bar"] },
-    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&map_ids=foo,bar",
+    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&loading=async&map_ids=foo,bar",
   ],
   [
     { url: "https://example.com/js" },
-    "https://example.com/js?callback=__googleMapsCallback",
+    "https://example.com/js?callback=__googleMapsCallback&loading=async",
   ],
   [
     { client: "bar", channel: "foo" },
-    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&channel=foo&client=bar",
+    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&loading=async&channel=foo&client=bar",
   ],
   [
     { authReferrerPolicy: "origin" },
-    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&auth_referrer_policy=origin",
+    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&loading=async&auth_referrer_policy=origin",
   ],
 ])("createUrl is correct", (options: LoaderOptions, expected: string) => {
   const loader = new Loader(options);
