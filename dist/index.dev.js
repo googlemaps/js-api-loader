@@ -223,7 +223,7 @@ this.google.maps.plugins.loader = (function (exports) {
        */
       createUrl() {
         let url = this.url;
-        url += `?callback=__googleMapsCallback`;
+        url += `?callback=__googleMapsCallback&loading=async`;
         if (this.apiKey) {
           url += `&key=${this.apiKey}`;
         }
