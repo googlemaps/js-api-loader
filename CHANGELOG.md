@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.4](https://github.com/googlemaps/js-api-loader/compare/v1.16.3...v1.16.4) (2024-02-16)
+
+
+### Bug Fixes
+
+* revert changing to package type "module" ([#826](https://github.com/googlemaps/js-api-loader/issues/826)) ([fce8110](https://github.com/googlemaps/js-api-loader/commit/fce81109d3efd59e6b7fad434dc40a02e5d06ed8))
+
 ## [1.16.3](https://github.com/googlemaps/js-api-loader/compare/v1.16.2...v1.16.3) (2024-02-15)
 
 
