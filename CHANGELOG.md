@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.16.6](https://github.com/googlemaps/js-api-loader/compare/v1.16.5...v1.16.6) (2024-02-16)
+
+
+### Bug Fixes
+
+* change filename for esm build to use .mjs extension ([#831](https://github.com/googlemaps/js-api-loader/issues/831)) ([1a50235](https://github.com/googlemaps/js-api-loader/commit/1a50235c6c42611bbe6b0efc9c4c246a7b3e8a59))
+* move @rollup/plugin-terser to devDependencies ([#830](https://github.com/googlemaps/js-api-loader/issues/830)) ([2d95119](https://github.com/googlemaps/js-api-loader/commit/2d951197b6256ae82a51d555549cbdb900d4e208))
+
 ## [1.16.5](https://github.com/googlemaps/js-api-loader/compare/v1.16.4...v1.16.5) (2024-02-16)
 
 
