@@ -19,7 +19,7 @@
   "author": "Justin Poehnelt",
   "main": "dist/index.umd.js",
   "unpkg": "dist/index.min.js",
-  "module": "dist/index.esm.js",
+  "module": "dist/index.mjs",
   "types": "dist/src/index.d.ts",
   "files": [
     "dist/",
