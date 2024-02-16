@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.5](https://github.com/googlemaps/js-api-loader/compare/v1.16.4...v1.16.5) (2024-02-16)
+
+
+### Bug Fixes
+
+* specify correct location for typings ([#828](https://github.com/googlemaps/js-api-loader/issues/828)) ([c3c4583](https://github.com/googlemaps/js-api-loader/commit/c3c45833ae54cc384943883252c949e27eb7dd08)), closes [#825](https://github.com/googlemaps/js-api-loader/issues/825)
+
 ## [1.16.4](https://github.com/googlemaps/js-api-loader/compare/v1.16.3...v1.16.4) (2024-02-16)
 
 
