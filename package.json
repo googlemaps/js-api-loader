@@ -1,5 +1,6 @@
 {
   "name": "@googlemaps/js-api-loader",
+  "type": "commonjs",
   "version": "1.16.4",
   "description": "Wrapper for the loading of Google Maps JavaScript API script in the browser",
   "keywords": [
@@ -19,7 +20,7 @@
   "main": "dist/index.umd.js",
   "unpkg": "dist/index.min.js",
   "module": "dist/index.esm.js",
-  "types": "dist/index.d.ts",
+  "types": "dist/src/index.d.ts",
   "files": [
     "dist/",
     "src/"
