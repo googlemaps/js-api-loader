@@ -406,4 +406,4 @@ class Loader {
 }
 
 export { DEFAULT_ID, Loader, LoaderStatus };
-//# sourceMappingURL=index.esm.js.map
+//# sourceMappingURL=index.mjs.map
