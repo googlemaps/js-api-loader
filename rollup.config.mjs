@@ -88,7 +88,7 @@ export default [
       commonjs(),
     ],
     output: {
-      file: "dist/index.esm.js",
+      file: "dist/index.mjs",
       format: "esm",
       sourcemap: true,
     },
