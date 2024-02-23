@@ -20,71 +20,55 @@ import { nodeResolve } from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
 import typescript from "@rollup/plugin-typescript";
 
-const babelOptions = {
-  extensions: [".js", ".ts"],
-};
-
-const terserOptions = { output: { comments: "" } };
-
-const resolveOptions = {
-  mainFields: ["browser", "jsnext:main", "module", "main"],
+const terserOptions = {
+  output: { comments: "some" },
 };
 
 export default [
+  // UMD and browser (iife) builds
   {
     input: "src/index.ts",
     plugins: [
-      typescript({ tsconfig: "./tsconfig.json", declarationDir: "./" }),
-
-      nodeResolve(resolveOptions),
+      typescript({ tsconfig: "./tsconfig.build.json", declarationDir: "./" }),
+      nodeResolve({
+        mainFields: ["browser", "jsnext:main", "module", "main"],
+      }),
       commonjs(),
-      babel(babelOptions),
-      terser(terserOptions),
+      babel({
+        extensions: [".js", ".ts"],
+        babelHelpers: "bundled",
+      }),
     ],
-    output: {
-      file: "dist/index.umd.js",
-      format: "umd",
-      name: "google.maps.plugins.loader",
-      sourcemap: true,
-    },
+    output: [
+      {
+        file: "dist/index.umd.js",
+        format: "umd",
+        name: "google.maps.plugins.loader",
+        sourcemap: true,
+        plugins: [terser(terserOptions)],
+      },
+      {
+        file: "dist/index.min.js",
+        format: "iife",
+        name: "google.maps.plugins.loader",
+        sourcemap: true,
+        plugins: [terser(terserOptions)],
+      },
+      {
+        file: "dist/index.dev.js",
+        format: "iife",
+        name: "google.maps.plugins.loader",
+        sourcemap: true,
+      },
+    ],
   },
+
+  // ESM build
   {
     input: "src/index.ts",
     plugins: [
-      typescript({ tsconfig: "./tsconfig.json", declarationDir: "./" }),
-
-      nodeResolve(resolveOptions),
-      commonjs(),
-      babel(babelOptions),
-      terser(terserOptions),
-    ],
-    output: {
-      file: "dist/index.min.js",
-      format: "iife",
-      name: "google.maps.plugins.loader",
-    },
-  },
-  {
-    input: "src/index.ts",
-    plugins: [
-      typescript({ tsconfig: "./tsconfig.json", declarationDir: "./" }),
-
-      nodeResolve(resolveOptions),
-      commonjs(),
-      babel(babelOptions),
-    ],
-    output: {
-      file: "dist/index.dev.js",
-      format: "iife",
-      name: "google.maps.plugins.loader",
-    },
-  },
-  {
-    input: "src/index.ts",
-    plugins: [
-      typescript({ tsconfig: "./tsconfig.json", declarationDir: "./" }),
-
-      nodeResolve(resolveOptions),
+      typescript({ tsconfig: "./tsconfig.build.json", declarationDir: "./" }),
+      nodeResolve(),
       commonjs(),
     ],
     output: {
