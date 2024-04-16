@@ -425,6 +425,23 @@ test("importLibrary resolves correctly", async () => {
   expect(core).toEqual({ core: "fake" });
 });
 
+test("importLibrary resolves correctly without warning with sequential await", async () => {
+  console.warn = jest.fn();
+  window.google = { maps: {} } as any;
+  google.maps.importLibrary = async (name) => {
+    google.maps.version = "3.*.*";
+    return { [name]: "fake" } as any;
+  };
+
+  const loader = new Loader({ apiKey: "foo" });
+  const core = await loader.importLibrary("core");
+  const marker = await loader.importLibrary("marker");
+
+  expect(console.warn).toHaveBeenCalledTimes(0);
+  expect(core).toEqual({ core: "fake" });
+  expect(marker).toEqual({ marker: "fake" });
+});
+
 test("importLibrary can also set up bootstrap libraries (if bootstrap libraries empty)", async () => {
   const loader = new Loader({ apiKey: "foo" });
   loader.importLibrary("marker");
