@@ -623,26 +623,26 @@ export class Loader {
   private execute(): void {
     this.resetIfRetryingFailed();
 
+    if (this.loading) {
+      // do nothing but wait
+      return;
+    }
+
     if (this.done) {
       this.callback();
     } else {
       // short circuit and warn if google.maps is already loaded
       if (window.google && window.google.maps && window.google.maps.version) {
         console.warn(
-          "Google Maps already loaded outside @googlemaps/js-api-loader." +
+          "Google Maps already loaded outside @googlemaps/js-api-loader. " +
             "This may result in undesirable behavior as options and script parameters may not match."
         );
         this.callback();
         return;
       }
 
-      if (this.loading) {
-        // do nothing but wait
-      } else {
-        this.loading = true;
-
-        this.setScript();
-      }
+      this.loading = true;
+      this.setScript();
     }
   }
 }
