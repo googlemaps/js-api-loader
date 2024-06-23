@@ -21,6 +21,13 @@
   "unpkg": "dist/index.min.js",
   "module": "dist/index.mjs",
   "types": "dist/src/index.d.ts",
+  "exports": [
+    {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.umd.js",
+      "default": "./dist/index.umd.js"
+    }
+  ],
   "files": [
     "dist/",
     "src/"
