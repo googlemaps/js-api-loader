@@ -29,7 +29,7 @@ export default [
   {
     input: "src/index.ts",
     plugins: [
-      typescript({ tsconfig: "./tsconfig.build.json", declarationDir: "./" }),
+      typescript({ tsconfig: "./tsconfig.build.json", declarationDir: "./dist" }),
       nodeResolve({
         mainFields: ["browser", "jsnext:main", "module", "main"],
       }),
@@ -67,7 +67,7 @@ export default [
   {
     input: "src/index.ts",
     plugins: [
-      typescript({ tsconfig: "./tsconfig.build.json", declarationDir: "./" }),
+      typescript({ tsconfig: "./tsconfig.build.json", declarationDir: "./dist" }),
       nodeResolve(),
       commonjs(),
     ],
