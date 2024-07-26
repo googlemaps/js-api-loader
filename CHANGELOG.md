@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.8](https://github.com/googlemaps/js-api-loader/compare/v1.16.7...v1.16.8) (2024-07-26)
+
+
+### Bug Fixes
+
+* trigger release-please ([f1964a5](https://github.com/googlemaps/js-api-loader/commit/f1964a5233f2de606cbf6bd7a36afa50fe614cfa))
+
 ## [1.16.7](https://github.com/googlemaps/js-api-loader/compare/v1.16.6...v1.16.7) (2024-06-26)
 
 
