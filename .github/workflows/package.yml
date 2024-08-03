@@ -12,24 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: Bundlewatch
-
+name: Package
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    types: [synchronize, opened]
-
+  - push
+  - pull_request
 jobs:
-  bundlewatch:
-    runs-on: ubuntu-latest
-    env:
-      CI_BRANCH_BASE: main
+  package:
+    runs-on: ubuntu-latest   
     steps:
       - uses: actions/checkout@v2
-      - uses: jackyef/bundlewatch-gh-action@b9753bc9b3ea458ff21069eaf6206e01e046f0b5
+      - run: npm i
+      - uses: jpoehnelt/verify-npm-files-action@main
         with:
-          build-script: npm i
-          bundlewatch-github-token: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
-          bundlewatch-config: .github/bundlewatch.config.json
+          keys: |
+            types
+            main
+            module
