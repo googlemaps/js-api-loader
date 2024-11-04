@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.16.9](https://github.com/googlemaps/js-api-loader/compare/v1.16.8...v1.16.9) (2024-11-04)
+
+
+### Bug Fixes
+
+* change jest-lite url to use https ([#856](https://github.com/googlemaps/js-api-loader/issues/856)) ([d3932c6](https://github.com/googlemaps/js-api-loader/commit/d3932c63f6e02f196fd1b21fb024d200d920fbca))
+
 ## [1.16.8](https://github.com/googlemaps/js-api-loader/compare/v1.16.7...v1.16.8) (2024-07-26)
 
 
