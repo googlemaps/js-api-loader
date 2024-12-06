@@ -1,17 +1,25 @@
-# Google Maps JavaScript API Loader
-
 [![npm](https://img.shields.io/npm/v/@googlemaps/js-api-loader)](https://www.npmjs.com/package/@googlemaps/js-api-loader)
-![Build](https://github.com/googlemaps/js-api-loader/workflows/Test/badge.svg)
+![Tests/Build Status](https://github.com/googlemaps/js-api-loader/workflows/Test/badge.svg)
 ![Release](https://github.com/googlemaps/js-api-loader/workflows/Release/badge.svg)
+![Stable](https://img.shields.io/badge/stability-stable-green)
+
 [![codecov](https://codecov.io/gh/googlemaps/js-api-loader/branch/main/graph/badge.svg)](https://codecov.io/gh/googlemaps/js-api-loader)
-![GitHub contributors](https://img.shields.io/github/contributors/googlemaps/js-api-loader?color=green)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
-[![Discord](https://img.shields.io/discord/676948200904589322?color=6A7EC2&logo=discord&logoColor=ffffff)](https://discord.gg/jRteCzP)
+
+![GitHub contributors](https://img.shields.io/github/contributors/googlemaps/js-api-loader?color=green)
+[![Discord](https://img.shields.io/discord/676948200904589322?color=6A7EC2&logo=discord&logoColor=ffffff)][Discord server]
+[![GitHub License](https://img.shields.io/github/license/googlemaps/js-api-loader?color=blue)](LICENSE)
+
+# Google Maps JavaScript API Loader
 
 ## Description
 Load the Google Maps JavaScript API script dynamically. This takes inspiration from the [google-maps](https://www.npmjs.com/package/google-maps) npm package but updates it with ES6, Promises, and TypeScript.
 
-## Install
+## Requirements
+
+- An [API key][api-key]
+
+## Installation
 
 Available via npm as the package [@googlemaps/js-api-loader](https://www.npmjs.com/package/@googlemaps/js-api-loader).
 
@@ -27,7 +35,7 @@ Alternatively you may add the umd package directly to the html document using th
 
 When adding via unpkg, the loader can be accessed at `google.maps.plugins.loader.Loader`.
 
-### TypeScript 
+### TypeScript
 
 TypeScript users need to install the following types package.
 
@@ -39,8 +47,7 @@ npm i -D @types/google.maps
 
 The reference documentation can be found at this [link](https://googlemaps.github.io/js-api-loader/index.html). The Google Maps JavaScript API [documentation](https://developers.google.com/maps/documentation/javascript/tutorial) is the authoritative source for the loader options.
 
-
-## Example
+## Usage
 
 ```javascript
 import { Loader } from '@googlemaps/js-api-loader';
@@ -104,14 +111,38 @@ loader.loadCallback(e => {
 
 View the package in action [here](https://googlemaps.github.io/js-api-loader/examples/index.html).
 
+## Contributing
+
+Contributions are welcome and encouraged! If you'd like to contribute, send us a [pull request] and refer to our [code of conduct] and [contributing guide].
+
+## Terms of Service
+
+This library uses Google Maps Platform services. Use of Google Maps Platform services through this library is subject to the Google Maps Platform [Terms of Service].
+
+This library is not a Google Maps Platform Core Service. Therefore, the Google Maps Platform Terms of Service (e.g. Technical Support Services, Service Level Agreements, and Deprecation Policy) do not apply to the code in this library.
 
 ## Support
 
-This library is community supported. We're comfortable enough with the stability and features of
-the library that we want you to build real production applications on it.
+This library is offered via an open source [license](LICENSE). It is not governed by the Google Maps Platform Support [Technical Support Services Guidelines](https://cloud.google.com/maps-platform/terms/tssg), the [SLA](https://cloud.google.com/maps-platform/terms/sla), or the [Deprecation Policy](https://cloud.google.com/maps-platform/terms) (however, any Google Maps Platform services used by the library remain subject to the Google Maps Platform Terms of Service).
 
-If you find a bug, or have a feature suggestion, please [log an issue][issues]. If you'd like to
-contribute, please read [How to Contribute][contrib].
+This library adheres to [semantic versioning] to indicate when backwards-incompatible changes are introduced. Accordingly, while the library is in version 0.x, backwards-incompatible changes may be introduced at any time.
 
-[issues]: https://github.com/googlemaps/js-api-loader/issues
-[contrib]: https://github.com/googlemaps/js-api-loader/blob/main/CONTRIBUTING.md
+If you find a bug, or have a feature request, please [file an issue] on GitHub. If you would like to get answers to technical questions from other Google Maps Platform developers, ask through one of our [developer community channels]. If you'd like to contribute, please check the [contributing guide].
+
+You can also discuss this library on our [Discord server].
+
+[api-key]: https://developers.google.com/maps/documentation/android-sdk/get-api-key
+[devsite-guide]: https://developers.google.com/maps/documentation/android-sdk/utility
+[gmp-start]: https://console.cloud.google.com/google/maps-apis/start
+[maps-sdk]: https://developers.google.com/maps/documentation/android-sdk
+[documentation]: https://googlemaps.github.io/js-api-loader
+
+[code of conduct]: CODE_OF_CONDUCT.md
+[contributing guide]: CONTRIBUTING.md
+[developer community channels]: https://developers.google.com/maps/developer-community
+[Discord server]: https://discord.gg/hYsWbmk
+[file an issue]: https://github.com/googlemaps/js-api-loader/issues/new/choose
+[pull request]: https://github.com/googlemaps/js-api-loader/compare
+[semantic versioning]: https://semver.org
+[similar inquiry]: https://github.com/googlemaps/js-api-loader/issues
+[Terms of Service]: https://cloud.google.com/maps-platform/terms
