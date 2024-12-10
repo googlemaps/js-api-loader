@@ -1,4 +1,4 @@
-[![npm](https://img.shields.io/npm/v/@googlemaps/js-api-loader)](https://www.npmjs.com/package/@googlemaps/js-api-loader)
+[![npm](https://img.shields.io/npm/v/@googlemaps/js-api-loader)][npm-pkg]
 ![Tests/Build Status](https://github.com/googlemaps/js-api-loader/workflows/Test/badge.svg)
 ![Release](https://github.com/googlemaps/js-api-loader/workflows/Release/badge.svg)
 ![Stable](https://img.shields.io/badge/stability-stable-green)
@@ -17,11 +17,14 @@ Load the Google Maps JavaScript API script dynamically. This takes inspiration f
 
 ## Requirements
 
-- An [API key][api-key]
+* [Sign up with Google Maps Platform]
+* A Google Maps Platform [project] with the [**Maps Javascript API**][maps-sdk] enabled
+* An [API key] associated with the project above
+* [@googlemaps/js-api-loader NPM package][npm-pkg]
 
 ## Installation
 
-Available via npm as the package [@googlemaps/js-api-loader](https://www.npmjs.com/package/@googlemaps/js-api-loader).
+Install the [@googlemaps/js-api-loader NPM package][npm-pkg] with:
 
 ```sh
 npm i @googlemaps/js-api-loader
@@ -131,11 +134,10 @@ If you find a bug, or have a feature request, please [file an issue] on GitHub. 
 
 You can also discuss this library on our [Discord server].
 
-[api-key]: https://developers.google.com/maps/documentation/android-sdk/get-api-key
-[devsite-guide]: https://developers.google.com/maps/documentation/android-sdk/utility
-[gmp-start]: https://console.cloud.google.com/google/maps-apis/start
-[maps-sdk]: https://developers.google.com/maps/documentation/android-sdk
+[API key]: https://developers.google.com/maps/documentation/javascript/get-api-key
+[maps-sdk]: https://developers.google.com/maps/documentation/javascript
 [documentation]: https://googlemaps.github.io/js-api-loader
+[npm-pkg]: https://npmjs.com/package/@googlemaps/js-api-loader
 
 [code of conduct]: CODE_OF_CONDUCT.md
 [contributing guide]: CONTRIBUTING.md
@@ -144,8 +146,10 @@ You can also discuss this library on our [Discord server].
 [Discord server]: https://discord.gg/hYsWbmk
 [file an issue]: https://github.com/googlemaps/js-api-loader/issues/new/choose
 [license]: LICENSE
+[project]: https://developers.google.com/maps/documentation/javascript/cloud-setup#enabling-apis
 [pull request]: https://github.com/googlemaps/js-api-loader/compare
 [semantic versioning]: https://semver.org
+[Sign up with Google Maps Platform]: https://console.cloud.google.com/google/maps-apis/start
 [similar inquiry]: https://github.com/googlemaps/js-api-loader/issues
 [SLA]: https://cloud.google.com/maps-platform/terms/sla
 [Technical Support Services Guidelines]: https://cloud.google.com/maps-platform/terms/tssg
