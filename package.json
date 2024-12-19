@@ -29,7 +29,7 @@
     "docs": "typedoc src/index.ts && cp -r dist docs/dist && cp -r examples docs/examples",
     "format": "eslint . --fix",
     "lint": "eslint .",
-    "prepare": "rm -rf dist && rollup -c",
+    "prepack": "rm -rf dist && rollup -c",
     "test": "jest src/*",
     "test:e2e": "jest e2e/*"
   },
@@ -44,6 +44,7 @@
     "@types/google.maps": "^3.53.1",
     "@types/jest": "^29.5.5",
     "@types/selenium-webdriver": "^4.0.9",
+    "@types/trusted-types": "^2.0.7",
     "@typescript-eslint/eslint-plugin": "^8.8.1",
     "@typescript-eslint/parser": "^8.8.1",
     "core-js": "^3.6.4",
