@@ -59,7 +59,7 @@
     "rollup": "^4.6.1",
     "selenium-webdriver": "^4.0.0-alpha.7",
     "ts-jest": "^29.1.1",
-    "typedoc": "^0.26.5",
+    "typedoc": "^0.27.6",
     "typescript": "^5.5.4"
   },
   "publishConfig": {
