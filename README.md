@@ -1,14 +1,15 @@
 [![npm](https://img.shields.io/npm/v/@googlemaps/js-api-loader)][npm-pkg]
-![Tests/Build Status](https://github.com/googlemaps/js-api-loader/workflows/Test/badge.svg)
 ![Release](https://github.com/googlemaps/js-api-loader/workflows/Release/badge.svg)
 ![Stable](https://img.shields.io/badge/stability-stable-green)
+[![Tests/Build](https://github.com/googlemaps/js-api-loader/actions/workflows/test.yml/badge.svg)](https://github.com/googlemaps/js-api-loader/actions/workflows/test.yml)
 
 [![codecov](https://codecov.io/gh/googlemaps/js-api-loader/branch/main/graph/badge.svg)](https://codecov.io/gh/googlemaps/js-api-loader)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
-![GitHub contributors](https://img.shields.io/github/contributors/googlemaps/js-api-loader?color=green)
+![Contributors](https://img.shields.io/github/contributors/googlemaps/js-api-loader?color=green)
+[![License](https://img.shields.io/github/license/googlemaps/js-api-loader?color=blue)][license]
+[![StackOverflow](https://img.shields.io/stackexchange/stackoverflow/t/google-maps?color=orange&label=google-maps&logo=stackoverflow)](https://stackoverflow.com/questions/tagged/google-maps)
 [![Discord](https://img.shields.io/discord/676948200904589322?color=6A7EC2&logo=discord&logoColor=ffffff)][Discord server]
-[![GitHub License](https://img.shields.io/github/license/googlemaps/js-api-loader?color=blue)](LICENSE)
 
 # Google Maps JavaScript API Loader
 
@@ -139,7 +140,7 @@ You can also discuss this library on our [Discord server].
 [documentation]: https://googlemaps.github.io/js-api-loader
 [npm-pkg]: https://npmjs.com/package/@googlemaps/js-api-loader
 
-[code of conduct]: CODE_OF_CONDUCT.md
+[code of conduct]: ?tab=coc-ov-file#readme
 [contributing guide]: CONTRIBUTING.md
 [Deprecation Policy]: https://cloud.google.com/maps-platform/terms
 [developer community channels]: https://developers.google.com/maps/developer-community
