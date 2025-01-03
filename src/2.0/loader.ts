@@ -16,7 +16,7 @@
 export type APIOptions = {
   key?: string;
   v?: string;
-  libraries?: string;
+  libraries?: string | string[];
   language?: string;
   region?: string;
   authReferrerPolicy?: string;
