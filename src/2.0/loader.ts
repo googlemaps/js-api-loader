@@ -20,7 +20,7 @@ export type APIOptions = {
   language?: string;
   region?: string;
   authReferrerPolicy?: string;
-  mapIds?: string;
+  mapIds?: string | string[];
   channel?: string;
   solutionChannel?: string;
 };
@@ -53,7 +53,7 @@ export function bootstrapLoader(options: APIOptions) {
         for (const [name, value] of Object.entries(options)) {
           urlParameters.set(
             name.replace(/[A-Z]/g, (t) => "_" + t[0].toLowerCase()),
-            value
+            value as string
           );
         }
         urlParameters.set("callback", `google.maps.__ib__`);
