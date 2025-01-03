@@ -1,10 +1,10 @@
-import { ApiLoadingError, type ApiOptions, bootstrapLoader } from "./loader";
+import { APILoadingError, type APIOptions, bootstrapLoader } from "./loader";
 
 // fixme: remove the second importLibrary signature and ApiLibraryMap interface
 //   once proper typings are implemented in @types/google.maps
 //   (https://github.com/googlemaps/js-types/issues/95)
 
-interface ApiLibraryMap {
+interface APILibraryMap {
   core: google.maps.CoreLibrary;
   drawing: google.maps.DrawingLibrary;
   elevation: google.maps.ElevationLibrary;
@@ -20,18 +20,18 @@ interface ApiLibraryMap {
   visualization: google.maps.VisualizationLibrary;
 }
 
-type ApiLibraryName = keyof ApiLibraryMap;
+type APILibraryName = keyof APILibraryMap;
 
 let isBootrapped_ = false;
-let options_: ApiOptions = {};
-const libraries_: Partial<ApiLibraryMap> = {};
+let options_: APIOptions = {};
+const libraries_: Partial<APILibraryMap> = {};
 
 /**
  * Sets the options for the Maps JavaScript API.
  * Has to be called before any library is loaded for the first time.
  * Will throw an error after a library has been loaded for the first time.
  */
-export function setOptions(options: ApiOptions) {
+export function setOptions(options: APIOptions) {
   if (isBootrapped_) {
     throw new Error(
       "options cannot be modified after the API has been loaded."
@@ -49,8 +49,8 @@ export async function importLibrary(
 ): ReturnType<typeof google.maps.importLibrary>;
 
 export async function importLibrary<
-  TLibraryName extends keyof ApiLibraryMap,
-  TLibrary extends ApiLibraryMap[TLibraryName],
+  TLibraryName extends keyof APILibraryMap,
+  TLibrary extends APILibraryMap[TLibraryName],
 >(libraryName: TLibraryName): Promise<TLibrary> {
   if (!isBootrapped_) {
     bootstrapLoader(options_);
@@ -64,7 +64,7 @@ export async function importLibrary<
       )) as TLibrary;
       libraries_[libraryName] = library;
     } catch (error) {
-      if (error instanceof ApiLoadingError) {
+      if (error instanceof APILoadingError) {
         isBootrapped_ = false;
         throw new Error("The Google Maps JavaScript API failed to load.");
       }
@@ -81,8 +81,8 @@ export async function importLibrary<
  * if it hasn't been loaded.
  */
 export function getImportedLibrary<
-  TLibraryName extends ApiLibraryName,
-  TLibrary extends ApiLibraryMap[TLibraryName],
+  TLibraryName extends APILibraryName,
+  TLibrary extends APILibraryMap[TLibraryName],
 >(libraryName: TLibraryName): TLibrary | null {
   if (!isLibraryImported(libraryName)) {
     throw new Error(`library ${libraryName} hasn't been imported.`);
@@ -94,7 +94,7 @@ export function getImportedLibrary<
 /**
  * Check if the given library has already been loaded.
  */
-export function isLibraryImported(libraryName: ApiLibraryName): boolean {
+export function isLibraryImported(libraryName: APILibraryName): boolean {
   return libraryName in libraries_;
 }
 

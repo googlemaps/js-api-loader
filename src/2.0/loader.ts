@@ -13,7 +13,7 @@
  *  - add APILoadingError
  */
 
-export type ApiOptions = {
+export type APIOptions = {
   key?: string;
   v?: string;
   libraries?: string;
@@ -25,14 +25,14 @@ export type ApiOptions = {
   solutionChannel?: string;
 };
 
-export class ApiLoadingError extends Error {}
+export class APILoadingError extends Error {}
 
 /**
  * Creates the bootstrap function for the API loader. The bootstrap function is
  * an initial version of `google.maps.importLibrary` that loads the actual JS
  * which will then replace the bootstrap-function with the actual implementation.
  */
-export function bootstrapLoader(options: ApiOptions) {
+export function bootstrapLoader(options: APIOptions) {
   if (google.maps.importLibrary)
     throw new Error("bootstrapLoader can only be called once");
 
@@ -59,12 +59,12 @@ export function bootstrapLoader(options: ApiOptions) {
         urlParameters.set("callback", `google.maps.__ib__`);
 
         const scriptEl = document.createElement("script");
-        scriptEl.src = getTrustedScriptUrl(
+        scriptEl.src = getTrustedScriptURL(
           `https://maps.googleapis.com/maps/api/js?${urlParameters.toString()}`
         ) as string;
 
         scriptEl.onerror = () => {
-          reject(new ApiLoadingError());
+          reject(new APILoadingError());
         };
 
         const nonceScript =
@@ -92,7 +92,7 @@ export function bootstrapLoader(options: ApiOptions) {
   };
 }
 
-const getTrustedScriptUrl: (url: string) => string | TrustedScriptURL = (() => {
+const getTrustedScriptURL: (url: string) => string | TrustedScriptURL = (() => {
   // check if trustedTypes are supported
   if (typeof window === "undefined" || !("trustedTypes" in window)) {
     return (url) => url;
