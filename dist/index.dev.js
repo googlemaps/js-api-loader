@@ -330,7 +330,7 @@ this.google.maps.plugins.loader = (function (exports) {
         Object.keys(params).forEach(
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         key => !params[key] && delete params[key]);
-        if (!((_b = (_a = window === null || window === void 0 ? void 0 : window.google) === null || _a === void 0 ? void 0 : _a.maps) === null || _b === void 0 ? void 0 : _b.importLibrary)) {
+        if (!((_b = (_a = window === null || window === undefined ? undefined : window.google) === null || _a === undefined ? undefined : _a.maps) === null || _b === undefined ? undefined : _b.importLibrary)) {
           // tweaked copy of https://developers.google.com/maps/documentation/javascript/load-maps-js-api#dynamic-library-import
           // which also sets the base url, the id, and the nonce
           /* eslint-disable */
@@ -353,7 +353,7 @@ this.google.maps.plugins.loader = (function (exports) {
               e = new URLSearchParams(),
               u = () =>
               // @ts-ignore
-              h || (h = new Promise((f, n) => __awaiter(this, void 0, void 0, function* () {
+              h || (h = new Promise((f, n) => __awaiter(this, undefined, undefined, function* () {
                 var _a;
                 yield a = m.createElement("script");
                 a.id = this.id;
@@ -365,7 +365,7 @@ this.google.maps.plugins.loader = (function (exports) {
                 d[q] = f;
                 a.onerror = () => h = n(Error(p + " could not load."));
                 // @ts-ignore
-                a.nonce = this.nonce || ((_a = m.querySelector("script[nonce]")) === null || _a === void 0 ? void 0 : _a.nonce) || "";
+                a.nonce = this.nonce || ((_a = m.querySelector("script[nonce]")) === null || _a === undefined ? undefined : _a.nonce) || "";
                 m.head.append(a);
               })));
             // @ts-ignore
