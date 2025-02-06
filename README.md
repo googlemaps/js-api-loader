@@ -39,6 +39,7 @@ npm i -D @types/google.maps
 
 The reference documentation can be found at this [link](https://googlemaps.github.io/js-api-loader/index.html). The Google Maps JavaScript API [documentation](https://developers.google.com/maps/documentation/javascript/tutorial) is the authoritative source for the loader options.
 
+
 ## Example
 
 ```javascript
@@ -57,6 +58,7 @@ const mapOptions = {
   },
   zoom: 4
 };
+
 ```
 
 Using a promise for a specific library.
