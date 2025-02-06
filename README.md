@@ -39,10 +39,6 @@ npm i -D @types/google.maps
 
 The reference documentation can be found at this [link](https://googlemaps.github.io/js-api-loader/index.html). The Google Maps JavaScript API [documentation](https://developers.google.com/maps/documentation/javascript/tutorial) is the authoritative source for the loader options.
 
-## Internal usage attribution ID
-
-This library uses `internalUsageAttributionIds`, which helps Google understand which libraries and samples are helpful to developers and is optional. Instructions for opting out of the identifier are provided in reference documentation.
-
 ## Example
 
 ```javascript
@@ -61,15 +57,6 @@ const mapOptions = {
   },
   zoom: 4
 };
-
-// Adds a usage attribution ID to the initializer, which helps Google understand which libraries and samples are helpful to developers, such as usage of this library.
-// To opt out of sending the usage attribution ID, it is safe to set the const to false or replace the value with an empty string.
-const useIneternalUsageAttributionId = true;
-const internalUsageAttributionId = "GMP_LIB_JS_API_LOADER";
-
-if (useIneternalUsageAttributionId) {
-  mapOptions.internalUsageAttributionIds = [internalUsageAttributionId];
-}
 ```
 
 Using a promise for a specific library.

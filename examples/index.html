@@ -51,14 +51,13 @@
         mapId: "DEMO_MAP_ID"
       };
       
-      // Adds a usage attribution ID to the initializer, which helps Google understand which libraries and samples are helpful to developers, such as usage of this library.
-      // To opt out of sending the usage attribution ID, it is safe to set the const to false or replace the value with an empty string.
-      
+      // See https://developers.google.com/maps/documentation/javascript/reference/map#MapOptions.internalUsageAttributionIds
+
       const useInternalUsageAttributionId = true;
-      const internalUsageAttributionId = "GMP_LIB_JS_API_LOADER";
+      const internalUsageAttributionIds = ["GMP_LIB_JS_API_LOADER"];
       
       if (useInternalUsageAttributionId) {
-        mapOptions.usageAttributionIds = [internalUsageAttributionId];
+        mapOptions.usageAttributionIds = internalUsageAttributionIds;
       }
 
       const loader = new google.maps.plugins.loader.Loader({
