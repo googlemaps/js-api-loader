@@ -22,6 +22,7 @@ export const DEFAULT_ID = "__googleMapsScriptId";
 export type Library =
   | "core"
   | "maps"
+  | "maps3d"
   | "places"
   | "geocoding"
   | "routes"
@@ -448,6 +449,7 @@ export class Loader {
    */
   public importLibrary(name: "core"): Promise<google.maps.CoreLibrary>;
   public importLibrary(name: "maps"): Promise<google.maps.MapsLibrary>;
+  public importLibrary(name: "maps3d"): Promise<google.maps.Maps3DLibrary>;
   public importLibrary(name: "places"): Promise<google.maps.PlacesLibrary>;
   public importLibrary(
     name: "geocoding"
