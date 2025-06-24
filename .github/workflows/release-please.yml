@@ -32,13 +32,11 @@ jobs:
     steps:
       - id: release
         name: Release Please
-        uses: google-github-actions/release-please-action@v3
+        uses: googleapis/release-please-action@v4
 
         with:
           release-type: node
           token: ${{ secrets.SYNCED_GITHUB_TOKEN_REPO }}
-          package-name: "@googlemaps/api-loader"
-          bump-minor-pre-major: true
 
       # Everything below is for NPM publishing when a release is cut.
       # Note the "if" statement on all commands to make sure that publishing
@@ -46,7 +44,7 @@ jobs:
 
       - if: ${{ steps.release.outputs.release_created }}
         name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - if: ${{ steps.release.outputs.release_created }}
         name: Setup Node for Dependency Installation
