@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 export declare const DEFAULT_ID = "__googleMapsScriptId";
-export type Library = "core" | "maps" | "places" | "geocoding" | "routes" | "marker" | "geometry" | "elevation" | "streetView" | "journeySharing" | "drawing" | "visualization";
+export type Library = "core" | "maps" | "maps3d" | "places" | "geocoding" | "routes" | "marker" | "geometry" | "elevation" | "streetView" | "journeySharing" | "drawing" | "visualization";
 export type Libraries = Library[];
 /**
  * The Google Maps JavaScript API
@@ -283,6 +283,7 @@ export declare class Loader {
      */
     importLibrary(name: "core"): Promise<google.maps.CoreLibrary>;
     importLibrary(name: "maps"): Promise<google.maps.MapsLibrary>;
+    importLibrary(name: "maps3d"): Promise<google.maps.Maps3DLibrary>;
     importLibrary(name: "places"): Promise<google.maps.PlacesLibrary>;
     importLibrary(name: "geocoding"): Promise<google.maps.GeocodingLibrary>;
     importLibrary(name: "routes"): Promise<google.maps.RoutesLibrary>;
