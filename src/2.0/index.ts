@@ -33,9 +33,7 @@ const libraries_: Partial<APILibraryMap> = {};
  */
 export function setOptions(options: APIOptions) {
   if (isBootrapped_) {
-    throw new Error(
-      "options cannot be modified after the API has been loaded."
-    );
+    return;
   }
 
   options_ = options;
@@ -49,7 +47,7 @@ export async function importLibrary(
 ): ReturnType<typeof google.maps.importLibrary>;
 
 export async function importLibrary<
-  TLibraryName extends keyof APILibraryMap,
+  TLibraryName extends APILibraryName,
   TLibrary extends APILibraryMap[TLibraryName],
 >(libraryName: TLibraryName): Promise<TLibrary> {
   if (!isBootrapped_) {
@@ -76,33 +74,9 @@ export async function importLibrary<
   return libraries_[libraryName] as TLibrary;
 }
 
-/**
- * Synchronously loads a library. Will directly return the library, or null
- * if it hasn't been loaded.
- */
-export function getImportedLibrary<
-  TLibraryName extends APILibraryName,
-  TLibrary extends APILibraryMap[TLibraryName],
->(libraryName: TLibraryName): TLibrary | null {
-  if (!isLibraryImported(libraryName)) {
-    throw new Error(`library ${libraryName} hasn't been imported.`);
-  }
-
-  return libraries_[libraryName] as TLibrary;
-}
-
-/**
- * Check if the given library has already been loaded.
- */
-export function isLibraryImported(libraryName: APILibraryName): boolean {
-  return libraryName in libraries_;
-}
-
 const api = {
   setOptions,
   importLibrary,
-  getImportedLibrary,
-  isLibraryImported,
 };
 
 export default api;

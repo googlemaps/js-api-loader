@@ -59,9 +59,7 @@ export function bootstrapLoader(options: APIOptions) {
         urlParameters.set("callback", `google.maps.__ib__`);
 
         const scriptEl = document.createElement("script");
-        scriptEl.src = getTrustedScriptURL(
-          `https://maps.googleapis.com/maps/api/js?${urlParameters.toString()}`
-        ) as string;
+        scriptEl.src = `https://maps.googleapis.com/maps/api/js?${urlParameters.toString()}`;
 
         scriptEl.onerror = () => {
           reject(new APILoadingError());
@@ -81,7 +79,7 @@ export function bootstrapLoader(options: APIOptions) {
     return apiLoadedPromise;
   };
 
-  // create intermediate importLibrary function that loads the API and calls
+  // create the intermediate importLibrary function that loads the API and calls
   // the real importLibrary function.
   google.maps.importLibrary = async (library: string) => {
     libraries.add(library);
@@ -91,26 +89,3 @@ export function bootstrapLoader(options: APIOptions) {
     return google.maps.importLibrary(library);
   };
 }
-
-const getTrustedScriptURL: (url: string) => string | TrustedScriptURL = (() => {
-  // check if trustedTypes are supported
-  if (typeof window === "undefined" || !("trustedTypes" in window)) {
-    return (url) => url;
-  }
-
-  // this policy will only certify the `maps.googleapis.com` script url,
-  // everything else will throw an error.
-  const policy = window.trustedTypes.createPolicy(
-    "google-maps-api#js-api-loader",
-    {
-      createScriptURL: (input) => {
-        const url = new URL(input);
-        if (url.host !== "maps.googleapis.com") throw new Error("invalid url");
-
-        return input;
-      },
-    }
-  );
-
-  return (url) => policy.createScriptURL(url);
-})();
