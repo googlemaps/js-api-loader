@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.16.10](https://github.com/googlemaps/js-api-loader/compare/v1.16.9...v1.16.10) (2025-06-26)
+
+
+### Bug Fixes
+
+* **deps:** update dependencies and fix compatibility ([#1001](https://github.com/googlemaps/js-api-loader/issues/1001)) ([530cd67](https://github.com/googlemaps/js-api-loader/commit/530cd67eca59702cb02262bc32f852751c373334))
+* **types:** add missing `Maps3DLibrary` ([#994](https://github.com/googlemaps/js-api-loader/issues/994)) ([a938c1e](https://github.com/googlemaps/js-api-loader/commit/a938c1ed7e900db3926d5809d793a0e18f328bf3))
+
 ## [1.16.9](https://github.com/googlemaps/js-api-loader/compare/v1.16.8...v1.16.9) (2024-11-04)
 
 
