@@ -344,7 +344,7 @@ test("singleton should throw with different options", () => {
   new Loader({ apiKey: "foo" });
   expect(() => {
     new Loader({ apiKey: "bar" });
-  }).toThrowError();
+  }).toThrow();
 });
 
 test("loader should resolve immediately when successfully loaded", async () => {
