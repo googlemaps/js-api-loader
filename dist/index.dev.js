@@ -512,10 +512,10 @@ this.google.maps.plugins.loader = (function (exports) {
 	  var SHARED = '__core-js_shared__';
 	  var store = sharedStore.exports = globalThis[SHARED] || defineGlobalProperty(SHARED, {});
 	  (store.versions || (store.versions = [])).push({
-	    version: '3.40.0',
+	    version: '3.43.0',
 	    mode: IS_PURE ? 'pure' : 'global',
 	    copyright: '© 2014-2025 Denis Pushkarev (zloirock.ru)',
-	    license: 'https://github.com/zloirock/core-js/blob/v3.40.0/LICENSE',
+	    license: 'https://github.com/zloirock/core-js/blob/v3.43.0/LICENSE',
 	    source: 'https://github.com/zloirock/core-js'
 	  });
 	  return sharedStore.exports;
@@ -575,7 +575,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	  var uncurryThis = requireFunctionUncurryThis();
 	  var id = 0;
 	  var postfix = Math.random();
-	  var toString = uncurryThis(1.0.toString);
+	  var toString = uncurryThis(1.1.toString);
 	  uid = function (key) {
 	    return 'Symbol(' + (key === undefined ? '' : key) + ')_' + toString(++id + postfix, 36);
 	  };
@@ -1972,7 +1972,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	    var fn = bind(unboundFunction, that);
 	    var iterator, iterFn, index, length, result, next, step;
 	    var stop = function (condition) {
-	      if (iterator) iteratorClose(iterator, 'normal', condition);
+	      if (iterator) iteratorClose(iterator, 'normal');
 	      return new Result(true, condition);
 	    };
 	    var callFn = function (value) {
@@ -2030,26 +2030,69 @@ this.google.maps.plugins.loader = (function (exports) {
 	  return getIteratorDirect;
 	}
 
+	var iteratorHelperWithoutClosingOnEarlyError;
+	var hasRequiredIteratorHelperWithoutClosingOnEarlyError;
+	function requireIteratorHelperWithoutClosingOnEarlyError() {
+	  if (hasRequiredIteratorHelperWithoutClosingOnEarlyError) return iteratorHelperWithoutClosingOnEarlyError;
+	  hasRequiredIteratorHelperWithoutClosingOnEarlyError = 1;
+	  var globalThis = requireGlobalThis();
+
+	  // https://github.com/tc39/ecma262/pull/3467
+	  iteratorHelperWithoutClosingOnEarlyError = function (METHOD_NAME, ExpectedError) {
+	    var Iterator = globalThis.Iterator;
+	    var IteratorPrototype = Iterator && Iterator.prototype;
+	    var method = IteratorPrototype && IteratorPrototype[METHOD_NAME];
+	    var CLOSED = false;
+	    if (method) try {
+	      method.call({
+	        next: function () {
+	          return {
+	            done: true
+	          };
+	        },
+	        'return': function () {
+	          CLOSED = true;
+	        }
+	      }, -1);
+	    } catch (error) {
+	      // https://bugs.webkit.org/show_bug.cgi?id=291195
+	      if (!(error instanceof ExpectedError)) CLOSED = false;
+	    }
+	    if (!CLOSED) return method;
+	  };
+	  return iteratorHelperWithoutClosingOnEarlyError;
+	}
+
 	var hasRequiredEs_iterator_forEach;
 	function requireEs_iterator_forEach() {
 	  if (hasRequiredEs_iterator_forEach) return es_iterator_forEach;
 	  hasRequiredEs_iterator_forEach = 1;
 	  var $ = require_export();
+	  var call = requireFunctionCall();
 	  var iterate = requireIterate();
 	  var aCallable = requireACallable();
 	  var anObject = requireAnObject();
 	  var getIteratorDirect = requireGetIteratorDirect();
+	  var iteratorClose = requireIteratorClose();
+	  var iteratorHelperWithoutClosingOnEarlyError = requireIteratorHelperWithoutClosingOnEarlyError();
+	  var forEachWithoutClosingOnEarlyError = iteratorHelperWithoutClosingOnEarlyError('forEach', TypeError);
 
 	  // `Iterator.prototype.forEach` method
 	  // https://tc39.es/ecma262/#sec-iterator.prototype.foreach
 	  $({
 	    target: 'Iterator',
 	    proto: true,
-	    real: true
+	    real: true,
+	    forced: forEachWithoutClosingOnEarlyError
 	  }, {
 	    forEach: function forEach(fn) {
 	      anObject(this);
-	      aCallable(fn);
+	      try {
+	        aCallable(fn);
+	      } catch (error) {
+	        iteratorClose(this, 'throw', error);
+	      }
+	      if (forEachWithoutClosingOnEarlyError) return call(forEachWithoutClosingOnEarlyError, this, fn);
 	      var record = getIteratorDirect(this);
 	      var counter = 0;
 	      iterate(record, function (value) {
@@ -2106,6 +2149,28 @@ this.google.maps.plugins.loader = (function (exports) {
 	  return createIterResultObject;
 	}
 
+	var iteratorCloseAll;
+	var hasRequiredIteratorCloseAll;
+	function requireIteratorCloseAll() {
+	  if (hasRequiredIteratorCloseAll) return iteratorCloseAll;
+	  hasRequiredIteratorCloseAll = 1;
+	  var iteratorClose = requireIteratorClose();
+	  iteratorCloseAll = function (iters, kind, value) {
+	    for (var i = iters.length - 1; i >= 0; i--) {
+	      if (iters[i] === undefined) continue;
+	      try {
+	        value = iteratorClose(iters[i].iterator, kind, value);
+	      } catch (error) {
+	        kind = 'throw';
+	        value = error;
+	      }
+	    }
+	    if (kind === 'throw') throw value;
+	    return value;
+	  };
+	  return iteratorCloseAll;
+	}
+
 	var iteratorCreateProxy;
 	var hasRequiredIteratorCreateProxy;
 	function requireIteratorCreateProxy() {
@@ -2121,9 +2186,12 @@ this.google.maps.plugins.loader = (function (exports) {
 	  var IteratorPrototype = requireIteratorsCore().IteratorPrototype;
 	  var createIterResultObject = requireCreateIterResultObject();
 	  var iteratorClose = requireIteratorClose();
+	  var iteratorCloseAll = requireIteratorCloseAll();
 	  var TO_STRING_TAG = wellKnownSymbol('toStringTag');
 	  var ITERATOR_HELPER = 'IteratorHelper';
 	  var WRAP_FOR_VALID_ITERATOR = 'WrapForValidIterator';
+	  var NORMAL = 'normal';
+	  var THROW = 'throw';
 	  var setInternalState = InternalStateModule.set;
 	  var createIteratorProxyPrototype = function (IS_ITERATOR) {
 	    var getInternalState = InternalStateModule.getterFor(IS_ITERATOR ? WRAP_FOR_VALID_ITERATOR : ITERATOR_HELPER);
@@ -2152,11 +2220,16 @@ this.google.maps.plugins.loader = (function (exports) {
 	          return returnMethod ? call(returnMethod, iterator) : createIterResultObject(undefined, true);
 	        }
 	        if (state.inner) try {
-	          iteratorClose(state.inner.iterator, 'normal');
+	          iteratorClose(state.inner.iterator, NORMAL);
 	        } catch (error) {
-	          return iteratorClose(iterator, 'throw', error);
+	          return iteratorClose(iterator, THROW, error);
 	        }
-	        if (iterator) iteratorClose(iterator, 'normal');
+	        if (state.openIters) try {
+	          iteratorCloseAll(state.openIters, NORMAL);
+	        } catch (error) {
+	          return iteratorClose(iterator, THROW, error);
+	        }
+	        if (iterator) iteratorClose(iterator, NORMAL);
 	        return createIterResultObject(undefined, true);
 	      }
 	    });
@@ -2202,17 +2275,45 @@ this.google.maps.plugins.loader = (function (exports) {
 	  return callWithSafeIterationClosing;
 	}
 
-	var iteratorMap;
-	var hasRequiredIteratorMap;
-	function requireIteratorMap() {
-	  if (hasRequiredIteratorMap) return iteratorMap;
-	  hasRequiredIteratorMap = 1;
+	var iteratorHelperThrowsOnInvalidIterator;
+	var hasRequiredIteratorHelperThrowsOnInvalidIterator;
+	function requireIteratorHelperThrowsOnInvalidIterator() {
+	  if (hasRequiredIteratorHelperThrowsOnInvalidIterator) return iteratorHelperThrowsOnInvalidIterator;
+	  hasRequiredIteratorHelperThrowsOnInvalidIterator = 1;
+	  // Should throw an error on invalid iterator
+	  // https://issues.chromium.org/issues/336839115
+	  iteratorHelperThrowsOnInvalidIterator = function (methodName, argument) {
+	    // eslint-disable-next-line es/no-iterator -- required for testing
+	    var method = typeof Iterator == 'function' && Iterator.prototype[methodName];
+	    if (method) try {
+	      method.call({
+	        next: null
+	      }, argument).next();
+	    } catch (error) {
+	      return true;
+	    }
+	  };
+	  return iteratorHelperThrowsOnInvalidIterator;
+	}
+
+	var hasRequiredEs_iterator_map;
+	function requireEs_iterator_map() {
+	  if (hasRequiredEs_iterator_map) return es_iterator_map;
+	  hasRequiredEs_iterator_map = 1;
+	  var $ = require_export();
 	  var call = requireFunctionCall();
 	  var aCallable = requireACallable();
 	  var anObject = requireAnObject();
 	  var getIteratorDirect = requireGetIteratorDirect();
 	  var createIteratorProxy = requireIteratorCreateProxy();
 	  var callWithSafeIterationClosing = requireCallWithSafeIterationClosing();
+	  var iteratorClose = requireIteratorClose();
+	  var iteratorHelperThrowsOnInvalidIterator = requireIteratorHelperThrowsOnInvalidIterator();
+	  var iteratorHelperWithoutClosingOnEarlyError = requireIteratorHelperWithoutClosingOnEarlyError();
+	  var IS_PURE = requireIsPure();
+	  var MAP_WITHOUT_THROWING_ON_INVALID_ITERATOR = !IS_PURE && !iteratorHelperThrowsOnInvalidIterator('map', function () {/* empty */});
+	  var mapWithoutClosingOnEarlyError = !IS_PURE && !MAP_WITHOUT_THROWING_ON_INVALID_ITERATOR && iteratorHelperWithoutClosingOnEarlyError('map', TypeError);
+	  var FORCED = IS_PURE || MAP_WITHOUT_THROWING_ON_INVALID_ITERATOR || mapWithoutClosingOnEarlyError;
 	  var IteratorProxy = createIteratorProxy(function () {
 	    var iterator = this.iterator;
 	    var result = anObject(call(this.next, iterator));
@@ -2221,34 +2322,25 @@ this.google.maps.plugins.loader = (function (exports) {
 	  });
 
 	  // `Iterator.prototype.map` method
-	  // https://github.com/tc39/proposal-iterator-helpers
-	  iteratorMap = function map(mapper) {
-	    anObject(this);
-	    aCallable(mapper);
-	    return new IteratorProxy(getIteratorDirect(this), {
-	      mapper: mapper
-	    });
-	  };
-	  return iteratorMap;
-	}
-
-	var hasRequiredEs_iterator_map;
-	function requireEs_iterator_map() {
-	  if (hasRequiredEs_iterator_map) return es_iterator_map;
-	  hasRequiredEs_iterator_map = 1;
-	  var $ = require_export();
-	  var map = requireIteratorMap();
-	  var IS_PURE = requireIsPure();
-
-	  // `Iterator.prototype.map` method
 	  // https://tc39.es/ecma262/#sec-iterator.prototype.map
 	  $({
 	    target: 'Iterator',
 	    proto: true,
 	    real: true,
-	    forced: IS_PURE
+	    forced: FORCED
 	  }, {
-	    map: map
+	    map: function map(mapper) {
+	      anObject(this);
+	      try {
+	        aCallable(mapper);
+	      } catch (error) {
+	        iteratorClose(this, 'throw', error);
+	      }
+	      if (mapWithoutClosingOnEarlyError) return call(mapWithoutClosingOnEarlyError, this, mapper);
+	      return new IteratorProxy(getIteratorDirect(this), {
+	        mapper: mapper
+	      });
+	    }
 	  });
 	  return es_iterator_map;
 	}
