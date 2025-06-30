@@ -47,34 +47,36 @@ export function bootstrapLoader(options: APIOptions) {
   const urlParameters = new URLSearchParams();
 
   const startLoading = () => {
-    if (!apiLoadedPromise) {
-      apiLoadedPromise = new Promise((resolve, reject) => {
-        urlParameters.set("libraries", [...libraries] + "");
-        for (const [name, value] of Object.entries(options)) {
-          urlParameters.set(
-            name.replace(/[A-Z]/g, (t) => "_" + t[0].toLowerCase()),
-            value as string
-          );
-        }
-        urlParameters.set("callback", `google.maps.__ib__`);
-
-        const scriptEl = document.createElement("script");
-        scriptEl.src = `https://maps.googleapis.com/maps/api/js?${urlParameters.toString()}`;
-
-        scriptEl.onerror = () => {
-          reject(new APILoadingError());
-        };
-
-        const nonceScript =
-          document.querySelector<HTMLScriptElement>("script[nonce]");
-        scriptEl.nonce = nonceScript?.nonce || "";
-
-        // @ts-ignore
-        google.maps["__ib__"] = resolve;
-
-        document.head.append(scriptEl);
-      });
+    if (apiLoadedPromise) {
+      return apiLoadedPromise;
     }
+
+    apiLoadedPromise = new Promise((resolve, reject) => {
+      urlParameters.set("libraries", [...libraries] + "");
+      for (const [name, value] of Object.entries(options)) {
+        urlParameters.set(
+          name.replace(/[A-Z]/g, (t) => "_" + t[0].toLowerCase()),
+          value as string
+        );
+      }
+      urlParameters.set("callback", `google.maps.__ib__`);
+
+      const scriptEl = document.createElement("script");
+      scriptEl.src = `https://maps.googleapis.com/maps/api/js?${urlParameters.toString()}`;
+
+      scriptEl.onerror = () => {
+        reject(new APILoadingError());
+      };
+
+      const nonceScript =
+        document.querySelector<HTMLScriptElement>("script[nonce]");
+      scriptEl.nonce = nonceScript?.nonce || "";
+
+      // @ts-ignore
+      google.maps["__ib__"] = resolve;
+
+      document.head.append(scriptEl);
+    });
 
     return apiLoadedPromise;
   };
