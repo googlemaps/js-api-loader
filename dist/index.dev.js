@@ -512,10 +512,10 @@ this.google.maps.plugins.loader = (function (exports) {
 	  var SHARED = '__core-js_shared__';
 	  var store = sharedStore.exports = globalThis[SHARED] || defineGlobalProperty(SHARED, {});
 	  (store.versions || (store.versions = [])).push({
-	    version: '3.43.0',
+	    version: '3.44.0',
 	    mode: IS_PURE ? 'pure' : 'global',
 	    copyright: '© 2014-2025 Denis Pushkarev (zloirock.ru)',
-	    license: 'https://github.com/zloirock/core-js/blob/v3.43.0/LICENSE',
+	    license: 'https://github.com/zloirock/core-js/blob/v3.44.0/LICENSE',
 	    source: 'https://github.com/zloirock/core-js'
 	  });
 	  return sharedStore.exports;
@@ -2019,7 +2019,7 @@ this.google.maps.plugins.loader = (function (exports) {
 	  if (hasRequiredGetIteratorDirect) return getIteratorDirect;
 	  hasRequiredGetIteratorDirect = 1;
 	  // `GetIteratorDirect(obj)` abstract operation
-	  // https://tc39.es/proposal-iterator-helpers/#sec-getiteratordirect
+	  // https://tc39.es/ecma262/#sec-getiteratordirect
 	  getIteratorDirect = function (obj) {
 	    return {
 	      iterator: obj,
