@@ -78,7 +78,7 @@ jobs:
       #    uses a compiled language
 
       #- run: |
-      #   make bootstrap
+      #   make bootstrapInternal
       #   make release
 
       - name: Perform CodeQL Analysis

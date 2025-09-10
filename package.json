@@ -1,7 +1,7 @@
 {
   "name": "@googlemaps/js-api-loader",
-  "type": "commonjs",
-  "version": "1.16.10",
+  "type": "module",
+  "version": "1.16.9",
   "description": "Wrapper for the loading of Google Maps JavaScript API script in the browser",
   "keywords": [
     "google",
@@ -16,9 +16,7 @@
     "url": "https://github.com/googlemaps/js-api-loader.git"
   },
   "license": "Apache-2.0",
-  "author": "Justin Poehnelt",
   "main": "dist/index.umd.js",
-  "unpkg": "dist/index.min.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "files": [
@@ -29,9 +27,11 @@
     "docs": "typedoc src/index.ts && cp -r dist docs/dist && cp -r examples docs/examples",
     "format": "eslint . --fix",
     "lint": "eslint .",
-    "prepare": "rm -rf dist && rollup -c",
-    "test": "jest src/*",
-    "test:e2e": "jest e2e/*"
+    "prepack": "rm -rf dist && rollup -c",
+    "test": "NODE_OPTIONS='--experimental-vm-modules --disable-warning=ExperimentalWarning' jest ./src"
+  },
+  "dependencies": {
+    "@types/google.maps": "^3.53.1"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.9.5",
@@ -39,29 +39,27 @@
     "@rollup/plugin-babel": "^6.0.3",
     "@rollup/plugin-commonjs": "^28.0.0",
     "@rollup/plugin-node-resolve": "^16.0.0",
+    "@rollup/plugin-replace": "^6.0.2",
     "@rollup/plugin-terser": "^0.4.3",
     "@rollup/plugin-typescript": "^12.1.0",
-    "@types/google.maps": "^3.53.1",
     "@types/jest": "^30.0.0",
-    "@types/selenium-webdriver": "^4.0.9",
-    "@typescript-eslint/eslint-plugin": "^8.8.1",
-    "@typescript-eslint/parser": "^8.8.1",
+    "@typescript-eslint/eslint-plugin": "^8.42.0",
+    "@typescript-eslint/parser": "^8.42.0",
     "core-js": "^3.6.4",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^10.0.1",
+    "eslint": "^9.35.0",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-jest": "^29.0.1",
-    "eslint-plugin-prettier": "^5.0.0",
+    "eslint-plugin-prettier": "^5.5.4",
     "fast-deep-equal": "^3.1.3",
-    "geckodriver": "^6.0.1",
-    "jest": "^30.0.3",
-    "jest-environment-jsdom": "^30.0.2",
+    "jest": "^30.1.3",
+    "jest-environment-jsdom": "^30.1.2",
     "prettier": "^3.0.3",
     "rollup": "^4.6.1",
-    "selenium-webdriver": "^4.0.0-alpha.7",
     "ts-jest": "^29.1.1",
     "tslib": "^2.8.1",
-    "typedoc": "^0.28.5",
-    "typescript": "^5.5.4"
+    "typedoc": "^0.28.12",
+    "typescript": "^5.9.2",
+    "typescript-eslint": "^8.42.0"
   },
   "publishConfig": {
     "access": "public",
