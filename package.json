@@ -16,19 +16,18 @@
     "url": "https://github.com/googlemaps/js-api-loader.git"
   },
   "license": "Apache-2.0",
-  "main": "dist/index.umd.js",
-  "module": "dist/index.mjs",
-  "types": "dist/index.d.ts",
+  "main": "dist/index.mjs",
   "files": [
     "dist/",
     "src/"
   ],
   "scripts": {
-    "docs": "typedoc src/index.ts && cp -r dist docs/dist && cp -r examples docs/examples",
-    "format": "eslint . --fix",
+    "prepack": "npm run build",
     "lint": "eslint .",
-    "prepack": "rm -rf dist && rollup -c",
-    "test": "NODE_OPTIONS='--experimental-vm-modules --disable-warning=ExperimentalWarning' jest ./src"
+    "test": "NODE_OPTIONS='--experimental-vm-modules --disable-warning=ExperimentalWarning' jest ./src",
+    "build": "rm -rf dist && rollup -c",
+    "docs": "typedoc src/index.ts && npm run build && cp -r dist docs/dist && cp -r examples docs/examples",
+    "format": "eslint . --fix"
   },
   "dependencies": {
     "@types/google.maps": "^3.53.1"
