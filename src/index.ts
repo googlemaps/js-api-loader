@@ -89,19 +89,21 @@ export async function importLibrary(
 
 export async function importLibrary<TLibraryName extends APILibraryName>(
   libraryName: TLibraryName
-): Promise<APILibraryMap[TLibraryName]> {
+): Promise<APILibraryMap[TLibraryName]>;
+
+export async function importLibrary(libraryName: string): Promise<unknown> {
   if (!isBootrapped_) {
     bootstrap(options_);
     isBootrapped_ = true;
   }
 
-  if (!libraries_[libraryName]) {
-    libraries_[libraryName] = (await google.maps.importLibrary(
-      libraryName
-    )) as APILibraryMap[TLibraryName];
+  const name = libraryName as keyof APILibraryMap;
+  if (!libraries_[name]) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    libraries_[name] = (await google.maps.importLibrary(name)) as any;
   }
 
-  return libraries_[libraryName] as APILibraryMap[TLibraryName];
+  return libraries_[name] as APILibraryMap[keyof APILibraryMap];
 }
 
 /**
