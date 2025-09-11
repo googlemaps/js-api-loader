@@ -15,17 +15,14 @@
  */
 
 export default {
-  roots: ["<rootDir>"],
-  preset: "ts-jest",
-  testEnvironment: "jsdom",
-  testPathIgnorePatterns: ["/node_modules/", "/dist/", "/__utils__/"],
-  collectCoverage: true,
-  coverageThreshold: {
-    global: {
-      branches: 90,
-      functions: 90,
-      lines: 90,
-      statements: 90,
-    },
+  out: "docs",
+  entryPoints: ["src/index.ts"],
+  exclude: ["node_modules/**", "**/*.spec.ts", "**/*.test.ts"],
+  name: "@googlemaps/js-api-loader",
+  excludePrivate: true,
+  excludeExternals: true,
+  compilerOptions: {
+    skipLibCheck: true,
+    strictNullChecks: false,
   },
 };

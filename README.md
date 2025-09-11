@@ -14,27 +14,32 @@
 # Google Maps JavaScript API Loader
 
 ## Description
-Load the Google Maps JavaScript API script dynamically. This takes inspiration from the [google-maps](https://www.npmjs.com/package/google-maps) npm package but updates it with ES6, Promises, and TypeScript.
+
+Load the Google Maps JavaScript API script dynamically. This is essentially
+an npm version of the [Dynamic Library Import](https://developers.google.com/maps/documentation/javascript/load-maps-js-api#dynamic-library-import)
+script.
 
 ## Requirements
 
-* [Sign up with Google Maps Platform]
-* A Google Maps Platform [project] with the [**Maps Javascript API**][maps-sdk] enabled
-* An [API key] associated with the project above
-* [@googlemaps/js-api-loader NPM package][npm-pkg]
+- [Sign up with Google Maps Platform]
+- A Google Cloud Platform [project] with the [**Maps JavaScript API**]
+  [maps-sdk] enabled
+- An [API key] associated with the project above
+- [@googlemaps/js-api-loader NPM package][npm-pkg]
 
 ## Installation
 
-Install the [@googlemaps/js-api-loader NPM package][npm-pkg] with:
+Install the [`@googlemaps/js-api-loader` NPM package][npm-pkg] with:
 
 ```sh
-npm i @googlemaps/js-api-loader
+npm install @googlemaps/js-api-loader
 ```
 
-Alternatively you may add the umd package directly to the html document using the unpkg link.
+Alternatively you may add the UMD package directly to the html document using
+the unpkg link.
 
 ```html
-<script src="https://unpkg.com/@googlemaps/js-api-loader@1.x/dist/index.min.js"></script>
+<script src="https://unpkg.com/@googlemaps/js-api-loader@2.x/dist/index.umd.js"></script>
 ```
 
 When adding via unpkg, the loader can be accessed at `google.maps.plugins.loader.Loader`.
@@ -44,86 +49,55 @@ When adding via unpkg, the loader can be accessed at `google.maps.plugins.loader
 TypeScript users need to install the following types package.
 
 ```sh
-npm i -D @types/google.maps
+npm install --save-dev @types/google.maps
 ```
 
 ## Documentation
 
-The reference documentation can be found at this [link](https://googlemaps.github.io/js-api-loader/index.html). The Google Maps JavaScript API [documentation](https://developers.google.com/maps/documentation/javascript/tutorial) is the authoritative source for the loader options.
+The reference documentation can be found at this [link][reference]. The Google
+Maps JavaScript API documentation is the authoritative source for the loader options.
 
 ## Usage
 
 ```javascript
-import { Loader } from '@googlemaps/js-api-loader';
+import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
 
-const loader = new Loader({
-  apiKey: "",
-  version: "weekly",
-  libraries: ["places"]
-});
+// set the options for loading the API.
+// See here for a list of supported options:
+//   https://developers.google.com/maps/documentation/javascript/load-maps-js-api#required_parameters
+setOptions({ key: "your-api-key-here" });
 
-const mapOptions = {
-  center: {
-    lat: 0,
-    lng: 0
-  },
-  zoom: 4
-};
+// load the needed APIs asynchronously.
+// Once the returned promise is fulfilled, the libraries are also
+// available in the global `google.maps` namespace.
+const { Map } = await importLibrary("maps");
+const map = new Map(mapEl, mapOptions);
 
-```
+// alternatively:
+await importLibrary("maps");
+const map = new google.maps.Map(mapEl, mapOptions);
 
-Using a promise for a specific library.
-
-```javascript
-// Promise for a specific library
-loader
-  .importLibrary('maps')
-  .then(({Map}) => {
-    new Map(document.getElementById("map"), mapOptions);
-  })
-  .catch((e) => {
-    // do something
-  });
-```
-
-Using a promise for when the script has loaded.
-
-```javascript
-// Promise
-loader
-  .load()
-  .then((google) => {
-    new google.maps.Map(document.getElementById("map"), mapOptions);
-  })
-  .catch(e => {
-    // do something
-  });
-```
-
-Alternatively, if you want to use a callback.
-
-```javascript
-// Callback
-loader.loadCallback(e => {
-  if (e) {
-    console.log(e);
-  } else {
-    new google.maps.Map(document.getElementById("map"), mapOptions);
-  }
+// or, if you prefer using callbacks instead of async/awqait:
+importLibrary("maps").then(() => {
+  const map = new google.maps.Map(mapEl, mapOptions);
 });
 ```
-
-View the package in action [here](https://googlemaps.github.io/js-api-loader/examples/index.html).
 
 ## Contributing
 
-Contributions are welcome and encouraged! If you'd like to contribute, send us a [pull request] and refer to our [code of conduct] and [contributing guide].
+Contributions are welcome and encouraged! If you'd like to contribute, send
+us a [pull request] and refer to our [code of conduct] and [contributing guide].
 
 ## Terms of Service
 
-This library uses Google Maps Platform services. Use of Google Maps Platform services through this library is subject to the Google Maps Platform [Terms of Service].
+This library uses Google Maps Platform services. Use of Google Maps
+Platform services through this library is subject to the Google Maps
+Platform [Terms of Service].
 
-This library is not a Google Maps Platform Core Service. Therefore, the Google Maps Platform Terms of Service (e.g. Technical Support Services, Service Level Agreements, and Deprecation Policy) do not apply to the code in this library.
+This library is not a Google Maps Platform Core Service. Therefore, the
+Google Maps Platform Terms of Service (e.g. Technical Support Services,
+Service Level Agreements, and Deprecation Policy) do not apply to the code
+in this library.
 
 ### European Economic Area (EEA) developers
 
@@ -131,19 +105,27 @@ If your billing address is in the European Economic Area, effective on 8 July 20
 
 ## Support
 
-This library is offered via an open source [license]. It is not governed by the Google Maps Platform Support [Technical Support Services Guidelines, the SLA, or the [Deprecation Policy]. However, any Google Maps Platform services used by the library remain subject to the Google Maps Platform Terms of Service.
+This library is offered via an open source [license]. It is not governed by
+the Google Maps Platform Support [Technical Support Services Guidelines],
+the [SLA], or the [Deprecation Policy]. However, any Google Maps Platform
+services used by the library remain subject to the Google Maps Platform Terms of Service.
 
-This library adheres to [semantic versioning] to indicate when backwards-incompatible changes are introduced. Accordingly, while the library is in version 0.x, backwards-incompatible changes may be introduced at any time.
+This library adheres to [semantic versioning] to indicate when
+backwards-incompatible changes are introduced.
 
-If you find a bug, or have a feature request, please [file an issue] on GitHub. If you would like to get answers to technical questions from other Google Maps Platform developers, ask through one of our [developer community channels]. If you'd like to contribute, please check the [contributing guide].
+If you find a bug, or have a feature request, please [file an issue] on
+GitHub. If you would like to get answers to technical questions from other
+Google Maps Platform developers, ask through one of our
+[developer community channels].
+If you'd like to contribute, please check the [contributing guide].
 
 You can also discuss this library on our [Discord server].
 
 [API key]: https://developers.google.com/maps/documentation/javascript/get-api-key
 [maps-sdk]: https://developers.google.com/maps/documentation/javascript
+[reference]: https://googlemaps.github.io/js-api-loader/index.html
 [documentation]: https://googlemaps.github.io/js-api-loader
 [npm-pkg]: https://npmjs.com/package/@googlemaps/js-api-loader
-
 [code of conduct]: ?tab=coc-ov-file#readme
 [contributing guide]: CONTRIBUTING.md
 [Deprecation Policy]: https://cloud.google.com/maps-platform/terms

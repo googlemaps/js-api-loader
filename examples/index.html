@@ -38,70 +38,34 @@
       src="../dist/index.umd.js"
     ></script>
 
-    <script
-      nonce="caffe67d7b989af3a1c7f4a1a6c79bd9fb2b4eb0"
-      type="text/javascript"
-    >
+    <script nonce="caffe67d7b989af3a1c7f4a1a6c79bd9fb2b4eb0">
+      const { setOptions, importLibrary } = google.maps.plugins.loader;
+
       const mapOptions = {
         center: {
           lat: 0,
           lng: 0,
         },
         zoom: 4,
-        mapId: "DEMO_MAP_ID"
+        mapId: "DEMO_MAP_ID",
       };
 
-      const loader = new google.maps.plugins.loader.Loader({
+      setOptions({
         apiKey: "",
         version: "weekly",
         libraries: ["places"],
       });
 
-      // Promise for a specific library
-      loader
-        .importLibrary('maps')
-        .then(async ({Map}) => {
+      importLibrary("maps")
+        .then(async ({ Map }) => {
           const map = new Map(document.getElementById("map"), mapOptions);
-          const {AdvancedMarkerElement} = await loader.importLibrary('marker');
-          new AdvancedMarkerElement({map, position: mapOptions.center});
+          const { AdvancedMarkerElement } =
+            await loader.importLibrary("marker");
+          new AdvancedMarkerElement({ map, position: mapOptions.center });
         })
         .catch((e) => {
           // do something
         });
-
-      // Promise
-      loader
-        .load()
-        .then((google) => {
-          // new google.maps.Map(document.getElementById("map"), mapOptions);
-        })
-        .catch((e) => {
-          // do something
-        });
-
-      // Callback
-      loader.loadCallback((e) => {
-        if (e) {
-          console.log(e);
-        } else {
-          // new google.maps.Map(document.getElementById("map"), mapOptions);
-        }
-      });
-
-      // An error is thrown when instantiating loader with new options
-      try {
-        new google.maps.plugins.loader.Loader({ apiKey: "foo" });
-      } catch (e) {
-        console.log(e.message);
-      }
-
-      // The loader is a singleton and new loaders will resolve with the old
-      const anotherLoader = new google.maps.plugins.loader.Loader(
-        loader.options
-      );
-      anotherLoader.load().then(() => {
-        console.log("another loader was used with same options");
-      });
     </script>
   </head>
 

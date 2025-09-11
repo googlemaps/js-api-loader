@@ -15,9 +15,22 @@
  */
 
 export default {
-  out: "docs",
-  exclude: ["**/node_modules/**", "**/*.spec.ts", "**/*.test.ts"],
-  name: "@googlemaps/js-api-loader",
-  excludePrivate: true,
-  excludeExternals: true,
+  preset: "ts-jest/presets/default-esm",
+  testEnvironment: "jsdom",
+  resetModules: true,
+  roots: ["<rootDir>/src"],
+  moduleNameMapper: {
+    "^(\\.{1,2}/.*)\\.js$": "$1",
+  },
+  transform: {
+    "^.+\\.tsx?$": [
+      "ts-jest",
+      {
+        useESM: true,
+      },
+    ],
+  },
+  globals: {
+    __DEV__: true,
+  },
 };

@@ -1,7 +1,0 @@
-bazel-*
-coverage/
-dist/
-docs/
-lib/
-node_modules/
-public/
