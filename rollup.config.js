@@ -20,6 +20,7 @@ import { nodeResolve } from "@rollup/plugin-node-resolve";
 import replace from "@rollup/plugin-replace";
 import terser from "@rollup/plugin-terser";
 import typescript from "@rollup/plugin-typescript";
+import { dts } from "rollup-plugin-dts";
 
 const terserOptions = {
   output: { comments: "some" },
@@ -28,7 +29,8 @@ const terserOptions = {
 const basePlugins = [
   typescript({
     tsconfig: "./tsconfig.build.json",
-    declarationDir: "./dist",
+    declaration: true,
+    declarationDir: "dist/types",
   }),
   nodeResolve({
     mainFields: ["browser", "jsnext:main", "module", "main"],
@@ -55,7 +57,7 @@ export default [
     ],
     output: [
       {
-        file: "dist/index.umd.js",
+        file: "dist/index.cjs",
         format: "umd",
         name: "google.maps.plugins.loader",
         sourcemap: true,
@@ -66,6 +68,13 @@ export default [
         file: "dist/index.min.js",
         format: "iife",
         name: "google.maps.plugins.loader",
+        sourcemap: true,
+        plugins: [terser(terserOptions)],
+        exports: "named",
+      },
+      {
+        file: "dist/index.browser.mjs",
+        format: "esm",
         sourcemap: true,
         plugins: [terser(terserOptions)],
         exports: "named",
@@ -98,7 +107,7 @@ export default [
     plugins: [
       typescript({
         tsconfig: "./tsconfig.build.json",
-        declarationDir: "./dist",
+        declaration: false,
       }),
       nodeResolve(),
       commonjs(),
@@ -110,10 +119,16 @@ export default [
       }),
     ],
     output: {
-      file: "dist/index.mjs",
+      file: "dist/index.js",
       format: "esm",
       sourcemap: true,
       exports: "named",
     },
+  },
+  // types
+  {
+    input: "./dist/types/index.d.ts",
+    output: [{ file: "dist/index.d.ts", format: "es" }],
+    plugins: [dts()],
   },
 ];

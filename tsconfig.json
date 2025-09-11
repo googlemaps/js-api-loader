@@ -1,9 +1,7 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "declarationDir": "./dist",
     "noImplicitAny": true,
-    "outDir": "./dist",
     "sourceMap": true,
     "esModuleInterop": true,
     "isolatedModules": true,
