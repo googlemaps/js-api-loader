@@ -1,8 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function */
 /*
  * Copyright 2025 Google LLC
  * SPDX-License-Identifier: Apache-2.0
  */
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function */
 
 import { ERR_DEPRECATED_LOADER, logErrorOnce } from "./messages.js";
 
