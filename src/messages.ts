@@ -58,6 +58,14 @@ export const logError = (message: string) => {
   console.error(`[@googlemaps/js-api-loader] ${message}`);
 };
 
+const loggedErrors = new Set<string>();
+export const logErrorOnce = (message: string) => {
+  if (loggedErrors.has(message)) return;
+  loggedErrors.add(message);
+
+  logError(message);
+};
+
 export const logDevWarning = __DEV__
   ? (message: string) => {
       console.warn(`[@googlemaps/js-api-loader] ${message}`);
