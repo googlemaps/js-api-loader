@@ -26,12 +26,10 @@ export const ERR_KEY_VERSION_MISMATCH = (
   setOptions: Partial<APIOptions>,
   script: Partial<APIOptions>
 ): string =>
-  __DEV__
-    ? `The Google Maps JavaScript API is already being loaded using a ` +
-      `different key or version. The key "${script.key ?? ""}" and version ` +
-      `"${script.v ?? ""}" are already in use, while "${setOptions.key ?? ""}" ` +
-      `and "${setOptions.v ?? ""}" were specified to setOptions().`
-    : "Key or version doesn't match previously loaded Google Maps JavaScript API";
+  `The Google Maps JavaScript API is already being loaded using a ` +
+  `different key or version. The key "${script.key ?? ""}" and version ` +
+  `"${script.v ?? ""}" are already in use, while "${setOptions.key ?? ""}" ` +
+  `and "${setOptions.v ?? ""}" were specified to setOptions().`;
 
 export const WARN_LANGUAGE_REGION_NOT_COMPATIBLE = (
   setOptions: Partial<APIOptions>,
