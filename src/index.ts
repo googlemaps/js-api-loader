@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { bootstrap as bootstrapInternal } from "./bootstrap.js";
+import { bootstrap } from "./bootstrap.js";
 
 import {
   logDevNotice,
@@ -61,7 +61,7 @@ interface APILibraryMap {
 
 type APILibraryName = keyof APILibraryMap;
 
-let isBootrapped_ = false;
+let isImportLibraryInstalled_ = false;
 let options_: APIOptions = {};
 
 const libraries_: Partial<APILibraryMap> = {};
@@ -77,7 +77,7 @@ const libraries_: Partial<APILibraryMap> = {};
  * @param options The options to set.
  */
 export function setOptions(options: APIOptions) {
-  if (isBootrapped_) {
+  if (isImportLibraryInstalled_) {
     logDevWarning(WARN_SET_OPTIONS_AFTER_BOOTSTRAP);
     return;
   }
@@ -92,7 +92,9 @@ export function setOptions(options: APIOptions) {
  * JavaScript API.
  *
  * @param libraryName The name of the library to load.
- * @returns A promise that resolves with the loaded library.
+ * @returns A promise that resolves with the loaded library. In case of an
+ *   error (due to poor network conditions, browser extensions, etc.), the
+ *   returned promise is rejected with an error.
  */
 export async function importLibrary<TLibraryName extends APILibraryName>(
   libraryName: TLibraryName
@@ -103,9 +105,9 @@ export async function importLibrary(
 ): ReturnType<typeof google.maps.importLibrary>;
 
 export async function importLibrary(libraryName: string): Promise<unknown> {
-  if (!isBootrapped_) {
-    bootstrap(options_);
-    isBootrapped_ = true;
+  if (!isImportLibraryInstalled_) {
+    installImportLibrary_(options_);
+    isImportLibraryInstalled_ = true;
   }
 
   const name = libraryName as keyof APILibraryMap;
@@ -118,20 +120,18 @@ export async function importLibrary(libraryName: string): Promise<unknown> {
 }
 
 /**
- * The bootstrap function makes sure that a usable version of the
- * google.maps.importLibrary function exists and loading of the maps API is
- * started.
+ * The installImportLibrary_ function makes sure that a usable version of the
+ * `google.maps.importLibrary` function exists.
  */
-function bootstrap(options: APIOptions) {
+function installImportLibrary_(options: APIOptions) {
   // check for maps JS already being loaded
   const scriptEl = document.querySelector(
     'script[src*="maps.googleapis.com/maps/api/js"]'
   ) as HTMLScriptElement | null;
 
   if (!scriptEl) {
-    // bootstrapInternal will setup the google.maps.importLibrary function to
-    // start loading the Maps API when needed.
-    bootstrapInternal(options);
+    bootstrap(options);
+
     return;
   }
 
@@ -139,7 +139,7 @@ function bootstrap(options: APIOptions) {
   // - a different api key or different version will log an error
   // - different language or region will trigger warning in dev-mode
   // - in any other case we just log an informational message in dev-mode
-  const scriptOptions = getOptionsFromURL(scriptEl.src);
+  const scriptOptions = getOptionsFromURL_(scriptEl.src);
   if (scriptOptions.key !== options.key || scriptOptions.v !== options.v) {
     logError(ERR_KEY_VERSION_MISMATCH(options, scriptOptions));
   } else if (
@@ -183,7 +183,7 @@ function bootstrap(options: APIOptions) {
   google.maps.importLibrary = importLibraryStub;
 }
 
-function getOptionsFromURL(url: string): Partial<APIOptions> {
+function getOptionsFromURL_(url: string): Partial<APIOptions> {
   const scriptParams = new URL(url).searchParams;
   const scriptOpts: Partial<APIOptions> = {};
   for (const [key, value] of scriptParams.entries()) {
