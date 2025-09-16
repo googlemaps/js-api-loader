@@ -49,7 +49,7 @@ loader.load().then(() => initMap());
 await loader.load();
 initMap();
 
-// c) using callback
+// c) using callback – same as a)
 loader.loadCallback(() => {
   initMap();
 });
@@ -92,6 +92,9 @@ However, all the examples from the 1.x version can also be written based
 on the 2.x version, since – besides returning the library object – the
 `importLibrary()` function also populates the global `google.maps` namespace.
 
+<details>
+<summary>Imitating the 1.x API</summary>
+
 ```javascript
 import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
 
@@ -99,25 +102,23 @@ setOptions({
   key: "YOUR_API_KEY",
   v: "weekly",
 
-  // libraries can still be specified in `setOptions`, which can slightly
-  // speed up the loading of the API and makes sure that all libraries are
-  // available when the importLibrary promise is resolved.
+  // libraries can still be specified in `setOptions`. This makes sure that
+  // all libraries are available when the importLibrary promise is resolved.
   libraries: ["maps", "places"],
 });
 
+// The examples from above, rewritten with v2.0:
+//
 // a) using promises (note: which library is imported in these cases makes
 //    little difference: the libraries were specified in `setOptions` and
 //    we're not using the returned value)
-importLibrary("maps").then(() => initMap());
+importLibrary("core").then(() => initMap());
 
 // b) using load() with async/await:
-await importLibrary("maps");
+await importLibrary("core");
 initMap();
 
-// c) using a callback
-importLibrary("maps").then(() => {
-  initMap();
-});
+// c) using a callback – this is identical to a)
 
 function initMap() {
   // use the global google.maps namespace once loading is complete
@@ -127,3 +128,4 @@ function initMap() {
   });
 }
 ```
+</details>
