@@ -83,6 +83,10 @@ importLibrary("maps").then(() => {
 });
 ```
 
+## Migrating from v1 to v2
+
+See the [migration guide](MIGRATION.md).
+
 ## Contributing
 
 Contributions are welcome and encouraged! If you'd like to contribute, send
