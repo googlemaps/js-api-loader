@@ -68,8 +68,13 @@ const libraries_: Partial<APILibraryMap> = {};
 
 /**
  * Sets the options for the Maps JavaScript API.
- * Has to be called before any library is loaded for the first time.
- * Will throw an error after a library has been loaded for the first time.
+ *
+ * Has to be called before any library is loaded.
+ *
+ * See https://developers.google.com/maps/documentation/javascript/load-maps-js-api#required_parameters
+ * for the full documentation of available options.
+ *
+ * @param options The options to set.
  */
 export function setOptions(options: APIOptions) {
   if (isBootrapped_) {
@@ -81,15 +86,21 @@ export function setOptions(options: APIOptions) {
 }
 
 /**
- * Import the specified library.
+ * Imports the specified library from the Maps JavaScript API.
+ *
+ * The first call to this function will start the bootstrap process for the Maps
+ * JavaScript API.
+ *
+ * @param libraryName The name of the library to load.
+ * @returns A promise that resolves with the loaded library.
  */
-export async function importLibrary(
-  ...parameters: Parameters<typeof google.maps.importLibrary>
-): ReturnType<typeof google.maps.importLibrary>;
-
 export async function importLibrary<TLibraryName extends APILibraryName>(
   libraryName: TLibraryName
 ): Promise<APILibraryMap[TLibraryName]>;
+
+export async function importLibrary(
+  ...parameters: Parameters<typeof google.maps.importLibrary>
+): ReturnType<typeof google.maps.importLibrary>;
 
 export async function importLibrary(libraryName: string): Promise<unknown> {
   if (!isBootrapped_) {
@@ -118,6 +129,8 @@ function bootstrap(options: APIOptions) {
   ) as HTMLScriptElement | null;
 
   if (!scriptEl) {
+    // bootstrapInternal will setup the google.maps.importLibrary function to
+    // start loading the Maps API when needed.
     bootstrapInternal(options);
     return;
   }

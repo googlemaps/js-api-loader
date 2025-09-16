@@ -24,8 +24,8 @@ const messages = await import("./messages.js");
 const mockImportLibrary: ImportLibraryMock = jest.fn();
 
 const mockBootstrap: jest.Mock<typeof bootstrap> = jest.fn(() => {
-  // we don't care for anything else in the library. The only thing we need for
-  // our tests is the importLibrary function.
+  // The bootstrap mock needs to provide `google.maps.importLibrary` for the
+  // tests.
   globalThis.google = {
     maps: {
       importLibrary: mockImportLibrary,
@@ -76,8 +76,8 @@ describe("importLibrary(): basic operation", () => {
   it("should return the value from importLibrary", async () => {
     const { importLibrary } = await import("./index.js");
 
-    // the actual value doesn't matter here, we just want to make sure that
-    // this value is returned
+    // The mocked library object is a placeholder to verify that `importLibrary`
+    // returns the correct value.
     const lib = {} as never as google.maps.MapsLibrary;
     mockImportLibrary.mockResolvedValue(lib);
 
