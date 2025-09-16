@@ -30,11 +30,11 @@ export type APIOptions = {
   key?: string;
 
   v?: string;
-  libraries?: string | string[];
+  libraries?: string[];
   language?: string;
   region?: string;
   authReferrerPolicy?: string;
-  mapIds?: string | string[];
+  mapIds?: string[];
   channel?: string;
   solutionChannel?: string;
 };
