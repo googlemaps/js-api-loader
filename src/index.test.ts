@@ -16,7 +16,6 @@
 
 import { jest } from "@jest/globals";
 import type { bootstrap } from "./bootstrap.js";
-import { logDevWarning } from "./messages.js";
 
 type ImportLibraryMock = jest.Mock<typeof google.maps.importLibrary>;
 

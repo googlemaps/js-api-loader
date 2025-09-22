@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+/* eslint-disable @typescript-eslint/no-empty-function */
 export const MSG_DEPRECATED_LOADER =
   "The Loader class is no longer available in this version." +
   "\nPlease use the new functional API: setOptions() and importLibrary()." +
