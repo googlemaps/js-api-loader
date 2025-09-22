@@ -85,7 +85,7 @@ setOptions({ key: "your-api-key-here" });
 await importLibrary("maps"); // needed for gmp-map
 await importLibrary("marker"); // needed for gmp-advanced-marker
 
-// or:
+// Or:
 await Promise.all([importLibrary("maps"), importLibrary("marker")]);
 ```
 
