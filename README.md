@@ -15,8 +15,8 @@
 
 ## Description
 
-Load the Google Maps JavaScript API script dynamically. This is essentially
-an npm version of the [Dynamic Library Import](https://developers.google.com/maps/documentation/javascript/load-maps-js-api#dynamic-library-import)
+Load the Google Maps JavaScript API script dynamically. This is an npm version
+of the [Dynamic Library Import](https://developers.google.com/maps/documentation/javascript/load-maps-js-api#dynamic-library-import)
 script.
 
 ## Requirements
@@ -25,63 +25,133 @@ script.
 - A Google Cloud Platform [project] with the [**Maps JavaScript API**]
   [maps-sdk] enabled
 - An [API key] associated with the project above
-- [@googlemaps/js-api-loader NPM package][npm-pkg]
 
 ## Installation
 
 Install the [`@googlemaps/js-api-loader` NPM package][npm-pkg] with:
 
 ```sh
-npm install @googlemaps/js-api-loader
+npm install --save @googlemaps/js-api-loader
+
+# or
+yarn add @googlemaps/js-api-loader
+
+# or
+pnpm add @googlemaps/js-api-loader
 ```
-
-Alternatively you may add the UMD package directly to the html document using
-the unpkg link.
-
-```html
-<script src="https://unpkg.com/@googlemaps/js-api-loader@2.x/dist/index.umd.js"></script>
-```
-
-When adding via unpkg, the loader can be accessed at `google.maps.plugins.loader.Loader`.
 
 ### TypeScript
 
-TypeScript users need to install the following types package.
+TypeScript users should additionally install the types for the Google Maps
+JavaScript API:
 
 ```sh
 npm install --save-dev @types/google.maps
 ```
-
-## Documentation
-
-The reference documentation can be found at this [link][reference]. The Google
-Maps JavaScript API documentation is the authoritative source for the loader options.
 
 ## Usage
 
 ```javascript
 import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
 
-// set the options for loading the API.
-// See here for a list of supported options:
-//   https://developers.google.com/maps/documentation/javascript/load-maps-js-api#required_parameters
+// Set the options for loading the API.
 setOptions({ key: "your-api-key-here" });
 
-// load the needed APIs asynchronously.
-// Once the returned promise is fulfilled, the libraries are also
-// available in the global `google.maps` namespace.
+// Load the needed APIs.
+// Note: once the returned promise is fulfilled, the libraries are also
+//       available in the global `google.maps` namespace.
 const { Map } = await importLibrary("maps");
 const map = new Map(mapEl, mapOptions);
 
-// alternatively:
+// Alternatively:
 await importLibrary("maps");
 const map = new google.maps.Map(mapEl, mapOptions);
 
-// or, if you prefer using callbacks instead of async/awqait:
+// Or, if you prefer using callbacks instead of async/await:
 importLibrary("maps").then(() => {
   const map = new google.maps.Map(mapEl, mapOptions);
 });
 ```
+
+## Documentation
+
+This package exports just two functions, `setOptions` and `importLibrary`.
+The functions are available as named exports and default export.
+
+```ts
+// Using named exports:
+import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
+
+setOptions({ key: GOOGLE_MAPS_API_KEY });
+await importLibrary("core");
+
+// Using the default export:
+import MapsAPILoader from "@googlemaps/js-api-loader";
+
+MapsAPILoader.setOptions({ key: GOOGLE_MAPS_API_KEY });
+await MapsAPILoader.importLibrary("core");
+```
+
+### `setOptions(options: APIOptions): void`
+
+Sets the options for loading the Google Maps JavaScript API. See the
+[documentation][parameters] for additional information.
+
+Supported options:
+
+- `key: string`: Your API key.
+- `v: string`: The version of the Maps JavaScript API to load.
+- `language: string`: The language to use. This affects the names of
+  controls, copyright notices, driving directions, and control labels, and
+  the responses to service requests.
+- `region: string`: The region code to use. This alters the API's behavior
+  based on a given country or territory.
+- `libraries: string[]`: An array of additional Maps JavaScript API libraries to
+  load. Specifying a fixed set of libraries is not generally recommended, but is
+  available for developers who want to finely tune the caching behavior on their
+  website.
+- `authReferrerPolicy: string`: Can be used to configure HTTP Referrer
+  Restrictions in the Cloud Console to limit which URLs are allowed to use a
+  particular API Key.
+- `mapIds: string[]`: An array of map IDs. Causes the configuration for the
+  specified map IDs to be preloaded. Specifying map IDs here is not required
+  for map IDs usage, but is available for developers who want to finely tune
+  network performance.
+- `channel: string`: Can be used to track your usage using numeric channels.
+  Only numeric values `0` to `999` are allowed.
+- `solutionChannel`: Google Maps Platform provides many types of sample code to
+  help you get up and running quickly. To track adoption of our more complex
+  code samples and improve solution quality, Google includes the solutionChannel
+  query parameter in API calls in our sample code.
+
+### `importLibrary(library: string): Promise`
+
+Loads the specified library. Returns a promise that resolves with the
+library object when the library is loaded. In case of an error while loading
+the library (might be due to poor network conditions and other unforseeable
+circumstances), the promise is rejected with an error.
+
+Calling this function for the first time will trigger loading the maps API
+itself. After that, the options can no longer be changed, and trying to do
+that will log a warning to the console.
+
+The following libraries are available:
+
+- `core`: [`google.maps.CoreLibrary`](https://developers.google.com/maps/documentation/javascript/reference/library-interfaces#CoreLibrary)
+- `maps`: [`google.maps.MapsLibrary`](https://developers.google.com/maps/documentation/javascript/reference/library-interfaces#MapsLibrary)
+- `maps3d`: [`google.maps.Maps3DLibrary`](https://developers.google.com/maps/documentation/javascript/reference/library-interfaces#Maps3DLibrary)
+- `places`: [`google.maps.PlacesLibrary`](https://developers.google.com/maps/documentation/javascript/reference/library-interfaces#PlacesLibrary)
+- `geocoding`: [`google.maps.GeocodingLibrary`](https://developers.google.com/maps/documentation/javascript/reference/library-interfaces#GeocodingLibrary)
+- `routes`: [`google.maps.RoutesLibrary`](https://developers.google.com/maps/documentation/javascript/reference/library-interfaces#RoutesLibrary)
+- `marker`: [`google.maps.MarkerLibrary`](https://developers.google.com/maps/documentation/javascript/reference/library-interfaces#MarkerLibrary)
+- `geometry`: [`google.maps.GeometryLibrary`](https://developers.google.com/maps/documentation/javascript/reference/library-interfaces#GeometryLibrary)
+- `elevation`: [`google.maps.ElevationLibrary`](https://developers.google.com/maps/documentation/javascript/reference/library-interfaces#ElevationLibrary)
+- `streetView`: [`google.maps.StreetViewLibrary`](https://developers.google.com/maps/documentation/javascript/reference/library-interfaces#StreetViewLibrary)
+- `journeySharing`: [`google.maps.JourneySharingLibrary`](https://developers.google.com/maps/documentation/javascript/reference/library-interfaces#JourneySharingLibrary)
+- `visualization`: [`google.maps.VisualizationLibrary`](https://developers.google.com/maps/documentation/javascript/reference/library-interfaces#VisualizationLibrary)
+- `airQuality`: [`google.maps.AirQualityLibrary`](https://developers.google.com/maps/documentation/javascript/reference/library-interfaces#AirQualityLibrary)
+- `addressValidation`: [`google.maps.AddressValidationLibrary`](https://developers.google.com/maps/documentation/javascript/reference/library-interfaces#AddressValidationLibrary)
+- `drawing`: [`google.maps.DrawingLibrary`](https://developers.google.com/maps/documentation/javascript/reference/library-interfaces#DrawingLibrary) (deprecated)
 
 ## Migrating from v1 to v2
 
@@ -129,6 +199,7 @@ You can also discuss this library on our [Discord server].
 [maps-sdk]: https://developers.google.com/maps/documentation/javascript
 [reference]: https://googlemaps.github.io/js-api-loader/index.html
 [documentation]: https://googlemaps.github.io/js-api-loader
+[parameters]: https://developers.google.com/maps/documentation/javascript/load-maps-js-api#required_parameters
 [npm-pkg]: https://npmjs.com/package/@googlemaps/js-api-loader
 [code of conduct]: ?tab=coc-ov-file#readme
 [contributing guide]: CONTRIBUTING.md
@@ -141,7 +212,6 @@ You can also discuss this library on our [Discord server].
 [pull request]: https://github.com/googlemaps/js-api-loader/compare
 [semantic versioning]: https://semver.org
 [Sign up with Google Maps Platform]: https://console.cloud.google.com/google/maps-apis/start
-[similar inquiry]: https://github.com/googlemaps/js-api-loader/issues
 [SLA]: https://cloud.google.com/maps-platform/terms/sla
 [Technical Support Services Guidelines]: https://cloud.google.com/maps-platform/terms/tssg
 [Terms of Service]: https://cloud.google.com/maps-platform/terms

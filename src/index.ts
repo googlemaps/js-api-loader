@@ -26,11 +26,10 @@ import {
 
 export type APIOptions = {
   key?: string;
-
   v?: string;
-  libraries?: string[];
   language?: string;
   region?: string;
+  libraries?: string[];
   authReferrerPolicy?: string;
   mapIds?: string[];
   channel?: string;
