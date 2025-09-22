@@ -22,8 +22,8 @@ script.
 ## Requirements
 
 - [Sign up with Google Maps Platform]
-- A Google Cloud Platform [project] with the [**Maps JavaScript API**]
-  [maps-sdk] enabled
+- A Google Cloud Platform [project] with the [**Maps JavaScript API**][maps-sdk]
+  enabled
 - An [API key] associated with the project above
 
 ## Installation
@@ -68,9 +68,25 @@ await importLibrary("maps");
 const map = new google.maps.Map(mapEl, mapOptions);
 
 // Or, if you prefer using callbacks instead of async/await:
-importLibrary("maps").then(() => {
-  const map = new google.maps.Map(mapEl, mapOptions);
+importLibrary("maps").then(({ Map }) => {
+  const map = new Map(mapEl, mapOptions);
 });
+```
+
+If you use web components from the Google Maps JavaScript API (e.g. `gmp-map`,
+and `gmp-advanced-marker`), you need to import them as well:
+
+```javascript
+import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
+
+// Set the options for loading the API.
+setOptions({ key: "your-api-key-here" });
+
+await importLibrary("maps"); // needed for gmp-map
+await importLibrary("marker"); // needed for gmp-advanced-marker
+
+// or:
+await Promise.all([importLibrary("maps"), importLibrary("marker")]);
 ```
 
 ## Documentation
@@ -170,7 +186,7 @@ Platform [Terms of Service].
 
 This library is not a Google Maps Platform Core Service. Therefore, the
 Google Maps Platform Terms of Service (e.g. Technical Support Services,
-Service Level Agreements, and Deprecation Policy) do not apply to the code
+Service Level Agreements, and Deprecation Policy) don’t apply to the code
 in this library.
 
 ### European Economic Area (EEA) developers
