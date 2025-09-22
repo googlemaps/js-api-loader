@@ -19,11 +19,9 @@ import { bootstrap } from "./bootstrap.js";
 import {
   logDevNotice,
   logDevWarning,
-  logError,
-  ERR_KEY_VERSION_MISMATCH,
-  INFO_LOADED_WITHOUT_OPTIONS,
-  WARN_LANGUAGE_REGION_NOT_COMPATIBLE,
-  WARN_SET_OPTIONS_AFTER_BOOTSTRAP,
+  MSG_IMPORT_LIBRARY_EXISTS,
+  MSG_SCRIPT_ELEMENT_EXISTS,
+  MSG_SET_OPTIONS_AFTER_BOOTSTRAP,
 } from "./messages.js";
 
 export type APIOptions = {
@@ -61,10 +59,11 @@ interface APILibraryMap {
 
 type APILibraryName = keyof APILibraryMap;
 
+// The __DEV__ global variable is set by rollup during the build process.
+declare const __DEV__: boolean;
+
 let isImportLibraryInstalled_ = false;
 let options_: APIOptions = {};
-
-const libraries_: Partial<APILibraryMap> = {};
 
 /**
  * Sets the options for the Maps JavaScript API.
@@ -78,7 +77,7 @@ const libraries_: Partial<APILibraryMap> = {};
  */
 export function setOptions(options: APIOptions) {
   if (isImportLibraryInstalled_) {
-    logDevWarning(WARN_SET_OPTIONS_AFTER_BOOTSTRAP);
+    logDevWarning(MSG_SET_OPTIONS_AFTER_BOOTSTRAP);
     return;
   }
 
@@ -110,13 +109,9 @@ export async function importLibrary(libraryName: string): Promise<unknown> {
     isImportLibraryInstalled_ = true;
   }
 
-  const name = libraryName as keyof APILibraryMap;
-  if (!libraries_[name]) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    libraries_[name] = (await google.maps.importLibrary(name)) as any;
-  }
-
-  return libraries_[name] as APILibraryMap[keyof APILibraryMap];
+  return (await google.maps.importLibrary(
+    libraryName
+  )) as APILibraryMap[keyof APILibraryMap];
 }
 
 /**
@@ -124,81 +119,22 @@ export async function importLibrary(libraryName: string): Promise<unknown> {
  * `google.maps.importLibrary` function exists.
  */
 function installImportLibrary_(options: APIOptions) {
-  // check for maps JS already being loaded
-  const scriptEl = document.querySelector(
-    'script[src*="maps.googleapis.com/maps/api/js"]'
-  ) as HTMLScriptElement | null;
+  const importLibraryExists = Boolean(window.google?.maps?.importLibrary);
+  if (importLibraryExists) {
+    logDevNotice(MSG_IMPORT_LIBRARY_EXISTS);
+  } else if (__DEV__) {
+    const scriptEl = document.querySelector(
+      'script[src*="maps.googleapis.com/maps/api/js"]'
+    );
 
-  if (!scriptEl) {
-    bootstrap(options);
-
-    return;
-  }
-
-  // Check the parameters to be compatible with `options` passed to this function:
-  // - a different api key or different version will log an error
-  // - different language or region will trigger warning in dev-mode
-  // - in any other case we just log an informational message in dev-mode
-  const scriptOptions = getOptionsFromURL_(scriptEl.src);
-  if (scriptOptions.key !== options.key || scriptOptions.v !== options.v) {
-    logError(ERR_KEY_VERSION_MISMATCH(options, scriptOptions));
-  } else if (
-    scriptOptions.language !== options.language ||
-    scriptOptions.region !== options.region
-  ) {
-    logDevWarning(WARN_LANGUAGE_REGION_NOT_COMPATIBLE(options, scriptOptions));
-  } else {
-    logDevNotice(INFO_LOADED_WITHOUT_OPTIONS);
-  }
-
-  // there is a script tag, and importLibrary is defined, so we're all set
-  if (window.google?.maps?.importLibrary) return;
-
-  // maps JS is currently being loaded, but wasn't loaded with the dynamic
-  // import snipped. In this case, the importLibrary bootstrap function has to
-  // be provided
-  const scriptLoadedPromise = new Promise<void>((resolve, reject) => {
-    // FIXME: it would probably be more precise to intercept (override and call
-    //   the original) the callback function specified in
-    //   `scriptOptions.callback`, but the load event should be sufficient.
-    scriptEl.addEventListener("load", () => resolve());
-    scriptEl.addEventListener("error", () => reject());
-  });
-
-  const importLibraryStub = async (name: string) => {
-    await scriptLoadedPromise;
-
-    // only do the recursive call if the importLibrary function has been replaced
-    if (google.maps.importLibrary === importLibraryStub) {
-      // FIXME: this shouldn't be possible. How should we handle this?
-    } else {
-      return google.maps.importLibrary(name);
-    }
-  };
-
-  if (!window.google) window.google = {} as unknown as typeof google;
-  if (!window.google.maps)
-    window.google.maps = {} as unknown as typeof google.maps;
-
-  google.maps.importLibrary = importLibraryStub;
-}
-
-function getOptionsFromURL_(url: string): Partial<APIOptions> {
-  const scriptParams = new URL(url).searchParams;
-  const scriptOpts: Partial<APIOptions> = {};
-  for (const [key, value] of scriptParams.entries()) {
-    const optName = key.replace(/_[a-z]/g, (s: string) =>
-      s.charAt(1).toUpperCase()
-    ) as keyof APIOptions;
-
-    if (optName === "libraries") {
-      scriptOpts.libraries = value.split(",");
-    } else {
-      scriptOpts[optName] = value;
+    if (scriptEl) {
+      logDevWarning(MSG_SCRIPT_ELEMENT_EXISTS);
     }
   }
 
-  return scriptOpts;
+  // If the google.maps.importLibrary function already exists, bootstrap()
+  // won't do anything, so we won't call it
+  if (!importLibraryExists) bootstrap(options);
 }
 
 const api = {
@@ -207,6 +143,3 @@ const api = {
 };
 
 export default api;
-
-// stub implementation for
-export { Loader } from "./deprecated.js";

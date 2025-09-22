@@ -16,6 +16,7 @@
 
 import { jest } from "@jest/globals";
 import type { bootstrap } from "./bootstrap.js";
+import { logDevWarning } from "./messages.js";
 
 type ImportLibraryMock = jest.Mock<typeof google.maps.importLibrary>;
 
@@ -81,61 +82,37 @@ describe("importLibrary(): basic operation", () => {
     const lib = {} as never as google.maps.MapsLibrary;
     mockImportLibrary.mockResolvedValue(lib);
 
-    const result = await importLibrary("maps");
+    const result = await importLibrary("core");
     expect(result).toBe(lib);
   });
 
   it("should pass the library name to the google.maps.importLibrary function", async () => {
     const { importLibrary } = await import("./index.js");
 
-    await importLibrary("maps");
+    await importLibrary("core");
 
-    expect(mockImportLibrary).toHaveBeenCalledWith("maps");
+    expect(mockImportLibrary).toHaveBeenCalledWith("core");
   });
 
   it("should log a warning if setOptions is called after bootstrap", async () => {
     const { setOptions, importLibrary } = await import("./index.js");
     const { logDevWarning } = await import("./messages.js");
 
-    await importLibrary("maps");
+    await importLibrary("core");
     setOptions({ key: "foo", v: "bar" });
 
     expect(logDevWarning).toHaveBeenCalledWith(
-      messages.WARN_SET_OPTIONS_AFTER_BOOTSTRAP
+      messages.MSG_SET_OPTIONS_AFTER_BOOTSTRAP
     );
   });
 });
 
-describe("importLibrary(): caching of loaded libraries", () => {
-  it("should only call importLibrary once for the same library", async () => {
-    const { importLibrary } = await import("./index.js");
-    const lib = {} as google.maps.MapsLibrary;
-    mockImportLibrary.mockResolvedValue(lib);
-
-    await importLibrary("maps");
-    await importLibrary("maps");
-
-    expect(mockImportLibrary).toHaveBeenCalledTimes(1);
-  });
-
-  it("should call importLibrary for each library", async () => {
-    const { importLibrary } = await import("./index.js");
-    const lib = {} as google.maps.MapsLibrary;
-    mockImportLibrary.mockResolvedValue(lib);
-
-    await importLibrary("maps");
-    await importLibrary("places");
-
-    expect(mockImportLibrary).toHaveBeenCalledTimes(2);
-  });
-});
-
-describe("importLibrary(): cooperative loading with existing script tag", () => {
+describe("importLibrary(): existing loaders and/or script tags", () => {
   beforeEach(() => {
     document.head.innerHTML = "";
   });
 
-  it("should use existing google.maps.importLibrary if available", async () => {
+  it("shouldn't bootstrap if google.maps.importLibrary is available", async () => {
     const { importLibrary } = await import("./index.js");
     const existingMockImportLibrary: ImportLibraryMock = jest.fn();
     globalThis.google = {
@@ -146,109 +123,47 @@ describe("importLibrary(): cooperative loading with existing script tag", () => 
     script.src = "https://maps.googleapis.com/maps/api/js";
     document.head.appendChild(script);
 
-    await importLibrary("maps");
+    await importLibrary("core");
 
     expect(mockBootstrap).not.toHaveBeenCalled();
-    expect(existingMockImportLibrary).toHaveBeenCalledWith("maps");
+    expect(existingMockImportLibrary).toHaveBeenCalledWith("core");
   });
 
-  it("should wait for script to load if importLibrary is not available", async () => {
+  it("should bootstrap if google.maps.importLibrary isn't available", async () => {
     const { importLibrary } = await import("./index.js");
 
     const script = document.createElement("script");
-    script.src = "https://maps.googleapis.com/maps/api/js?key=foo&v=bar";
+    script.src = "https://maps.googleapis.com/maps/api/js";
     document.head.appendChild(script);
 
-    // this will create a stub for google.maps.importLibrary that waits for the
-    // existing script to load and define
-    const importLibraryPromise = importLibrary("maps");
+    await importLibrary("core");
 
-    // At this point, the stub exists, but the real function doesn't.
-    // Let's simulate the script finishing its load.
-    const newMockImportLibrary: ImportLibraryMock = jest.fn();
-    globalThis.google.maps.importLibrary = newMockImportLibrary;
-
-    // Now, trigger the 'load' event. The stub's promise should resolve,
-    // and it should call the function that now exists.
-    script.dispatchEvent(new Event("load", { bubbles: true }));
-
-    // Wait for the promise returned by our loader to resolve.
-    await importLibraryPromise;
-
-    // Check that the function that became available *after* the script loaded was called.
-    expect(newMockImportLibrary).toHaveBeenCalledWith("maps");
+    expect(mockBootstrap).toHaveBeenCalled();
   });
 
-  it("should log an error if key or version are different", async () => {
-    const { setOptions, importLibrary } = await import("./index.js");
-    const { logError } = await import("./messages.js");
-
-    const existingMockImportLibrary: ImportLibraryMock = jest.fn();
-    globalThis.google = {
-      maps: { importLibrary: existingMockImportLibrary },
-    } as unknown as typeof globalThis.google;
-
-    const script = document.createElement("script");
-    script.src = "https://maps.googleapis.com/maps/api/js?key=foo&v=bar";
-    document.head.appendChild(script);
-
-    const setOptionsParams = { key: "different", v: "different" };
-    setOptions(setOptionsParams);
-    await importLibrary("maps");
-
-    expect(logError).toHaveBeenCalledWith(
-      messages.ERR_KEY_VERSION_MISMATCH(setOptionsParams, {
-        key: "foo",
-        v: "bar",
-      })
-    );
-  });
-
-  it("should log a warning if language or region are different", async () => {
-    const { setOptions, importLibrary } = await import("./index.js");
-    const { logDevWarning } = await import("./messages.js");
-
-    const existingMockImportLibrary: ImportLibraryMock = jest.fn();
-    globalThis.google = {
-      maps: { importLibrary: existingMockImportLibrary },
-    } as unknown as typeof globalThis.google;
-
-    const script = document.createElement("script");
-    script.src =
-      "https://maps.googleapis.com/maps/api/js?language=en&region=US";
-    document.head.appendChild(script);
-
-    const setOptionsParams = { language: "de", region: "DE" };
-    setOptions(setOptionsParams);
-    await importLibrary("maps");
-
-    expect(logDevWarning).toHaveBeenCalledWith(
-      messages.WARN_LANGUAGE_REGION_NOT_COMPATIBLE(setOptionsParams, {
-        language: "en",
-        region: "US",
-      })
-    );
-  });
-
-  it("should log a notice if options are compatible", async () => {
-    const { setOptions, importLibrary } = await import("./index.js");
+  it("should log a message if google.maps.importLibrary is already defined", async () => {
+    const { importLibrary } = await import("./index.js");
     const { logDevNotice } = await import("./messages.js");
 
-    const existingMockImportLibrary: ImportLibraryMock = jest.fn();
     globalThis.google = {
-      maps: { importLibrary: existingMockImportLibrary },
+      maps: { importLibrary: jest.fn() },
     } as unknown as typeof globalThis.google;
 
+    await importLibrary("core");
+
+    expect(logDevNotice).toHaveBeenCalled();
+  });
+
+  it("should log a message if a script tag is already defined", async () => {
+    const { importLibrary } = await import("./index.js");
+    const { logDevWarning } = await import("./messages.js");
+
     const script = document.createElement("script");
-    script.src =
-      "https://maps.googleapis.com/maps/api/js?key=foo&v=bar&language=en&region=US";
+    script.src = "https://maps.googleapis.com/maps/api/js";
     document.head.appendChild(script);
 
-    setOptions({ key: "foo", v: "bar", language: "en", region: "US" });
-    await importLibrary("maps");
+    await importLibrary("core");
 
-    expect(logDevNotice).toHaveBeenCalledWith(
-      messages.INFO_LOADED_WITHOUT_OPTIONS
-    );
+    expect(logDevWarning).toHaveBeenCalled();
   });
 });

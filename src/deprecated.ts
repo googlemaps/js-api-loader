@@ -4,7 +4,7 @@
  */
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function */
 
-import { ERR_DEPRECATED_LOADER } from "./messages.js";
+import { MSG_DEPRECATED_LOADER } from "./messages.js";
 
 /**
  * @deprecated Use the new functional API: `setOptions()` and `importLibrary()`.
@@ -12,6 +12,6 @@ import { ERR_DEPRECATED_LOADER } from "./messages.js";
  */
 export class Loader {
   constructor(...args: any[]) {
-    throw new Error(`[@googlemaps/js-api-loader]: ${ERR_DEPRECATED_LOADER}`);
+    throw new Error(`[@googlemaps/js-api-loader]: ${MSG_DEPRECATED_LOADER}`);
   }
 }

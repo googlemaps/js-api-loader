@@ -14,54 +14,34 @@
  * limitations under the License.
  */
 
-import type { APIOptions } from "./index.js";
-
-export const ERR_DEPRECATED_LOADER =
+export const MSG_DEPRECATED_LOADER =
   "The Loader class is no longer available in this version." +
   "\nPlease use the new functional API: setOptions() and importLibrary()." +
   "\nFor more information, see the updated documentation at: " +
   "https://github.com/googlemaps/js-api-loader/blob/main/README.md";
 
-export const ERR_KEY_VERSION_MISMATCH = (
-  setOptions: Partial<APIOptions>,
-  script: Partial<APIOptions>
-): string =>
-  `The Google Maps JavaScript API is already being loaded using a ` +
-  `different key or version. The key "${script.key ?? ""}" and version ` +
-  `"${script.v ?? ""}" are already in use, while "${setOptions.key ?? ""}" ` +
-  `and "${setOptions.v ?? ""}" were specified to setOptions().`;
-
-export const WARN_LANGUAGE_REGION_NOT_COMPATIBLE = (
-  setOptions: Partial<APIOptions>,
-  script: Partial<APIOptions>
-): string =>
-  `The Google Maps JavaScript API is already being loaded with a different ` +
-  `language or region. The language "${script.language ?? ""}" and region ` +
-  `"${script.region ?? ""}" are already in use, while ` +
-  `"${setOptions.language ?? ""}" and "${setOptions.region ?? ""}" ` +
-  `were specified.`;
-
-export const INFO_LOADED_WITHOUT_OPTIONS =
-  "The Google Maps JavaScript API was loaded outside the @googlemaps/js-api-loader. " +
-  "The options passed to setOptions will be ignored.";
-
-export const WARN_SET_OPTIONS_AFTER_BOOTSTRAP =
+export const MSG_SET_OPTIONS_AFTER_BOOTSTRAP =
   "The setOptions() function was called after the Google Maps JavaScript API has already been bootstrapped. " +
   "The options passed to setOptions() will be ignored.";
+
+export const MSG_IMPORT_LIBRARY_EXISTS =
+  "The google.maps.importLibrary function is already defined, and " +
+  "@googlemaps/js-api-loader will use the existing function instead of " +
+  "overwriting it. The options passed to setOptions() will be ignored.";
+
+export const MSG_SCRIPT_ELEMENT_EXISTS =
+  "There already is a script loading the Google Maps JavaScript " +
+  "API, and no google.maps.importLibrary function is defined. " +
+  "@googlemaps/js-api-loader will proceed to bootstrap the API " +
+  "with the specified options, but the existing script might cause " +
+  "problems using the API. Make sure to remove the script " +
+  "loading the API.";
 
 // The __DEV__ global variable is set by rollup during the build process.
 declare const __DEV__: boolean;
 
 export const logError = (message: string) => {
   console.error(`[@googlemaps/js-api-loader] ${message}`);
-};
-
-const loggedErrors = new Set<string>();
-export const logErrorOnce = (message: string) => {
-  if (loggedErrors.has(message)) return;
-  loggedErrors.add(message);
-
-  logError(message);
 };
 
 export const logDevWarning = __DEV__
