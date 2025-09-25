@@ -102,7 +102,7 @@ setOptions({
   key: "YOUR_API_KEY",
   v: "weekly",
 
-  // libraries can still be specified in `setOptions`. This makes sure that
+  // Libraries can still be specified in `setOptions`. This makes sure that
   // all libraries are available when the importLibrary promise is resolved.
   libraries: ["maps", "places"],
 });
@@ -121,7 +121,7 @@ initMap();
 // c) using a callback – this is identical to a)
 
 function initMap() {
-  // use the global google.maps namespace once loading is complete
+  // Use the global google.maps namespace once loading is complete
   const map = new google.maps.Map(document.getElementById("map"), {
     center: { lat: -34.397, lng: 150.644 },
     zoom: 8,
