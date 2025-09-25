@@ -14,20 +14,27 @@
  * limitations under the License.
  */
 /* eslint-disable @typescript-eslint/no-empty-function */
+import { APIOptions } from "./index.js";
+
 export const MSG_DEPRECATED_LOADER =
   "The Loader class is no longer available in this version." +
   "\nPlease use the new functional API: setOptions() and importLibrary()." +
   "\nFor more information, see the updated documentation at: " +
   "https://github.com/googlemaps/js-api-loader/blob/main/README.md";
 
-export const MSG_SET_OPTIONS_AFTER_BOOTSTRAP =
-  "The setOptions() function was called after the Google Maps JavaScript API has already been bootstrapped. " +
-  "The options passed to setOptions() will be ignored.";
+export const MSG_REPEATED_SET_OPTIONS = (options: APIOptions) =>
+  `The setOptions() function should only be called once. The options passed ` +
+  `to the additional call (${JSON.stringify(options)}) will be ignored.`;
 
-export const MSG_IMPORT_LIBRARY_EXISTS =
-  "The google.maps.importLibrary function is already defined, and " +
-  "@googlemaps/js-api-loader will use the existing function instead of " +
-  "overwriting it. The options passed to setOptions() will be ignored.";
+export const MSG_IMPORT_LIBRARY_EXISTS = (options: APIOptions) =>
+  `The google.maps.importLibrary function is already defined, and ` +
+  `@googlemaps/js-api-loader will use the existing function instead of ` +
+  `overwriting it. The options passed to setOptions ` +
+  `(${JSON.stringify(options)}) will be ignored.`;
+
+export const MSG_SET_OPTIONS_NOT_CALLED =
+  "No options were set before calling importLibrary. Make sure to configure " +
+  "the loader using setOptions().";
 
 export const MSG_SCRIPT_ELEMENT_EXISTS =
   "There already is a script loading the Google Maps JavaScript " +

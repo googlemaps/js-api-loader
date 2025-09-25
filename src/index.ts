@@ -21,7 +21,8 @@ import {
   logDevWarning,
   MSG_IMPORT_LIBRARY_EXISTS,
   MSG_SCRIPT_ELEMENT_EXISTS,
-  MSG_SET_OPTIONS_AFTER_BOOTSTRAP,
+  MSG_REPEATED_SET_OPTIONS,
+  MSG_SET_OPTIONS_NOT_CALLED,
 } from "./messages.js";
 
 export type APIOptions = {
@@ -61,7 +62,7 @@ type APILibraryName = keyof APILibraryMap;
 // The __DEV__ global variable is set by rollup during the build process.
 declare const __DEV__: boolean;
 
-let isImportLibraryInstalled_ = false;
+let setOptionsWasCalled_ = false;
 let options_: APIOptions = {};
 
 /**
@@ -75,18 +76,22 @@ let options_: APIOptions = {};
  * @param options The options to set.
  */
 export function setOptions(options: APIOptions) {
-  if (isImportLibraryInstalled_) {
-    logDevWarning(MSG_SET_OPTIONS_AFTER_BOOTSTRAP);
+  if (setOptionsWasCalled_) {
+    logDevWarning(MSG_REPEATED_SET_OPTIONS(options));
+
     return;
   }
 
   options_ = options;
+
+  installImportLibrary_(options_);
+  setOptionsWasCalled_ = true;
 }
 
 /**
  * Imports the specified library from the Maps JavaScript API.
  *
- * The first call to this function will start the bootstrap process for the Maps
+ * The first call to this function will start actually loading the Maps
  * JavaScript API.
  *
  * @param libraryName The name of the library to load.
@@ -103,10 +108,12 @@ export async function importLibrary(
 ): ReturnType<typeof google.maps.importLibrary>;
 
 export async function importLibrary(libraryName: string): Promise<unknown> {
-  if (!isImportLibraryInstalled_) {
-    installImportLibrary_(options_);
-    isImportLibraryInstalled_ = true;
+  if (!setOptionsWasCalled_) {
+    logDevWarning(MSG_SET_OPTIONS_NOT_CALLED);
   }
+
+  if (!window?.google?.maps?.importLibrary)
+    throw new Error("google.maps.importLibrary is not installed.");
 
   return (await google.maps.importLibrary(
     libraryName
@@ -120,7 +127,7 @@ export async function importLibrary(libraryName: string): Promise<unknown> {
 function installImportLibrary_(options: APIOptions) {
   const importLibraryExists = Boolean(window.google?.maps?.importLibrary);
   if (importLibraryExists) {
-    logDevNotice(MSG_IMPORT_LIBRARY_EXISTS);
+    logDevNotice(MSG_IMPORT_LIBRARY_EXISTS(options));
   } else if (__DEV__) {
     const scriptEl = document.querySelector(
       'script[src*="maps.googleapis.com/maps/api/js"]'
@@ -136,9 +143,4 @@ function installImportLibrary_(options: APIOptions) {
   if (!importLibraryExists) bootstrap(options);
 }
 
-const api = {
-  setOptions,
-  importLibrary,
-};
-
-export default api;
+export * from "./deprecated.js";

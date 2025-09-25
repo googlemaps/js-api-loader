@@ -52,12 +52,20 @@ beforeEach(() => {
 });
 
 describe("importLibrary(): basic operation", () => {
-  it("should bootstrap and call importLibrary when a library is imported", async () => {
-    const { importLibrary } = await import("./index.js");
+  it("should bootstrap when setOptions is called", async () => {
+    const { setOptions } = await import("./index.js");
 
-    await importLibrary("maps");
+    setOptions({ key: "foo" });
 
     expect(mockBootstrap).toHaveBeenCalledTimes(1);
+  });
+
+  it("should forward importLibrary calls", async () => {
+    const { importLibrary, setOptions } = await import("./index.js");
+
+    setOptions({ key: "foo" });
+    await importLibrary("maps");
+
     expect(mockImportLibrary).toHaveBeenCalledTimes(1);
     expect(mockImportLibrary).toHaveBeenCalledWith("maps");
   });
@@ -74,35 +82,53 @@ describe("importLibrary(): basic operation", () => {
   });
 
   it("should return the value from importLibrary", async () => {
-    const { importLibrary } = await import("./index.js");
+    const { setOptions, importLibrary } = await import("./index.js");
 
     // The mocked library object is a placeholder to verify that `importLibrary`
-    // returns the correct value.
+    // returns the correct value. The actual content doesn't need to be
+    // accurate.
     const lib = {} as never as google.maps.MapsLibrary;
     mockImportLibrary.mockResolvedValue(lib);
 
+    setOptions({ key: "foo" });
     const result = await importLibrary("core");
     expect(result).toBe(lib);
   });
 
   it("should pass the library name to the google.maps.importLibrary function", async () => {
-    const { importLibrary } = await import("./index.js");
+    const { setOptions, importLibrary } = await import("./index.js");
 
+    setOptions({ key: "foo" });
     await importLibrary("core");
 
     expect(mockImportLibrary).toHaveBeenCalledWith("core");
   });
 
-  it("should log a warning if setOptions is called after bootstrap", async () => {
-    const { setOptions, importLibrary } = await import("./index.js");
+  it("should return a rejected promise if importLibrary is called without setOptions", async () => {
+    const { importLibrary } = await import("./index.js");
+
+    await expect(importLibrary("core")).rejects.toThrow();
+  });
+
+  it("should log a warning if setOptions is called multiple times", async () => {
+    const { setOptions } = await import("./index.js");
     const { logDevWarning } = await import("./messages.js");
 
-    await importLibrary("core");
     setOptions({ key: "foo", v: "bar" });
+    setOptions({ key: "a", v: "b" });
 
-    expect(logDevWarning).toHaveBeenCalledWith(
-      messages.MSG_SET_OPTIONS_AFTER_BOOTSTRAP
-    );
+    expect(logDevWarning).toHaveBeenCalled();
+  });
+
+  it("should log an error if importLibrary is called without setOptions", async () => {
+    const { importLibrary } = await import("./index.js");
+    const { logDevWarning } = await import("./messages.js");
+
+    try {
+      await importLibrary("core");
+    } catch {}
+
+    expect(logDevWarning).toHaveBeenCalled();
   });
 });
 
@@ -129,40 +155,51 @@ describe("importLibrary(): existing loaders and/or script tags", () => {
   });
 
   it("should bootstrap if google.maps.importLibrary isn't available", async () => {
-    const { importLibrary } = await import("./index.js");
+    const { setOptions, importLibrary } = await import("./index.js");
 
     const script = document.createElement("script");
     script.src = "https://maps.googleapis.com/maps/api/js";
     document.head.appendChild(script);
 
+    setOptions({ key: "foo" });
     await importLibrary("core");
 
     expect(mockBootstrap).toHaveBeenCalled();
   });
 
   it("should log a message if google.maps.importLibrary is already defined", async () => {
-    const { importLibrary } = await import("./index.js");
+    const { setOptions, importLibrary } = await import("./index.js");
     const { logDevNotice } = await import("./messages.js");
 
     globalThis.google = {
       maps: { importLibrary: jest.fn() },
     } as unknown as typeof globalThis.google;
 
+    setOptions({ key: "foo" });
     await importLibrary("core");
 
     expect(logDevNotice).toHaveBeenCalled();
   });
 
   it("should log a message if a script tag is already defined", async () => {
-    const { importLibrary } = await import("./index.js");
+    const { setOptions, importLibrary } = await import("./index.js");
     const { logDevWarning } = await import("./messages.js");
 
     const script = document.createElement("script");
     script.src = "https://maps.googleapis.com/maps/api/js";
     document.head.appendChild(script);
 
+    setOptions({ key: "foo" });
     await importLibrary("core");
 
     expect(logDevWarning).toHaveBeenCalled();
+  });
+});
+
+describe("deprecated Loader class", () => {
+  it("should throw an error when created", async () => {
+    const { Loader } = await import("./index.js");
+
+    expect(() => new Loader()).toThrow();
   });
 });
