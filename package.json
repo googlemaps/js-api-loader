@@ -32,7 +32,6 @@
     "lint": "eslint .",
     "test": "NODE_OPTIONS='--experimental-vm-modules --disable-warning=ExperimentalWarning' jest ./src",
     "build": "rm -rf ./dist && rollup -c && rm -rf ./dist/types",
-    "docs": "typedoc src/index.ts && npm run build && cp -r dist docs/dist && cp -r examples docs/examples",
     "format": "eslint . --fix"
   },
   "dependencies": {
@@ -63,7 +62,6 @@
     "rollup-plugin-dts": "^6.2.3",
     "ts-jest": "^29.1.1",
     "tslib": "^2.8.1",
-    "typedoc": "^0.28.12",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.42.0"
   },
