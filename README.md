@@ -120,8 +120,8 @@ Below is a short summary of the accepted options, see the
 - `authReferrerPolicy: string`: Set the referrer policy for the API requests.
 - `mapIds: string[]`: An array of map IDs to preload.
 - `channel: string`: Can be used to track your usage.
-- `solutionChannel`: Used by the Google Maps Platform to track adoption and
-  usage of examples and solutions.
+- `solutionChannel: string`: Used by the Google Maps Platform to track 
+  adoption and usage of examples and solutions.
 
 ### `importLibrary(library: string): Promise`
 
