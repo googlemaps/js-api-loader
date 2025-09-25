@@ -88,9 +88,10 @@ setOptions({ key: "your-api-key-here" });
 importLibrary("maps"); // needed for gmp-map
 importLibrary("marker"); // needed for gmp-advanced-marker
 
-// Wait for the map-componment to be upgraded
+// Wait for gmp-map to be upgraded and interact with it.
+await customElements.whenDefined('gmp-map');
 const map = document.querySelector("gmp-map");
-await map.whenDefined();
+// ...
 ```
 
 ## Documentation
