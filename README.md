@@ -73,8 +73,10 @@ importLibrary("maps").then(({ Map }) => {
 
 If you use custom HTML elements from the Google Maps JavaScript API (e.g.
 `<gmp-map>`, and `<gmp-advanced-marker>`), you need to import them as well.
-Note that you do not need to await the result of importLibrary in this case.
-The custom elements will upgrade automatically once the library is loaded.
+Note that you do not need to await the result of `importLibrary` in this case.
+The custom elements will upgrade automatically once the library is loaded
+and you can use the `whenDefined()` method to wait for the upgrade to
+complete.
 
 ```javascript
 import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
@@ -82,8 +84,13 @@ import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
 // Set the options for loading the API.
 setOptions({ key: "your-api-key-here" });
 
+// Start loading the libraries needed for custom elements.
 importLibrary("maps"); // needed for gmp-map
 importLibrary("marker"); // needed for gmp-advanced-marker
+
+// Wait for the map-componment to be upgraded
+const map = document.querySelector("gmp-map");
+await map.whenDefined();
 ```
 
 ## Documentation
