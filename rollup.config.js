@@ -59,47 +59,12 @@ export default [
       {
         file: "dist/index.cjs",
         format: "umd",
-        name: "google.maps.plugins.loader",
-        sourcemap: true,
-        plugins: [terser(terserOptions)],
-        exports: "named",
-      },
-      {
-        file: "dist/index.min.js",
-        format: "iife",
-        name: "google.maps.plugins.loader",
-        sourcemap: true,
-        plugins: [terser(terserOptions)],
-        exports: "named",
-      },
-      {
-        file: "dist/index.browser.mjs",
-        format: "esm",
+        name: "jsApiLoader",
         sourcemap: true,
         plugins: [terser(terserOptions)],
         exports: "named",
       },
     ],
-  },
-  // development IIFE build
-  {
-    input: "src/index.ts",
-    plugins: [
-      ...basePlugins,
-      replace({
-        preventAssignment: true,
-        values: {
-          __DEV__: true,
-        },
-      }),
-    ],
-    output: {
-      file: "dist/index.dev.js",
-      format: "iife",
-      name: "google.maps.plugins.loader",
-      sourcemap: true,
-      exports: "named",
-    },
   },
   // ESM build
   {
