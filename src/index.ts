@@ -143,4 +143,6 @@ function installImportLibrary_(options: APIOptions) {
   if (!importLibraryExists) bootstrap(options);
 }
 
+// export the deprecated (and non-functional) Loader class to trigger a strong
+// error-message for users migrating to the new version
 export * from "./deprecated.js";

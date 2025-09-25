@@ -28,7 +28,7 @@ script.
 
 ## Installation
 
-Install the [`@googlemaps/js-api-loader` NPM package][npm-pkg] with:
+Install [`@googlemaps/js-api-loader`][npm-pkg] with:
 
 ```sh
 npm install --save @googlemaps/js-api-loader
@@ -39,8 +39,6 @@ yarn add @googlemaps/js-api-loader
 # or
 pnpm add @googlemaps/js-api-loader
 ```
-
-### TypeScript
 
 TypeScript users should additionally install the types for the Google Maps
 JavaScript API:
@@ -73,8 +71,8 @@ importLibrary("maps").then(({ Map }) => {
 });
 ```
 
-If you use web components from the Google Maps JavaScript API (e.g. `gmp-map`,
-and `gmp-advanced-marker`), you need to import them as well:
+If you use custom HTML elements from the Google Maps JavaScript API (e.g.
+`<gmp-map>`, and `<gmp-advanced-marker>`), you need to import them as well:
 
 ```javascript
 import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
@@ -92,7 +90,6 @@ await Promise.all([importLibrary("maps"), importLibrary("marker")]);
 ## Documentation
 
 This package exports just two functions, `setOptions` and `importLibrary`.
-The functions are available as named exports and default export.
 
 ```ts
 // Using named exports:
@@ -100,45 +97,31 @@ import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
 
 setOptions({ key: GOOGLE_MAPS_API_KEY });
 await importLibrary("core");
-
-// Using the default export:
-import MapsAPILoader from "@googlemaps/js-api-loader";
-
-MapsAPILoader.setOptions({ key: GOOGLE_MAPS_API_KEY });
-await MapsAPILoader.importLibrary("core");
 ```
 
 ### `setOptions(options: APIOptions): void`
 
-Sets the options for loading the Google Maps JavaScript API. See the
-[documentation][parameters] for additional information.
+Sets the options for loading the Google Maps JavaScript API and installs the
+global `google.maps.importLibrary` function that is used by the importLibrary
+function.
 
-Supported options:
+This function should be called as early as possible in your application and
+should only be called once. Any further calls will not have any effect and
+log a warning to the console.
 
-- `key: string`: Your API key.
+Below is a short summary of the accepted options, see the
+[documentation][parameters] for full descriptions and additional information:
+
+- `key: string`: Your API key. This is the only required option.
 - `v: string`: The version of the Maps JavaScript API to load.
-- `language: string`: The language to use. This affects the names of
-  controls, copyright notices, driving directions, and control labels, and
-  the responses to service requests.
-- `region: string`: The region code to use. This alters the API's behavior
-  based on a given country or territory.
-- `libraries: string[]`: An array of additional Maps JavaScript API libraries to
-  load. Specifying a fixed set of libraries is not generally recommended, but is
-  available for developers who want to finely tune the caching behavior on their
-  website.
-- `authReferrerPolicy: string`: Can be used to configure HTTP Referrer
-  Restrictions in the Cloud Console to limit which URLs are allowed to use a
-  particular API Key.
-- `mapIds: string[]`: An array of map IDs. Causes the configuration for the
-  specified map IDs to be preloaded. Specifying map IDs here is not required
-  for map IDs usage, but is available for developers who want to finely tune
-  network performance.
-- `channel: string`: Can be used to track your usage using numeric channels.
-  Only numeric values `0` to `999` are allowed.
-- `solutionChannel`: Google Maps Platform provides many types of sample code to
-  help you get up and running quickly. To track adoption of our more complex
-  code samples and improve solution quality, Google includes the solutionChannel
-  query parameter in API calls in our sample code.
+- `language: string`: The language to use.
+- `region: string`: The region code to use.
+- `libraries: string[]`: additional libraries to load.
+- `authReferrerPolicy: string`: Set the referrer policy for the API requests.
+- `mapIds: string[]`: An array of map IDs to preload.
+- `channel: string`: Can be used to track your usage.
+- `solutionChannel`: Used by the Google Maps Platform to track adoption and
+  usage of examples and solutions.
 
 ### `importLibrary(library: string): Promise`
 
@@ -147,9 +130,8 @@ library object when the library is loaded. In case of an error while loading
 the library (might be due to poor network conditions and other unforseeable
 circumstances), the promise is rejected with an error.
 
-Calling this function for the first time will trigger loading the maps API
-itself. After that, the options can no longer be changed, and trying to do
-that will log a warning to the console.
+Calling this function for the first time will trigger loading the Google 
+Maps JavaScript API itself.
 
 The following libraries are available:
 
@@ -186,7 +168,7 @@ Platform [Terms of Service].
 
 This library is not a Google Maps Platform Core Service. Therefore, the
 Google Maps Platform Terms of Service (e.g. Technical Support Services,
-Service Level Agreements, and Deprecation Policy) don’t apply to the code
+Service Level Agreements, and Deprecation Policy) do not apply to the code
 in this library.
 
 ### European Economic Area (EEA) developers
