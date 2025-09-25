@@ -72,7 +72,9 @@ importLibrary("maps").then(({ Map }) => {
 ```
 
 If you use custom HTML elements from the Google Maps JavaScript API (e.g.
-`<gmp-map>`, and `<gmp-advanced-marker>`), you need to import them as well:
+`<gmp-map>`, and `<gmp-advanced-marker>`), you need to import them as well.
+Note that you do not need to await the result of importLibrary in this case.
+The custom elements will upgrade automatically once the library is loaded.
 
 ```javascript
 import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
@@ -80,16 +82,13 @@ import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
 // Set the options for loading the API.
 setOptions({ key: "your-api-key-here" });
 
-await importLibrary("maps"); // needed for gmp-map
-await importLibrary("marker"); // needed for gmp-advanced-marker
-
-// Or:
-await Promise.all([importLibrary("maps"), importLibrary("marker")]);
+importLibrary("maps"); // needed for gmp-map
+importLibrary("marker"); // needed for gmp-advanced-marker
 ```
 
 ## Documentation
 
-This package exports just two functions, `setOptions` and `importLibrary`.
+This package exports just two functions, `setOptions()` and `importLibrary()`.
 
 ```ts
 // Using named exports:
@@ -120,7 +119,7 @@ Below is a short summary of the accepted options, see the
 - `authReferrerPolicy: string`: Set the referrer policy for the API requests.
 - `mapIds: string[]`: An array of map IDs to preload.
 - `channel: string`: Can be used to track your usage.
-- `solutionChannel: string`: Used by the Google Maps Platform to track 
+- `solutionChannel: string`: Used by the Google Maps Platform to track
   adoption and usage of examples and solutions.
 
 ### `importLibrary(library: string): Promise`
@@ -130,7 +129,7 @@ library object when the library is loaded. In case of an error while loading
 the library (might be due to poor network conditions and other unforseeable
 circumstances), the promise is rejected with an error.
 
-Calling this function for the first time will trigger loading the Google 
+Calling this function for the first time will trigger loading the Google
 Maps JavaScript API itself.
 
 The following libraries are available:
