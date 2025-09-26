@@ -1,13 +1,8 @@
 [![npm](https://img.shields.io/npm/v/@googlemaps/js-api-loader)][npm-pkg]
-![Release](https://github.com/googlemaps/js-api-loader/workflows/Release/badge.svg)
+[![License](https://img.shields.io/github/license/googlemaps/js-api-loader?color=blue)][license]
 ![Stable](https://img.shields.io/badge/stability-stable-green)
 [![Tests/Build](https://github.com/googlemaps/js-api-loader/actions/workflows/test.yml/badge.svg)](https://github.com/googlemaps/js-api-loader/actions/workflows/test.yml)
-
-[![codecov](https://codecov.io/gh/googlemaps/js-api-loader/branch/main/graph/badge.svg)](https://codecov.io/gh/googlemaps/js-api-loader)
-[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
-
-![Contributors](https://img.shields.io/github/contributors/googlemaps/js-api-loader?color=green)
-[![License](https://img.shields.io/github/license/googlemaps/js-api-loader?color=blue)][license]
+[![codecov](https://codecov.io/gh/googlemaps/js-api-loader/branch/main/graph/badge.svg)](https://app.codecov.io/gh/googlemaps/js-api-loader/tree/main)
 [![StackOverflow](https://img.shields.io/stackexchange/stackoverflow/t/google-maps?color=orange&label=google-maps&logo=stackoverflow)](https://stackoverflow.com/questions/tagged/google-maps)
 [![Discord](https://img.shields.io/discord/676948200904589322?color=6A7EC2&logo=discord&logoColor=ffffff)][Discord server]
 
