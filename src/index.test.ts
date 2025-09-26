@@ -1,11 +1,11 @@
 /**
- * Copyright 2019 Google LLC. All Rights Reserved.
+ * Copyright 2025 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at.
+ * You may obtain a copy of the License at
  *
- *      Http://www.apache.org/licenses/LICENSE-2.0.
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,457 +13,193 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/* eslint @typescript-eslint/no-explicit-any: 0 */
-import { DEFAULT_ID, Loader, LoaderOptions, LoaderStatus } from ".";
 
-jest.useFakeTimers();
+import { jest } from "@jest/globals";
+import type { bootstrap } from "./bootstrap.js";
 
-afterEach(() => {
-  document.getElementsByTagName("html")[0].innerHTML = "";
-  delete Loader["instance"];
-  if (window.google) delete window.google;
-});
+type ImportLibraryMock = jest.Mock<typeof google.maps.importLibrary>;
 
-test.each([
-  [
-    {},
-    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&loading=async",
-  ],
-  [
-    { apiKey: "foo" },
-    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&loading=async&key=foo",
-  ],
-  [
-    {
-      apiKey: "foo",
-      version: "weekly",
-      libraries: ["marker", "places"],
-      language: "language",
-      region: "region",
+const messages = await import("./messages.js");
+
+const mockImportLibrary: ImportLibraryMock = jest.fn();
+
+const mockBootstrap: jest.Mock<typeof bootstrap> = jest.fn(() => {
+  // The bootstrap mock needs to provide `google.maps.importLibrary` for the
+  // tests.
+  globalThis.google = {
+    maps: {
+      importLibrary: mockImportLibrary,
     },
-    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&loading=async&key=foo&libraries=marker,places&language=language&region=region&v=weekly",
-  ],
-  [
-    { mapIds: ["foo", "bar"] },
-    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&loading=async&map_ids=foo,bar",
-  ],
-  [
-    { url: "https://example.com/js" },
-    "https://example.com/js?callback=__googleMapsCallback&loading=async",
-  ],
-  [
-    { client: "bar", channel: "foo" },
-    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&loading=async&channel=foo&client=bar",
-  ],
-  [
-    { authReferrerPolicy: "origin" },
-    "https://maps.googleapis.com/maps/api/js?callback=__googleMapsCallback&loading=async&auth_referrer_policy=origin",
-  ],
-])("createUrl is correct", (options: LoaderOptions, expected: string) => {
-  const loader = new Loader(options);
-  expect(loader.createUrl()).toEqual(expected);
-  expect(loader.status).toBe(LoaderStatus.INITIALIZED);
+  } as unknown as typeof globalThis.google;
 });
 
-test("uses default id if empty string", () => {
-  expect(new Loader({ apiKey: "foo", id: "" }).id).toBe(DEFAULT_ID);
+jest.unstable_mockModule("./bootstrap.js", () => ({
+  bootstrap: mockBootstrap,
+}));
+
+jest.unstable_mockModule("./messages.js", () => ({
+  ...messages,
+  logError: jest.fn(),
+  logDevWarning: jest.fn(),
+  logDevNotice: jest.fn(),
+}));
+
+beforeEach(() => {
+  jest.resetModules();
+  jest.clearAllMocks();
+
+  delete globalThis.google;
 });
 
-test("setScript adds a script to head with correct attributes", async () => {
-  const loader = new Loader({ apiKey: "foo" });
+describe("importLibrary(): basic operation", () => {
+  it("should bootstrap when setOptions is called", async () => {
+    const { setOptions } = await import("./index.js");
 
-  loader["setScript"]();
-  await 0;
+    setOptions({ key: "foo" });
 
-  const script = document.head.childNodes[0] as HTMLScriptElement;
-
-  expect(script.id).toEqual(loader.id);
-});
-
-test("setScript adds a script with id", async () => {
-  const loader = new Loader({ apiKey: "foo", id: "bar" });
-  loader["setScript"]();
-  await 0;
-
-  const script = document.head.childNodes[0] as HTMLScriptElement;
-  expect(script.localName).toEqual("script");
-  expect(loader.id).toEqual("bar");
-  expect(script.id).toEqual("bar");
-});
-
-test("setScript does not add second script with same id", async () => {
-  new Loader({ apiKey: "foo", id: "bar" })["setScript"]();
-  new Loader({ apiKey: "foo", id: "bar" })["setScript"]();
-  await 0;
-  new Loader({ apiKey: "foo", id: "bar" })["setScript"]();
-  await 0;
-
-  expect(document.head.childNodes.length).toBe(1);
-});
-
-test("setScript adds a script to head with valid src", async () => {
-  const loader = new Loader({ apiKey: "foo" });
-
-  loader["setScript"]();
-  await 0;
-
-  const script = document.head.childNodes[0] as HTMLScriptElement;
-
-  expect(script.src).toEqual(
-    "https://maps.googleapis.com/maps/api/js?libraries=core&key=foo&callback=google.maps.__ib__"
-  );
-});
-
-test("setScript adds a script to head with valid src with libraries", async () => {
-  const loader = new Loader({ apiKey: "foo", libraries: ["marker", "places"] });
-
-  loader["setScript"]();
-  await 0;
-
-  const script = document.head.childNodes[0] as HTMLScriptElement;
-
-  expect(script.src).toEqual(
-    "https://maps.googleapis.com/maps/api/js?libraries=marker%2Cplaces&key=foo&callback=google.maps.__ib__"
-  );
-});
-
-test("load should return a promise that resolves even if called twice", () => {
-  const loader = new Loader({ apiKey: "foo" });
-  loader.importLibrary = (() => Promise.resolve()) as any;
-
-  expect.assertions(1);
-  const promise = Promise.all([loader.load(), loader.load()]).then(() => {
-    expect(loader["done"]).toBeTruthy();
+    expect(mockBootstrap).toHaveBeenCalledTimes(1);
   });
 
-  return promise;
-});
+  it("should forward importLibrary calls", async () => {
+    const { importLibrary, setOptions } = await import("./index.js");
 
-test("loadCallback callback should fire", () => {
-  const loader = new Loader({ apiKey: "foo" });
-  loader.importLibrary = (() => Promise.resolve()) as any;
+    setOptions({ key: "foo" });
+    await importLibrary("maps");
 
-  expect.assertions(2);
-  loader.loadCallback((e: Event) => {
-    expect(loader["done"]).toBeTruthy();
-    expect(e).toBeUndefined();
+    expect(mockImportLibrary).toHaveBeenCalledTimes(1);
+    expect(mockImportLibrary).toHaveBeenCalledWith("maps");
+  });
+
+  it("should pass options to the bootstrap function", async () => {
+    const { setOptions, importLibrary } = await import("./index.js");
+
+    const options = { key: "foo", v: "bar" };
+
+    setOptions(options);
+    await importLibrary("maps");
+
+    expect(mockBootstrap).toHaveBeenCalledWith(options);
+  });
+
+  it("should return the value from importLibrary", async () => {
+    const { setOptions, importLibrary } = await import("./index.js");
+
+    // The mocked library object is a placeholder to verify that `importLibrary`
+    // returns the correct value. The actual content doesn't need to be
+    // accurate.
+    const lib = {} as never as google.maps.MapsLibrary;
+    mockImportLibrary.mockResolvedValue(lib);
+
+    setOptions({ key: "foo" });
+    const result = await importLibrary("core");
+    expect(result).toBe(lib);
+  });
+
+  it("should pass the library name to the google.maps.importLibrary function", async () => {
+    const { setOptions, importLibrary } = await import("./index.js");
+
+    setOptions({ key: "foo" });
+    await importLibrary("core");
+
+    expect(mockImportLibrary).toHaveBeenCalledWith("core");
+  });
+
+  it("should return a rejected promise if importLibrary is called without setOptions", async () => {
+    const { importLibrary } = await import("./index.js");
+
+    await expect(importLibrary("core")).rejects.toThrow();
+  });
+
+  it("should log a warning if setOptions is called multiple times", async () => {
+    const { setOptions } = await import("./index.js");
+    const { logDevWarning } = await import("./messages.js");
+
+    setOptions({ key: "foo", v: "bar" });
+    setOptions({ key: "a", v: "b" });
+
+    expect(logDevWarning).toHaveBeenCalled();
+  });
+
+  it("should log an error if importLibrary is called without setOptions", async () => {
+    const { importLibrary } = await import("./index.js");
+    const { logDevWarning } = await import("./messages.js");
+
+    try {
+      await importLibrary("core");
+    } catch {}
+
+    expect(logDevWarning).toHaveBeenCalled();
   });
 });
 
-test("script onerror should reject promise", async () => {
-  const loader = new Loader({ apiKey: "foo", retries: 0 });
-
-  const rejection = expect(loader.load()).rejects.toBeInstanceOf(Error);
-
-  loader["loadErrorCallback"](
-    new ErrorEvent("ErrorEvent(", { error: new Error("") })
-  );
-
-  await rejection;
-  expect(loader["done"]).toBeTruthy();
-  expect(loader["loading"]).toBeFalsy();
-  expect(loader["errors"].length).toBe(1);
-  expect(loader.status).toBe(LoaderStatus.FAILURE);
-});
-
-test("script onerror should reject promise with multiple loaders", async () => {
-  const loader = new Loader({ apiKey: "foo", retries: 0 });
-  const extraLoader = new Loader({ apiKey: "foo", retries: 0 });
-
-  let rejection = expect(loader.load()).rejects.toBeInstanceOf(Error);
-  loader["loadErrorCallback"](
-    new ErrorEvent("ErrorEvent(", { error: new Error("") })
-  );
-
-  await rejection;
-  expect(loader["done"]).toBeTruthy();
-  expect(loader["loading"]).toBeFalsy();
-  expect(loader["onerrorEvent"]).toBeInstanceOf(ErrorEvent);
-
-  rejection = expect(extraLoader.load()).rejects.toBeInstanceOf(Error);
-  loader["loadErrorCallback"](
-    new ErrorEvent("ErrorEvent(", { error: new Error("") })
-  );
-
-  await rejection;
-  expect(extraLoader["done"]).toBeTruthy();
-  expect(extraLoader["loading"]).toBeFalsy();
-});
-
-test("script onerror should retry", async () => {
-  const loader = new Loader({ apiKey: "foo", retries: 1 });
-  const deleteScript = jest.spyOn(loader, "deleteScript");
-  loader.importLibrary = (() => Promise.reject(new Error("fake error"))) as any;
-  const rejection = expect(loader.load()).rejects.toBeInstanceOf(Error);
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  console.error = jest.fn();
-
-  // wait for the first failure
-  await 0;
-  await 0;
-  expect(loader["errors"].length).toBe(1);
-  // trigger the retry delay:
-  jest.runAllTimers();
-
-  await rejection;
-  expect(loader["errors"].length).toBe(2);
-  expect(loader["done"]).toBeTruthy();
-  expect(loader["failed"]).toBeTruthy();
-  expect(loader["loading"]).toBeFalsy();
-  expect(deleteScript).toHaveBeenCalledTimes(1);
-  expect(console.error).toHaveBeenCalledTimes(loader.retries);
-});
-
-test("script onerror should reset retry mechanism with next loader", async () => {
-  const loader = new Loader({ apiKey: "foo", retries: 1 });
-  const deleteScript = jest.spyOn(loader, "deleteScript");
-  loader.importLibrary = (() => Promise.reject(new Error("fake error"))) as any;
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  console.error = jest.fn();
-
-  let rejection = expect(loader.load()).rejects.toBeInstanceOf(Error);
-  // wait for the first first failure
-  await 0;
-  await 0;
-  expect(loader["errors"].length).toBe(1);
-  // trigger the retry delay:
-  jest.runAllTimers();
-  await rejection;
-
-  // try again...
-  rejection = expect(loader.load()).rejects.toBeInstanceOf(Error);
-  expect(loader["done"]).toBeFalsy();
-  expect(loader["failed"]).toBeFalsy();
-  expect(loader["loading"]).toBeTruthy();
-  expect(loader["errors"].length).toBe(0);
-
-  // wait for the second first failure
-  await 0;
-  await 0;
-  expect(loader["errors"].length).toBe(1);
-  // trigger the retry delay:
-  jest.runAllTimers();
-
-  await rejection;
-  expect(deleteScript).toHaveBeenCalledTimes(3);
-  expect(console.error).toHaveBeenCalledTimes(loader.retries * 2);
-});
-
-test("script onerror should not reset retry mechanism with parallel loaders", async () => {
-  const loader = new Loader({ apiKey: "foo", retries: 1 });
-  const deleteScript = jest.spyOn(loader, "deleteScript");
-  loader.importLibrary = (() => Promise.reject(new Error("fake error"))) as any;
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  console.error = jest.fn();
-
-  const rejection1 = expect(loader.load()).rejects.toBeInstanceOf(Error);
-  const rejection2 = expect(loader.load()).rejects.toBeInstanceOf(Error);
-  // wait for the first first failure
-  await 0;
-  await 0;
-  jest.runAllTimers();
-
-  await Promise.all([rejection1, rejection2]);
-  expect(loader["done"]).toBeTruthy();
-  expect(loader["loading"]).toBeFalsy();
-  expect(loader["errors"].length).toBe(2);
-  expect(deleteScript).toHaveBeenCalledTimes(1);
-  expect(console.error).toHaveBeenCalledTimes(loader.retries);
-});
-
-test("reset should clear state", () => {
-  const loader = new Loader({ apiKey: "foo", retries: 0 });
-  const deleteScript = jest.spyOn(loader, "deleteScript");
-
-  loader["done"] = true;
-  loader["loading"] = false;
-  loader["errors"] = [new ErrorEvent("foo")];
-
-  loader["reset"]();
-
-  expect(loader["done"]).toBeFalsy();
-  expect(loader["loading"]).toBeFalsy();
-  expect(loader["onerrorEvent"]).toBe(null);
-  expect(deleteScript).toHaveBeenCalledTimes(1);
-});
-
-test("failed getter should be correct", () => {
-  const loader = new Loader({ apiKey: "foo", retries: 0 });
-
-  // initial
-  expect(loader["failed"]).toBeFalsy();
-
-  // not done
-  loader["done"] = false;
-  loader["loading"] = false;
-  loader["errors"] = [new ErrorEvent("foo")];
-  expect(loader["failed"]).toBeFalsy();
-
-  // still loading
-  loader["done"] = false;
-  loader["loading"] = true;
-  loader["errors"] = [new ErrorEvent("foo")];
-  expect(loader["failed"]).toBeFalsy();
-
-  // no errors
-  loader["done"] = true;
-  loader["loading"] = false;
-  loader["errors"] = [];
-  expect(loader["failed"]).toBeFalsy();
-
-  // done with errors
-  loader["done"] = true;
-  loader["loading"] = false;
-  loader["errors"] = [new ErrorEvent("foo")];
-  expect(loader["failed"]).toBeTruthy();
-});
-
-test("loader should not reset retry mechanism if successfully loaded", async () => {
-  const loader = new Loader({ apiKey: "foo", retries: 0 });
-  const deleteScript = jest.spyOn(loader, "deleteScript");
-  loader.importLibrary = (() => Promise.resolve()) as any;
-
-  await expect(loader.load()).resolves.not.toBeUndefined();
-
-  expect(loader["done"]).toBeTruthy();
-  expect(loader["loading"]).toBeFalsy();
-  expect(deleteScript).toHaveBeenCalledTimes(0);
-});
-
-test("singleton should be used", () => {
-  const loader = new Loader({ apiKey: "foo" });
-  const extraLoader = new Loader({ apiKey: "foo" });
-  expect(extraLoader).toBe(loader);
-
-  loader["done"] = true;
-  expect(extraLoader["done"]).toBe(loader["done"]);
-  expect(loader.status).toBe(LoaderStatus.SUCCESS);
-});
-
-test("singleton should throw with different options", () => {
-  new Loader({ apiKey: "foo" });
-  expect(() => {
-    new Loader({ apiKey: "bar" });
-  }).toThrow();
-});
-
-test("loader should resolve immediately when successfully loaded", async () => {
-  // use await/async pattern since the promise resolves without trigger
-  const loader = new Loader({ apiKey: "foo", retries: 0 });
-  loader["done"] = true;
-  // TODO causes warning
-  window.google = { maps: { version: "3.*.*" } as any };
-  await expect(loader.loadPromise()).resolves.toBeDefined();
-});
-
-test("loader should resolve immediately when failed loading", async () => {
-  // use await/async pattern since the promise rejects without trigger
-  const loader = new Loader({ apiKey: "foo", retries: 0 });
-  loader["done"] = true;
-  loader["onerrorEvent"] = new ErrorEvent("ErrorEvent(", {
-    error: new Error(""),
+describe("importLibrary(): existing loaders and/or script tags", () => {
+  beforeEach(() => {
+    document.head.innerHTML = "";
   });
 
-  await expect(loader.loadPromise()).rejects.toBeDefined();
+  it("shouldn't bootstrap if google.maps.importLibrary is available", async () => {
+    const { importLibrary } = await import("./index.js");
+    const existingMockImportLibrary: ImportLibraryMock = jest.fn();
+    globalThis.google = {
+      maps: { importLibrary: existingMockImportLibrary },
+    } as unknown as typeof globalThis.google;
+
+    const script = document.createElement("script");
+    script.src = "https://maps.googleapis.com/maps/api/js";
+    document.head.appendChild(script);
+
+    await importLibrary("core");
+
+    expect(mockBootstrap).not.toHaveBeenCalled();
+    expect(existingMockImportLibrary).toHaveBeenCalledWith("core");
+  });
+
+  it("should bootstrap if google.maps.importLibrary isn't available", async () => {
+    const { setOptions, importLibrary } = await import("./index.js");
+
+    const script = document.createElement("script");
+    script.src = "https://maps.googleapis.com/maps/api/js";
+    document.head.appendChild(script);
+
+    setOptions({ key: "foo" });
+    await importLibrary("core");
+
+    expect(mockBootstrap).toHaveBeenCalled();
+  });
+
+  it("should log a message if google.maps.importLibrary is already defined", async () => {
+    const { setOptions, importLibrary } = await import("./index.js");
+    const { logDevNotice } = await import("./messages.js");
+
+    globalThis.google = {
+      maps: { importLibrary: jest.fn() },
+    } as unknown as typeof globalThis.google;
+
+    setOptions({ key: "foo" });
+    await importLibrary("core");
+
+    expect(logDevNotice).toHaveBeenCalled();
+  });
+
+  it("should log a message if a script tag is already defined", async () => {
+    const { setOptions, importLibrary } = await import("./index.js");
+    const { logDevWarning } = await import("./messages.js");
+
+    const script = document.createElement("script");
+    script.src = "https://maps.googleapis.com/maps/api/js";
+    document.head.appendChild(script);
+
+    setOptions({ key: "foo" });
+    await importLibrary("core");
+
+    expect(logDevWarning).toHaveBeenCalled();
+  });
 });
 
-test("loader should wait if already loading", () => {
-  const loader = new Loader({ apiKey: "foo", retries: 0 });
-  loader["loading"] = true;
-  expect(loader.status).toBe(LoaderStatus.LOADING);
-  loader.load();
-});
+describe("deprecated Loader class", () => {
+  it("should throw an error when created", async () => {
+    const { Loader } = await import("./index.js");
 
-test("setScript adds a nonce", async () => {
-  const nonce = "bar";
-  const loader = new Loader({ apiKey: "foo", nonce });
-  loader["setScript"]();
-  await 0;
-  const script = document.head.childNodes[0] as HTMLScriptElement;
-  expect(script.nonce).toBe(nonce);
-});
-
-test("loader should resolve immediately when google.maps defined", async () => {
-  const loader = new Loader({ apiKey: "foo" });
-  window.google = { maps: { version: "3.*.*" } as any };
-  console.warn = jest.fn();
-  await expect(loader.loadPromise()).resolves.toBeDefined();
-  delete window.google;
-  expect(console.warn).toHaveBeenCalledTimes(1);
-});
-
-test("loader should not warn if done and google.maps is defined", async () => {
-  const loader = new Loader({ apiKey: "foo" });
-  loader["done"] = true;
-  window.google = { maps: { version: "3.*.*" } as any };
-  console.warn = jest.fn();
-  await expect(loader.loadPromise()).resolves.toBeDefined();
-  delete window.google;
-  expect(console.warn).toHaveBeenCalledTimes(0);
-});
-
-test("deleteScript removes script tag from head", async () => {
-  const loader = new Loader({ apiKey: "foo" });
-  loader["setScript"]();
-  await 0;
-  expect(document.head.childNodes.length).toBe(1);
-  loader.deleteScript();
-  expect(document.head.childNodes.length).toBe(0);
-  // should work without script existing
-  loader.deleteScript();
-  expect(document.head.childNodes.length).toBe(0);
-});
-
-test("importLibrary resolves correctly", async () => {
-  window.google = { maps: {} } as any;
-  google.maps.importLibrary = async (name) => ({ [name]: "fake" }) as any;
-
-  const loader = new Loader({ apiKey: "foo" });
-  const corePromise = loader.importLibrary("core");
-
-  const core = await corePromise;
-  expect(core).toEqual({ core: "fake" });
-});
-
-test("importLibrary resolves correctly without warning with sequential await", async () => {
-  console.warn = jest.fn();
-  window.google = { maps: {} } as any;
-  google.maps.importLibrary = async (name) => {
-    google.maps.version = "3.*.*";
-    return { [name]: "fake" } as any;
-  };
-
-  const loader = new Loader({ apiKey: "foo" });
-  const core = await loader.importLibrary("core");
-  const marker = await loader.importLibrary("marker");
-
-  expect(console.warn).toHaveBeenCalledTimes(0);
-  expect(core).toEqual({ core: "fake" });
-  expect(marker).toEqual({ marker: "fake" });
-});
-
-test("importLibrary can also set up bootstrap libraries (if bootstrap libraries empty)", async () => {
-  const loader = new Loader({ apiKey: "foo" });
-  loader.importLibrary("marker");
-  loader.importLibrary("places");
-
-  await 0;
-
-  const script = document.head.childNodes[0] as HTMLScriptElement;
-
-  expect(script.src).toEqual(
-    "https://maps.googleapis.com/maps/api/js?libraries=core%2Cmarker%2Cplaces&key=foo&callback=google.maps.__ib__"
-  );
-});
-
-test("importLibrary resolves correctly even with different bootstrap libraries", async () => {
-  window.google = { maps: {} } as any;
-  google.maps.importLibrary = async (name) => ({ [name]: "fake" }) as any;
-
-  const loader = new Loader({ apiKey: "foo", libraries: ["places"] });
-  const corePromise = loader.importLibrary("core");
-
-  const core = await corePromise;
-  expect(core).toEqual({ core: "fake" });
-  expect(await loader.importLibrary("places")).toEqual({ places: "fake" });
+    expect(() => new Loader()).toThrow();
+  });
 });

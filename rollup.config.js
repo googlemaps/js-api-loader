@@ -17,64 +17,83 @@
 import { babel } from "@rollup/plugin-babel";
 import commonjs from "@rollup/plugin-commonjs";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
+import replace from "@rollup/plugin-replace";
 import terser from "@rollup/plugin-terser";
 import typescript from "@rollup/plugin-typescript";
+import { dts } from "rollup-plugin-dts";
 
 const terserOptions = {
   output: { comments: "some" },
 };
+
+const basePlugins = [
+  typescript({
+    tsconfig: "./tsconfig.build.json",
+    declaration: true,
+    declarationDir: "dist/types",
+  }),
+  nodeResolve({
+    mainFields: ["browser", "jsnext:main", "module", "main"],
+  }),
+  commonjs(),
+  babel({
+    extensions: [".js", ".ts"],
+    babelHelpers: "bundled",
+  }),
+];
 
 export default [
   // UMD and browser (iife) builds
   {
     input: "src/index.ts",
     plugins: [
-      typescript({ tsconfig: "./tsconfig.build.json", declarationDir: "./dist" }),
-      nodeResolve({
-        mainFields: ["browser", "jsnext:main", "module", "main"],
-      }),
-      commonjs(),
-      babel({
-        extensions: [".js", ".ts"],
-        babelHelpers: "bundled",
+      ...basePlugins,
+      replace({
+        preventAssignment: true,
+        values: {
+          __DEV__: false,
+        },
       }),
     ],
     output: [
       {
-        file: "dist/index.umd.js",
+        file: "dist/index.cjs",
         format: "umd",
-        name: "google.maps.plugins.loader",
+        name: "jsApiLoader",
         sourcemap: true,
         plugins: [terser(terserOptions)],
-      },
-      {
-        file: "dist/index.min.js",
-        format: "iife",
-        name: "google.maps.plugins.loader",
-        sourcemap: true,
-        plugins: [terser(terserOptions)],
-      },
-      {
-        file: "dist/index.dev.js",
-        format: "iife",
-        name: "google.maps.plugins.loader",
-        sourcemap: true,
+        exports: "named",
       },
     ],
   },
-
   // ESM build
   {
     input: "src/index.ts",
     plugins: [
-      typescript({ tsconfig: "./tsconfig.build.json", declarationDir: "./dist" }),
+      typescript({
+        tsconfig: "./tsconfig.build.json",
+        declaration: false,
+      }),
       nodeResolve(),
       commonjs(),
+      replace({
+        preventAssignment: true,
+        values: {
+          __DEV__: 'process.env.NODE_ENV !== "production"',
+        },
+      }),
     ],
     output: {
-      file: "dist/index.mjs",
+      file: "dist/index.js",
       format: "esm",
       sourcemap: true,
+      exports: "named",
     },
+  },
+  // types
+  {
+    input: "./dist/types/index.d.ts",
+    output: [{ file: "dist/index.d.ts", format: "es" }],
+    plugins: [dts()],
   },
 ];

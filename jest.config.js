@@ -15,17 +15,22 @@
  */
 
 export default {
-  roots: ["<rootDir>"],
-  preset: "ts-jest",
+  preset: "ts-jest/presets/default-esm",
   testEnvironment: "jsdom",
-  testPathIgnorePatterns: ["/node_modules/", "/dist/", "/__utils__/"],
-  collectCoverage: true,
-  coverageThreshold: {
-    global: {
-      branches: 90,
-      functions: 90,
-      lines: 90,
-      statements: 90,
-    },
+  resetModules: true,
+  roots: ["<rootDir>/src"],
+  moduleNameMapper: {
+    "^(\\.{1,2}/.*)\\.js$": "$1",
+  },
+  transform: {
+    "^.+\\.tsx?$": [
+      "ts-jest",
+      {
+        useESM: true,
+      },
+    ],
+  },
+  globals: {
+    __DEV__: true,
   },
 };

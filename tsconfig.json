@@ -1,14 +1,15 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "declarationDir": "./dist",
     "noImplicitAny": true,
-    "outDir": "./dist",
     "sourceMap": true,
     "esModuleInterop": true,
-    "lib": ["DOM", "ESNext"],
-    "target": "ES6",
-    "moduleResolution": "node"
+    "isolatedModules": true,
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "target": "es2020",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "types": ["google.maps", "jest"]
   },
   "include": ["src/**/*", "e2e/**/*.ts"],
   "exclude": ["node_modules", "./dist"]
