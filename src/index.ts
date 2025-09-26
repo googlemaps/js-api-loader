@@ -63,7 +63,6 @@ type APILibraryName = keyof APILibraryMap;
 declare const __DEV__: boolean;
 
 let setOptionsWasCalled_ = false;
-let options_: APIOptions = {};
 
 /**
  * Sets the options for the Maps JavaScript API.
@@ -82,9 +81,7 @@ export function setOptions(options: APIOptions) {
     return;
   }
 
-  options_ = options;
-
-  installImportLibrary_(options_);
+  installImportLibrary_(options);
   setOptionsWasCalled_ = true;
 }
 
@@ -112,8 +109,9 @@ export async function importLibrary(libraryName: string): Promise<unknown> {
     logDevWarning(MSG_SET_OPTIONS_NOT_CALLED);
   }
 
-  if (!window?.google?.maps?.importLibrary)
+  if (!window?.google?.maps?.importLibrary) {
     throw new Error("google.maps.importLibrary is not installed.");
+  }
 
   return (await google.maps.importLibrary(
     libraryName
@@ -140,7 +138,9 @@ function installImportLibrary_(options: APIOptions) {
 
   // If the google.maps.importLibrary function already exists, bootstrap()
   // won't do anything, so we won't call it
-  if (!importLibraryExists) bootstrap(options);
+  if (!importLibraryExists) {
+    bootstrap(options);
+  }
 }
 
 // export the deprecated (and non-functional) Loader class to trigger a strong

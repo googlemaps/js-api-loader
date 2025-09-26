@@ -73,7 +73,7 @@ importLibrary("maps").then(({ Map }) => {
 
 If you use custom HTML elements from the Google Maps JavaScript API (e.g.
 `<gmp-map>`, and `<gmp-advanced-marker>`), you need to import them as well.
-Note that you do not need to await the result of `importLibrary` in this case.
+Note that you do not need to await the result of `importLibrary()` in this case.
 The custom elements will upgrade automatically once the library is loaded
 and you can use the `whenDefined()` method to wait for the upgrade to
 complete.
@@ -85,11 +85,11 @@ import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
 setOptions({ key: "your-api-key-here" });
 
 // Start loading the libraries needed for custom elements.
-importLibrary("maps"); // needed for gmp-map
-importLibrary("marker"); // needed for gmp-advanced-marker
+importLibrary("maps"); // needed for <gmp-map>
+importLibrary("marker"); // needed for <gmp-advanced-marker>
 
 // Wait for gmp-map to be upgraded and interact with it.
-await customElements.whenDefined('gmp-map');
+await customElements.whenDefined("gmp-map");
 const map = document.querySelector("gmp-map");
 // ...
 ```
@@ -109,8 +109,8 @@ await importLibrary("core");
 ### `setOptions(options: APIOptions): void`
 
 Sets the options for loading the Google Maps JavaScript API and installs the
-global `google.maps.importLibrary` function that is used by the importLibrary
-function.
+global `google.maps.importLibrary()` function that is used by the
+`importLibrary()` function of this package.
 
 This function should be called as early as possible in your application and
 should only be called once. Any further calls will not have any effect and
@@ -123,7 +123,7 @@ Below is a short summary of the accepted options, see the
 - `v: string`: The version of the Maps JavaScript API to load.
 - `language: string`: The language to use.
 - `region: string`: The region code to use.
-- `libraries: string[]`: additional libraries to load.
+- `libraries: string[]`: Additional libraries to load.
 - `authReferrerPolicy: string`: Set the referrer policy for the API requests.
 - `mapIds: string[]`: An array of map IDs to preload.
 - `channel: string`: Can be used to track your usage.

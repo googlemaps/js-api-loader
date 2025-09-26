@@ -2,10 +2,11 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 import pluginJest from "eslint-plugin-jest";
 import eslintConfigPrettier from "eslint-config-prettier";
+import { defineConfig } from "eslint/config";
 
-export default tseslint.config(
+export default defineConfig(
   {
-    ignores: ["dist/", "node_modules/", "docs/", "src/bootstrap.js"],
+    ignores: ["dist/", "node_modules/", "src/bootstrap.js"],
   },
   {
     languageOptions: {
@@ -18,10 +19,6 @@ export default tseslint.config(
         ecmaVersion: 12,
         sourceType: "module",
       },
-    },
-    rules: {
-      "no-var": "error",
-      "prefer-arrow-callback": "error",
     },
   },
   ...tseslint.configs.recommended,
@@ -47,11 +44,15 @@ export default tseslint.config(
     },
   },
   {
-    ...pluginJest.configs["flat/recommended"],
     files: ["**/*.test.ts"],
-    rules: {
-      ...pluginJest.configs["flat/recommended"].rules,
-    },
+    ...pluginJest.configs["flat/recommended"],
   },
   eslintConfigPrettier,
+  {
+    rules: {
+      "no-var": "error",
+      "prefer-arrow-callback": "error",
+      curly: "error",
+    },
+  }
 );

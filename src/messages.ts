@@ -27,7 +27,7 @@ export const MSG_REPEATED_SET_OPTIONS = (options: APIOptions) =>
   `to the additional call (${JSON.stringify(options)}) will be ignored.`;
 
 export const MSG_IMPORT_LIBRARY_EXISTS = (options: APIOptions) =>
-  `The google.maps.importLibrary function is already defined, and ` +
+  `The google.maps.importLibrary() function is already defined, and ` +
   `@googlemaps/js-api-loader will use the existing function instead of ` +
   `overwriting it. The options passed to setOptions ` +
   `(${JSON.stringify(options)}) will be ignored.`;

@@ -10,11 +10,15 @@ functional approach. This simplifies the API and aligns it with
 [the recommended way](https://developers.google.com/maps/documentation/javascript/load-maps-js-api)
 to load the Google Maps JavaScript API.
 
-- **v1.x:** You would create an instance of the `Loader` class with your configuration and then call methods like `load()` or `importLibrary()` on that instance.
-- **v2.x:** You now use two standalone functions: `setOptions()` to configure the API loader and `importLibrary()` to load specific libraries.
+- **v1.x:** You would create an instance of the `Loader` class with your 
+  configuration and then call methods like `load()` or `importLibrary()` on 
+  that instance.
+- **v2.x:** You now use two standalone functions: `setOptions()` to 
+  configure the API loader and `importLibrary()` to load specific libraries.
 
 Generally, the Loader constructor can be replaced with a call to `setOptions()`,
-and the different methods used to actually load the API
+and the different methods used to actually load the API are all replaced
+with calls to `importLibrary()`.
 
 ## Key Changes
 
@@ -49,7 +53,7 @@ loader.load().then(() => initMap());
 await loader.load();
 initMap();
 
-// c) using callback – same as a)
+// c) using callback
 loader.loadCallback(() => {
   initMap();
 });
@@ -65,7 +69,7 @@ function initMap() {
 
 ### v2.x
 
-The typical use case from versions 2.0 onwards is to use importLibrary to get
+The typical use case from versions 2.0 onwards is to use `importLibrary` to get
 access to the classes and features needed from the Maps JavaScript API.
 
 ```javascript
@@ -128,4 +132,5 @@ function initMap() {
   });
 }
 ```
+
 </details>
