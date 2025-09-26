@@ -1,7 +1,7 @@
 {
   "files": [
     {
-      "path": "dist/index.*.js"
+      "path": "dist/index*.js"
     }
   ],
   "ci": {
