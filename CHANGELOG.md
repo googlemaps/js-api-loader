@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/googlemaps/js-api-loader/compare/v1.16.10...v2.0.0) (2025-09-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* reimplement with updated and simplified API ([#1068](https://github.com/googlemaps/js-api-loader/issues/1068))
+
+### Features
+
+* reimplement with updated and simplified API ([#1068](https://github.com/googlemaps/js-api-loader/issues/1068)) ([107cf47](https://github.com/googlemaps/js-api-loader/commit/107cf476ada8507fa05d5f8039b81a94e0818f29))
+
 ## [1.16.10](https://github.com/googlemaps/js-api-loader/compare/v1.16.9...v1.16.10) (2025-06-26)
 
 
