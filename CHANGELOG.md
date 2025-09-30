@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.1](https://github.com/googlemaps/js-api-loader/compare/v2.0.0...v2.0.1) (2025-09-30)
+
+
+### Bug Fixes
+
+* add `sideEffects` to package.json ([#1084](https://github.com/googlemaps/js-api-loader/issues/1084)) ([2f6bb31](https://github.com/googlemaps/js-api-loader/commit/2f6bb314fffff5608d1e3ab166a3abaed527650e)), closes [#1083](https://github.com/googlemaps/js-api-loader/issues/1083)
+
 ## [2.0.0](https://github.com/googlemaps/js-api-loader/compare/v1.16.10...v2.0.0) (2025-09-29)
 
 
