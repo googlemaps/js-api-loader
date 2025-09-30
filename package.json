@@ -23,6 +23,10 @@
     "require": "./dist/index.cjs",
     "types": "./dist/index.d.ts"
   },
+  "sideEffects": [
+    "dist/index.js",
+    "dist/index.cjs"
+  ],
   "files": [
     "dist/",
     "src/"
