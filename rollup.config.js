@@ -28,26 +28,23 @@ const terserOptions = {
 
 const basePlugins = [
   typescript({
+    declaration: false,
     tsconfig: "./tsconfig.build.json",
-    declaration: true,
-    declarationDir: "dist/types",
   }),
-  nodeResolve({
-    mainFields: ["browser", "jsnext:main", "module", "main"],
-  }),
+  nodeResolve(),
   commonjs(),
-  babel({
-    extensions: [".js", ".ts"],
-    babelHelpers: "bundled",
-  }),
 ];
 
 export default [
-  // UMD and browser (iife) builds
+  // CJS/UMD build
   {
     input: "src/index.ts",
     plugins: [
       ...basePlugins,
+      babel({
+        extensions: [".js", ".ts"],
+        babelHelpers: "bundled",
+      }),
       replace({
         preventAssignment: true,
         values: {
@@ -66,16 +63,12 @@ export default [
       },
     ],
   },
+
   // ESM build
   {
     input: "src/index.ts",
     plugins: [
-      typescript({
-        tsconfig: "./tsconfig.build.json",
-        declaration: false,
-      }),
-      nodeResolve(),
-      commonjs(),
+      ...basePlugins,
       replace({
         preventAssignment: true,
         values: {
@@ -90,9 +83,10 @@ export default [
       exports: "named",
     },
   },
+
   // types
   {
-    input: "./dist/types/index.d.ts",
+    input: "src/index.ts",
     output: [{ file: "dist/index.d.ts", format: "es" }],
     plugins: [dts()],
   },

@@ -35,7 +35,7 @@
     "prepack": "npm run build",
     "lint": "eslint .",
     "test": "NODE_OPTIONS='--experimental-vm-modules --disable-warning=ExperimentalWarning' jest ./src",
-    "build": "rm -rf ./dist && rollup -c && rm -rf ./dist/types",
+    "build": "rm -rf ./dist && rollup -c",
     "format": "eslint . --fix"
   },
   "dependencies": {
@@ -76,5 +76,9 @@
   },
   "prettier": {
     "trailingComma": "es5"
-  }
+  },
+  "browserslist": [
+    "last 2 versions",
+    "not dead"
+  ]
 }
