@@ -10,10 +10,10 @@ functional approach. This simplifies the API and aligns it with
 [the recommended way](https://developers.google.com/maps/documentation/javascript/load-maps-js-api)
 to load the Google Maps JavaScript API.
 
-- **v1.x:** You would create an instance of the `Loader` class with your 
-  configuration and then call methods like `load()` or `importLibrary()` on 
+- **v1.x:** You would create an instance of the `Loader` class with your
+  configuration and then call methods like `load()` or `importLibrary()` on
   that instance.
-- **v2.x:** You now use two standalone functions: `setOptions()` to 
+- **v2.x:** You now use two standalone functions: `setOptions()` to
   configure the API loader and `importLibrary()` to load specific libraries.
 
 Generally, the Loader constructor can be replaced with a call to `setOptions()`,
@@ -22,13 +22,13 @@ with calls to `importLibrary()`.
 
 ## Key Changes
 
-| Feature                | v1.x (`Loader` class)                | v2.x (functions)                        |
-| :--------------------- | :----------------------------------- | :-------------------------------------- |
-| **Initialization**     | `new Loader({ apiKey: '...', ... })` | `setOptions({ key: '...', ... })`       |
-| **Loading Libraries**  | `loader.importLibrary('maps')`       | `importLibrary('maps')`                 |
-| **Legacy Loading**     | `loader.load()`                      | Removed. Use `importLibrary()` instead. |
-| **API Key Parameters** | `apiKey`                             | `key`                                   |
-|                        | `version`                            | `v`                                     |
+| Feature                | v1.x (`Loader` class)                                | v2.x (functions)                        |
+| :--------------------- | :--------------------------------------------------- | :-------------------------------------- |
+| **Initialization**     | `new Loader({ apiKey: '...', ... })`                 | `setOptions({ key: '...', ... })`       |
+| **Loading Libraries**  | option `libraries` or `loader.importLibrary('maps')` | `importLibrary('maps')`                 |
+| **Legacy Loading**     | `loader.load()`                                      | Removed. Use `importLibrary()` instead. |
+| **API Key Parameters** | `apiKey`                                             | `key`                                   |
+|                        | `version`                                            | `v`                                     |
 
 ## Typical Use Cases Compared
 
@@ -70,7 +70,8 @@ function initMap() {
 ### v2.x
 
 The typical use case from versions 2.0 onwards is to use `importLibrary` to get
-access to the classes and features needed from the Maps JavaScript API.
+access to the classes and features needed from the Maps JavaScript API,
+when they are actually needed.
 
 ```javascript
 import { setOptions, importLibrary } from "@googlemaps/js-api-loader";
@@ -82,6 +83,7 @@ setOptions({
 
 try {
   const { Map } = await importLibrary("maps");
+
   // Use the maps library
   const map = new Map(document.getElementById("map"), {
     center: { lat: -34.397, lng: 150.644 },
@@ -92,7 +94,7 @@ try {
 }
 ```
 
-However, all the examples from the 1.x version can also be written based
+However, all the examples from the 1.x version can still be written based
 on the 2.x version, since – besides returning the library object – the
 `importLibrary()` function also populates the global `google.maps` namespace.
 
@@ -106,23 +108,26 @@ setOptions({
   key: "YOUR_API_KEY",
   v: "weekly",
 
-  // Libraries can still be specified in `setOptions`. This makes sure that
-  // all libraries are available when the importLibrary promise is resolved.
-  libraries: ["maps", "places"],
+  // Libraries can still be specified in `setOptions`, but this is only
+  // preloading them. You still need to call `importLibrary` to fully load
+  // them.
+  libraries: ["places"],
 });
+
+// load all required libraries in parallel
+const librariesPromise = Promise.all([
+  importLibrary("maps"),
+  importLibrary("places"),
+]);
 
 // The examples from above, rewritten with v2.0:
 //
-// a) using promises (note: which library is imported in these cases makes
-//    little difference: the libraries were specified in `setOptions` and
-//    we're not using the returned value)
-importLibrary("core").then(() => initMap());
+// a) using promises and c) using callbacks
+librariesPromise.then(() => initMap());
 
 // b) using load() with async/await:
-await importLibrary("core");
+await librariesPromise;
 initMap();
-
-// c) using a callback – this is identical to a)
 
 function initMap() {
   // Use the global google.maps namespace once loading is complete

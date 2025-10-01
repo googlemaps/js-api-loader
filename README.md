@@ -118,7 +118,7 @@ Below is a short summary of the accepted options, see the
 - `v: string`: The version of the Maps JavaScript API to load.
 - `language: string`: The language to use.
 - `region: string`: The region code to use.
-- `libraries: string[]`: Additional libraries to load.
+- `libraries: string[]`: Additional libraries to preload.
 - `authReferrerPolicy: string`: Set the referrer policy for the API requests.
 - `mapIds: string[]`: An array of map IDs to preload.
 - `channel: string`: Can be used to track your usage.
