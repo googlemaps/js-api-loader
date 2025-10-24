@@ -34,7 +34,9 @@
   "scripts": {
     "prepack": "npm run build",
     "lint": "eslint .",
-    "test": "NODE_OPTIONS='--experimental-vm-modules --disable-warning=ExperimentalWarning' jest ./src",
+    "test": "npm run lint && npm run test:unit && npm run test:bundlers",
+    "test:unit": "NODE_OPTIONS='--experimental-vm-modules --disable-warning=ExperimentalWarning' jest ./src",
+    "test:bundlers": "cd test-bundlers && ./test-all.sh",
     "build": "rm -rf ./dist && rollup -c",
     "format": "eslint . --fix"
   },
