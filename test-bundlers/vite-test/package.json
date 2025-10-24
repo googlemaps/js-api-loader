@@ -1,0 +1,16 @@
+{
+  "name": "vite-test",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "build:dev": "NODE_ENV=development vite build --mode development"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  },
+  "dependencies": {
+    "@googlemaps/js-api-loader": "file:../../googlemaps-js-api-loader-2.0.1.tgz"
+  }
+}

@@ -67,15 +67,7 @@ export default [
   // ESM build
   {
     input: "src/index.ts",
-    plugins: [
-      ...basePlugins,
-      replace({
-        preventAssignment: true,
-        values: {
-          __DEV__: 'process.env.NODE_ENV !== "production"',
-        },
-      }),
-    ],
+    plugins: [...basePlugins],
     output: {
       file: "dist/index.js",
       format: "esm",

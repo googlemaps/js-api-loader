@@ -44,8 +44,9 @@ export const MSG_SCRIPT_ELEMENT_EXISTS =
   "problems using the API. Make sure to remove the script " +
   "loading the API.";
 
-// The __DEV__ global variable is set by rollup during the build process.
-declare const __DEV__: boolean;
+// Development mode check - bundlers will replace process.env.NODE_ENV at build time
+declare const process: { env: { NODE_ENV?: string } };
+const __DEV__ = process.env.NODE_ENV !== 'production';
 
 export const logError = (message: string) => {
   console.error(`[@googlemaps/js-api-loader] ${message}`);

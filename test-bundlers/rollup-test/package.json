@@ -1,0 +1,19 @@
+{
+  "name": "rollup-test",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "rollup -c",
+    "build:dev": "rollup -c rollup.config.dev.js"
+  },
+  "devDependencies": {
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-replace": "^5.0.5",
+    "@rollup/plugin-terser": "^0.4.4",
+    "rollup": "^4.6.1"
+  },
+  "dependencies": {
+    "@googlemaps/js-api-loader": "file:../../googlemaps-js-api-loader-2.0.1.tgz"
+  }
+}

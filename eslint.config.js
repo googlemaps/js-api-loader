@@ -6,7 +6,7 @@ import { defineConfig } from "eslint/config";
 
 export default defineConfig(
   {
-    ignores: ["dist/", "node_modules/", "src/bootstrap.js"],
+    ignores: ["**/dist/", "**/node_modules/", "src/bootstrap.js"],
   },
   {
     languageOptions: {
