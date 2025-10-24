@@ -59,8 +59,9 @@ interface APILibraryMap {
 
 type APILibraryName = keyof APILibraryMap;
 
-// The __DEV__ global variable is set by rollup during the build process.
-declare const __DEV__: boolean;
+// Development mode check - bundlers will replace process.env.NODE_ENV at build time
+declare const process: { env: { NODE_ENV?: string } };
+const __DEV__ = process.env.NODE_ENV !== 'production';
 
 let setOptionsWasCalled_ = false;
 
