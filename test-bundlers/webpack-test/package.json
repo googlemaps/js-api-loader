@@ -11,6 +11,6 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "@googlemaps/js-api-loader": "file:../../googlemaps-js-api-loader-2.0.1.tgz"
+    "@googlemaps/js-api-loader": "*"
   }
 }
