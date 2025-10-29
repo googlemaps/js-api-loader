@@ -11,6 +11,6 @@
     "vite": "^5.0.0"
   },
   "dependencies": {
-    "@googlemaps/js-api-loader": "file:../../googlemaps-js-api-loader-2.0.1.tgz"
+    "@googlemaps/js-api-loader": "*"
   }
 }

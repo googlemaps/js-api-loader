@@ -34,7 +34,7 @@ for bundler in vite webpack rollup ; do
     # Install dependencies
     echo "  Installing dependencies for $bundler..."
     npm install --silent
-    npm install --silent "../../$TARBALL"
+    npm install --silent --no-save "../../$TARBALL"
   )
 done
 
