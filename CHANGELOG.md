@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.0.2](https://github.com/googlemaps/js-api-loader/compare/v2.0.1...v2.0.2) (2025-10-29)
+
+
+### Bug Fixes
+
+* replace `__DEV__` with `process.env.NODE_ENV` for environment checks ([e7279fe](https://github.com/googlemaps/js-api-loader/commit/e7279feee9739a46becfc9c36e3fc9e3c674d0ee))
+
 ## [2.0.1](https://github.com/googlemaps/js-api-loader/compare/v2.0.0...v2.0.1) (2025-09-30)
 
 
