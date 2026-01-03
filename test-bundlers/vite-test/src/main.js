@@ -2,8 +2,8 @@ import { importLibrary, setOptions } from "@googlemaps/js-api-loader";
 
 // Configure the Google Maps API
 setOptions({
-  apiKey: "YOUR_API_KEY",
-  version: "weekly",
+  key: "YOUR_API_KEY",
+  v: "weekly",
 });
 
 // Initialize the map
