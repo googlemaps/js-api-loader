@@ -100,11 +100,9 @@ export function setOptions(options: APIOptions) {
 export async function importLibrary<TLibraryName extends APILibraryName>(
   libraryName: TLibraryName
 ): Promise<APILibraryMap[TLibraryName]>;
-
 export async function importLibrary(
-  ...parameters: Parameters<typeof google.maps.importLibrary>
-): ReturnType<typeof google.maps.importLibrary>;
-
+  libraryName: string
+): Promise<unknown>;
 export async function importLibrary(libraryName: string): Promise<unknown> {
   if (!setOptionsWasCalled_) {
     logDevWarning(MSG_SET_OPTIONS_NOT_CALLED);
@@ -116,7 +114,7 @@ export async function importLibrary(libraryName: string): Promise<unknown> {
 
   return (await google.maps.importLibrary(
     libraryName
-  )) as APILibraryMap[keyof APILibraryMap];
+  ));
 }
 
 /**
