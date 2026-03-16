@@ -44,6 +44,10 @@ export const MSG_SCRIPT_ELEMENT_EXISTS =
   "problems using the API. Make sure to remove the script " +
   "loading the API.";
 
+export const MSG_TRUSTED_TYPES_POLICY_FAILED = (error: unknown) =>
+  `Failed to create TrustedTypes policy: ${error instanceof Error ? error.message : String(error)}. ` +
+  `Using fallback (this is normal if TrustedTypes is not supported or CSP restricts policy creation).`;
+
 // Development mode check - bundlers will replace process.env.NODE_ENV at build time
 declare const process: { env: { NODE_ENV?: string } };
 const __DEV__ = process.env.NODE_ENV !== 'production';
