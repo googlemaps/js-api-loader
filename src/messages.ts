@@ -48,6 +48,10 @@ export const MSG_API_KEY_USED =
   "The 'apiKey' parameter was used in setOptions(), but 'key' is the correct " +
   "parameter name. Please update your configuration.";
 
+export const MSG_TRUSTED_TYPES_POLICY_FAILED = (error: unknown) =>
+  `Failed to create TrustedTypes policy: ${error instanceof Error ? error.message : String(error)}. ` +
+  `Using fallback (this is normal if TrustedTypes is not supported or CSP restricts policy creation).`;
+
 // Development mode check - bundlers will replace process.env.NODE_ENV at build time
 declare const process: { env: { NODE_ENV?: string } };
 const __DEV__ = process.env.NODE_ENV !== 'production';
