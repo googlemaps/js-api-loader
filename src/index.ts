@@ -23,6 +23,7 @@ import {
   MSG_SCRIPT_ELEMENT_EXISTS,
   MSG_REPEATED_SET_OPTIONS,
   MSG_SET_OPTIONS_NOT_CALLED,
+  MSG_API_KEY_USED,
 } from "./messages.js";
 
 export type APIOptions = {
@@ -80,6 +81,14 @@ export function setOptions(options: APIOptions) {
     logDevWarning(MSG_REPEATED_SET_OPTIONS(options));
 
     return;
+  }
+
+  if ((options as Record<string, unknown>).apiKey) {
+    logDevWarning(MSG_API_KEY_USED);
+
+    if (!options.key) {
+      options.key = (options as Record<string, unknown>).apiKey as string;
+    }
   }
 
   installImportLibrary_(options);
