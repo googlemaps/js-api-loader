@@ -46,7 +46,7 @@ export const MSG_SCRIPT_ELEMENT_EXISTS =
 
 // Development mode check - bundlers will replace process.env.NODE_ENV at build time
 declare const process: { env: { NODE_ENV?: string } };
-const __DEV__ = process.env.NODE_ENV !== 'production';
+const __DEV__ = process.env.NODE_ENV !== "production";
 
 export const logError = (message: string) => {
   console.error(`[@googlemaps/js-api-loader] ${message}`);

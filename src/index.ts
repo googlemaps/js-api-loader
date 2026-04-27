@@ -37,31 +37,9 @@ export type APIOptions = {
   solutionChannel?: string;
 };
 
-// FIXME: remove the second importLibrary signature and ApiLibraryMap interface
-//   once proper typings are implemented in @types/google.maps
-//   (https://issuetracker.google.com/issues/423116767)
-
-interface APILibraryMap {
-  core: google.maps.CoreLibrary;
-  drawing: google.maps.DrawingLibrary;
-  elevation: google.maps.ElevationLibrary;
-  geocoding: google.maps.GeocodingLibrary;
-  geometry: google.maps.GeometryLibrary;
-  journeySharing: google.maps.JourneySharingLibrary;
-  maps: google.maps.MapsLibrary;
-  maps3d: google.maps.Maps3DLibrary;
-  marker: google.maps.MarkerLibrary;
-  places: google.maps.PlacesLibrary;
-  routes: google.maps.RoutesLibrary;
-  streetView: google.maps.StreetViewLibrary;
-  visualization: google.maps.VisualizationLibrary;
-}
-
-type APILibraryName = keyof APILibraryMap;
-
 // Development mode check - bundlers will replace process.env.NODE_ENV at build time
 declare const process: { env: { NODE_ENV?: string } };
-const __DEV__ = process.env.NODE_ENV !== 'production';
+const __DEV__ = process.env.NODE_ENV !== "production";
 
 let setOptionsWasCalled_ = false;
 
@@ -92,15 +70,10 @@ export function setOptions(options: APIOptions) {
  * The first call to this function will start actually loading the Maps
  * JavaScript API.
  *
- * @param libraryName The name of the library to load.
  * @returns A promise that resolves with the loaded library. In case of an
  *   error (due to poor network conditions, browser extensions, etc.), the
  *   returned promise is rejected with an error.
  */
-export async function importLibrary<TLibraryName extends APILibraryName>(
-  libraryName: TLibraryName
-): Promise<APILibraryMap[TLibraryName]>;
-
 export async function importLibrary(
   ...parameters: Parameters<typeof google.maps.importLibrary>
 ): ReturnType<typeof google.maps.importLibrary>;
@@ -114,9 +87,7 @@ export async function importLibrary(libraryName: string): Promise<unknown> {
     throw new Error("google.maps.importLibrary is not installed.");
   }
 
-  return (await google.maps.importLibrary(
-    libraryName
-  )) as APILibraryMap[keyof APILibraryMap];
+  return await google.maps.importLibrary(libraryName);
 }
 
 /**
