@@ -44,6 +44,10 @@ export const MSG_SCRIPT_ELEMENT_EXISTS =
   "problems using the API. Make sure to remove the script " +
   "loading the API.";
 
+export const MSG_API_KEY_USED =
+  "The 'apiKey' parameter was used in setOptions(), but 'key' is the correct " +
+  "parameter name. Please update your configuration.";
+
 // Development mode check - bundlers will replace process.env.NODE_ENV at build time
 declare const process: { env: { NODE_ENV?: string } };
 const __DEV__ = process.env.NODE_ENV !== "production";

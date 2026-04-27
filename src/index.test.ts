@@ -16,6 +16,7 @@
 
 import { jest } from "@jest/globals";
 import type { bootstrap } from "./bootstrap.js";
+import type { APIOptions } from "./index.js";
 
 type ImportLibraryMock = jest.Mock<typeof google.maps.importLibrary>;
 
@@ -79,6 +80,17 @@ describe("importLibrary(): basic operation", () => {
     await importLibrary("maps");
 
     expect(mockBootstrap).toHaveBeenCalledWith(options);
+  });
+
+  it("should log a warning when apiKey is used and use it as key", async () => {
+    const { setOptions } = await import("./index.js");
+    const { logDevWarning, MSG_API_KEY_USED } = await import("./messages.js");
+
+    const options = { apiKey: "foo" } as unknown as APIOptions;
+    setOptions(options);
+
+    expect(logDevWarning).toHaveBeenCalledWith(MSG_API_KEY_USED);
+    expect(options.key).toBe("foo");
   });
 
   it("should return the value from importLibrary", async () => {
