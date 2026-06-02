@@ -37,11 +37,9 @@ export type APIOptions = {
   solutionChannel?: string;
 };
 
-// FIXME: remove the second importLibrary signature and ApiLibraryMap interface
-//   once proper typings are implemented in @types/google.maps
-//   (https://issuetracker.google.com/issues/423116767)
-
-interface APILibraryMap {
+export type LibraryMap = {
+  addressValidation: google.maps.AddressValidationLibrary;
+  airQuality: google.maps.AirQualityLibrary;
   core: google.maps.CoreLibrary;
   drawing: google.maps.DrawingLibrary;
   elevation: google.maps.ElevationLibrary;
@@ -55,13 +53,13 @@ interface APILibraryMap {
   routes: google.maps.RoutesLibrary;
   streetView: google.maps.StreetViewLibrary;
   visualization: google.maps.VisualizationLibrary;
-}
+};
 
-type APILibraryName = keyof APILibraryMap;
+type LibraryName = keyof LibraryMap;
 
 // Development mode check - bundlers will replace process.env.NODE_ENV at build time
 declare const process: { env: { NODE_ENV?: string } };
-const __DEV__ = process.env.NODE_ENV !== 'production';
+const __DEV__ = process.env.NODE_ENV !== "production";
 
 let setOptionsWasCalled_ = false;
 
@@ -97,13 +95,9 @@ export function setOptions(options: APIOptions) {
  *   error (due to poor network conditions, browser extensions, etc.), the
  *   returned promise is rejected with an error.
  */
-export async function importLibrary<TLibraryName extends APILibraryName>(
+export async function importLibrary<TLibraryName extends LibraryName>(
   libraryName: TLibraryName
-): Promise<APILibraryMap[TLibraryName]>;
-
-export async function importLibrary(
-  ...parameters: Parameters<typeof google.maps.importLibrary>
-): ReturnType<typeof google.maps.importLibrary>;
+): Promise<LibraryMap[TLibraryName]>;
 
 export async function importLibrary(libraryName: string): Promise<unknown> {
   if (!setOptionsWasCalled_) {
@@ -116,7 +110,7 @@ export async function importLibrary(libraryName: string): Promise<unknown> {
 
   return (await google.maps.importLibrary(
     libraryName
-  )) as APILibraryMap[keyof APILibraryMap];
+  )) as LibraryMap[keyof LibraryMap];
 }
 
 /**
