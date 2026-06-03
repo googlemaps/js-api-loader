@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.1.0](https://github.com/googlemaps/js-api-loader/compare/v2.0.2...v2.1.0) (2026-06-03)
+
+
+### Features
+
+* use TrustedTypes policy to create script URL ([#1217](https://github.com/googlemaps/js-api-loader/issues/1217)) ([b370586](https://github.com/googlemaps/js-api-loader/commit/b370586ffc62822fbf8c48b5312fa9c5a2c2ee3b))
+
+
+### Bug Fixes
+
+* add warning message about common "apiKey" misspelling ([#1228](https://github.com/googlemaps/js-api-loader/issues/1228)) ([9bdc3f3](https://github.com/googlemaps/js-api-loader/commit/9bdc3f3c8432dd538644c33c062e0b24145de814))
+* update dependencies and google maps types ([#1229](https://github.com/googlemaps/js-api-loader/issues/1229)) ([a76955a](https://github.com/googlemaps/js-api-loader/commit/a76955aa46d55ba54fc0ba25603676b47de03191))
+
 ## [2.0.2](https://github.com/googlemaps/js-api-loader/compare/v2.0.1...v2.0.2) (2025-10-29)
 
 
