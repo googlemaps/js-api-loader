@@ -28,6 +28,14 @@ export default defineConfig(
       "@typescript-eslint/ban-ts-comment": "off",
       "@typescript-eslint/no-empty-function": "warn",
       "@typescript-eslint/member-ordering": "warn",
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
       "@typescript-eslint/explicit-member-accessibility": [
         "warn",
         {

@@ -49,7 +49,7 @@ beforeEach(() => {
   jest.resetModules();
   jest.clearAllMocks();
 
-  delete globalThis.google;
+  delete (globalThis as { google?: unknown }).google;
 });
 
 describe("importLibrary(): basic operation", () => {

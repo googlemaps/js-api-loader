@@ -29,13 +29,12 @@ echo ""
 for bundler in vite webpack rollup ; do
   dir="$SCRIPT_DIR/${bundler}-test"
 
+  echo "  Installing dependencies for $bundler..."
   (
-    cd $dir
-    # Install dependencies
-    echo "  Installing dependencies for $bundler..."
-    npm install --silent
-    npm install --silent --no-save "../../$TARBALL"
-  )
+    cd "$dir" || exit 1
+    npm install --silent || { echo "Failed to install dependencies for $bundler"; exit 1; }
+    npm install --silent --no-save "../../$TARBALL" || { echo "Failed to install tarball for $bundler"; exit 1; }
+  ) || exit 1
 done
 
 echo ""
@@ -131,8 +130,25 @@ echo ""
 echo "======================================"
 if [ $NUM_FAILED -eq 0 ]; then
   echo -e "${GREEN}✓ All bundler tests passed!${NC}"
-  exit 0
 else
   echo -e "${RED}✗ $NUM_FAILED bundler test(s) failed${NC}"
+fi
+
+# Cleanup
+echo ""
+echo "🧹 Cleaning up..."
+for bundler in vite webpack rollup ; do
+  dir="$SCRIPT_DIR/${bundler}-test"
+  echo "  Cleaning $bundler-test..."
+  (cd "$dir" && git clean -qfdx)
+done
+
+cd "$ROOT_DIR"
+rm -f "$TARBALL"
+echo "  Removed $TARBALL"
+
+if [ $NUM_FAILED -eq 0 ]; then
+  exit 0
+else
   exit 1
 fi
