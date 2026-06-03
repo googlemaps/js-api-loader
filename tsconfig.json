@@ -10,7 +10,8 @@
     "target": "es2020",
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
-    "typeRoots": ["./node_modules/@types"]
+    "typeRoots": ["./node_modules/@types"],
+    "types": ["google.maps", "jest", "trusted-types"]
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "./dist"]

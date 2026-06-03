@@ -48,9 +48,12 @@ export const MSG_API_KEY_USED =
   "The 'apiKey' parameter was used in setOptions(), but 'key' is the correct " +
   "parameter name. Please update your configuration.";
 
-export const MSG_TRUSTED_TYPES_POLICY_FAILED = (error: unknown) =>
-  `Failed to create TrustedTypes policy: ${error instanceof Error ? error.message : String(error)}. ` +
-  `Using fallback (this is normal if TrustedTypes is not supported or CSP restricts policy creation).`;
+export const MSG_TRUSTED_TYPES_POLICY_FAILED = (policyName: string, error: unknown) =>
+  `Failed to create Trusted Types policy "${policyName}": ${error instanceof Error ? error.message : String(error)}.\n\n` +
+  `If your Content Security Policy uses "require-trusted-types-for 'script'", ` +
+  `allow this policy with "trusted-types ${policyName} google-maps-api-loader google-maps-api#html lit-html". ` +
+  `The "google-maps-api-loader", "lit-html", and "google-maps-api#html" policies are required for full Maps JavaScript API execution. ` +
+  `Falling back to a string script URL.`;
 
 // Development mode check - bundlers will replace process.env.NODE_ENV at build time
 declare const process: { env: { NODE_ENV?: string } };

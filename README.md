@@ -153,6 +153,28 @@ The following libraries are available:
 - `addressValidation`: [`google.maps.AddressValidationLibrary`](https://developers.google.com/maps/documentation/javascript/reference/library-interfaces#AddressValidationLibrary)
 - `drawing`: [`google.maps.DrawingLibrary`](https://developers.google.com/maps/documentation/javascript/reference/library-interfaces#DrawingLibrary) (deprecated)
 
+### Content Security Policy and Trusted Types
+
+The loader supports pages that enforce
+[`require-trusted-types-for 'script'`](https://developer.mozilla.org/docs/Web/HTTP/Headers/Content-Security-Policy/require-trusted-types-for).
+When Trusted Types are available, the loader creates a policy named
+`@googlemaps/js-api-loader` and uses it to assign the Google Maps JavaScript API
+script URL.
+
+If your page uses a `trusted-types` CSP directive, allow this policy name:
+
+```http
+Content-Security-Policy: require-trusted-types-for 'script'; trusted-types @googlemaps/js-api-loader google-maps-api-loader google-maps-api#html lit-html
+```
+
+`@googlemaps/js-api-loader` is used by this package. `google-maps-api-loader`
+`google-maps-api#html`, and `lit-html` are used by the Maps JavaScript API
+script internally during execution.
+
+If the policy name is not allowed, the loader logs a development warning and
+falls back to assigning a string URL. On pages that enforce
+`require-trusted-types-for 'script'`, the browser will block that fallback.
+
 ## Migrating from v1 to v2
 
 See the [migration guide](MIGRATION.md).

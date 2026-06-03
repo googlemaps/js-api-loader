@@ -3,25 +3,38 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { logDevNotice, MSG_TRUSTED_TYPES_POLICY_FAILED } from "./messages.js";
+import type { TrustedTypePolicyFactory } from "trusted-types";
 
-// Try to create a TrustedTypes policy if supported and allowed by CSP.
-// Falls back to a simple passthrough if:
-// - Trusted Types is not supported
-// - CSP doesn't allow this policy name
-// - Policy with this name already exists
+import { logDevWarning, MSG_TRUSTED_TYPES_POLICY_FAILED } from "./messages.js";
+
+const TRUSTED_TYPES_POLICY_NAME = "@googlemaps/js-api-loader";
+type TrustedTypesWindow = Window & {
+  trustedTypes?: TrustedTypePolicyFactory;
+};
+
+// Try to create a Trusted Types policy when supported. Falls back to a string
+// passthrough when Trusted Types is unsupported, blocked by CSP, or already
+// registered.
 
 let policy: {
   createScriptURL: (url: string) => string | TrustedScriptURL;
 };
 
-try {
-  policy = window.trustedTypes.createPolicy("@googlemaps/js-api-loader", {
-    createScriptURL: (url: string) => url,
-  });
-} catch (e) {
-  logDevNotice(MSG_TRUSTED_TYPES_POLICY_FAILED(e));
+const trustedTypes = (window as TrustedTypesWindow).trustedTypes;
+
+if (!trustedTypes) {
   policy = { createScriptURL: (url: string) => url };
+} else {
+  try {
+    policy = trustedTypes.createPolicy(TRUSTED_TYPES_POLICY_NAME, {
+      createScriptURL: (url: string) => url,
+    });
+  } catch (e) {
+    logDevWarning(
+      MSG_TRUSTED_TYPES_POLICY_FAILED(TRUSTED_TYPES_POLICY_NAME, e)
+    );
+    policy = { createScriptURL: (url: string) => url };
+  }
 }
 
 export function setScriptSrc(script: HTMLScriptElement, src: string): void {
