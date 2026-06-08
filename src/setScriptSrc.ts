@@ -8,23 +8,34 @@ import type { TrustedTypePolicyFactory } from "trusted-types";
 import { logDevWarning, MSG_TRUSTED_TYPES_POLICY_FAILED } from "./messages.js";
 
 const TRUSTED_TYPES_POLICY_NAME = "@googlemaps/js-api-loader";
-type TrustedTypesWindow = Window & {
+interface TrustedTypesGlobals {
   trustedTypes?: TrustedTypePolicyFactory;
-};
+}
 
-// Try to create a Trusted Types policy when supported. Falls back to a string
-// passthrough when Trusted Types is unsupported, blocked by CSP, or already
-// registered.
-
-let policy: {
+type Policy = {
   createScriptURL: (url: string) => string | TrustedScriptURL;
 };
 
-const trustedTypes = (window as TrustedTypesWindow).trustedTypes;
+const fallbackPolicy: Policy = { createScriptURL: (url: string) => url };
 
-if (!trustedTypes) {
-  policy = { createScriptURL: (url: string) => url };
-} else {
+let policy: Policy | undefined;
+
+/*
+ * Tries to create a Trusted Types policy when supported. Falls back to a string passthrough
+ * when Trusted Types is unsupported, blocked by CSP, or already registered.
+ */
+function getPolicy(): Policy {
+  if (policy) {
+    return policy;
+  }
+
+  const trustedTypes = (globalThis as TrustedTypesGlobals).trustedTypes;
+
+  if (!trustedTypes) {
+    policy = fallbackPolicy;
+    return policy;
+  }
+
   try {
     policy = trustedTypes.createPolicy(TRUSTED_TYPES_POLICY_NAME, {
       createScriptURL: (url: string) => url,
@@ -33,10 +44,12 @@ if (!trustedTypes) {
     logDevWarning(
       MSG_TRUSTED_TYPES_POLICY_FAILED(TRUSTED_TYPES_POLICY_NAME, e)
     );
-    policy = { createScriptURL: (url: string) => url };
+    policy = fallbackPolicy;
   }
+
+  return policy;
 }
 
 export function setScriptSrc(script: HTMLScriptElement, src: string): void {
-  script.src = policy.createScriptURL(src) as string;
+  script.src = getPolicy().createScriptURL(src) as string;
 }
