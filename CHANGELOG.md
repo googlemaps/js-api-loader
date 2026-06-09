@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.1](https://github.com/googlemaps/js-api-loader/compare/v2.1.0...v2.1.1) (2026-06-09)
+
+
+### Bug Fixes
+
+* avoid unconditional use of window in policy creation logic ([#1234](https://github.com/googlemaps/js-api-loader/issues/1234)) ([2db1e08](https://github.com/googlemaps/js-api-loader/commit/2db1e08fa7b3e6bedbb1eabe395df049567c306a))
+
 ## [2.1.0](https://github.com/googlemaps/js-api-loader/compare/v2.0.2...v2.1.0) (2026-06-03)
 
 
