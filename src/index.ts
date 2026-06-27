@@ -38,25 +38,7 @@ export type APIOptions = {
   solutionChannel?: string;
 };
 
-export type LibraryMap = {
-  addressValidation: google.maps.AddressValidationLibrary;
-  airQuality: google.maps.AirQualityLibrary;
-  core: google.maps.CoreLibrary;
-  drawing: google.maps.DrawingLibrary;
-  elevation: google.maps.ElevationLibrary;
-  geocoding: google.maps.GeocodingLibrary;
-  geometry: google.maps.GeometryLibrary;
-  journeySharing: google.maps.JourneySharingLibrary;
-  maps: google.maps.MapsLibrary;
-  maps3d: google.maps.Maps3DLibrary;
-  marker: google.maps.MarkerLibrary;
-  places: google.maps.PlacesLibrary;
-  routes: google.maps.RoutesLibrary;
-  streetView: google.maps.StreetViewLibrary;
-  visualization: google.maps.VisualizationLibrary;
-};
-
-type LibraryName = keyof LibraryMap;
+type LibraryName = keyof google.maps.ImportLibraryMap;
 
 // Development mode check - bundlers will replace process.env.NODE_ENV at build time
 declare const process: { env: { NODE_ENV?: string } };
@@ -106,7 +88,7 @@ export function setOptions(options: APIOptions) {
  */
 export async function importLibrary<TLibraryName extends LibraryName>(
   libraryName: TLibraryName
-): Promise<LibraryMap[TLibraryName]>;
+): Promise<google.maps.ImportLibraryMap[TLibraryName]>;
 
 export async function importLibrary(libraryName: string): Promise<unknown> {
   if (!setOptionsWasCalled_) {
@@ -119,7 +101,7 @@ export async function importLibrary(libraryName: string): Promise<unknown> {
 
   return (await google.maps.importLibrary(
     libraryName
-  )) as LibraryMap[keyof LibraryMap];
+  )) as google.maps.ImportLibraryMap[LibraryName];
 }
 
 /**
