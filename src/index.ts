@@ -38,6 +38,9 @@ export type APIOptions = {
   solutionChannel?: string;
 };
 
+/** @deprecated use `google.maps.ImportLibraryMap` from `@types/google.maps` instead */
+export type LibraryMap = google.maps.ImportLibraryMap;
+
 type LibraryName = keyof google.maps.ImportLibraryMap;
 
 // Development mode check - bundlers will replace process.env.NODE_ENV at build time
