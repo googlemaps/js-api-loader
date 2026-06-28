@@ -42,7 +42,7 @@
     "format": "eslint . --fix"
   },
   "dependencies": {
-    "@types/google.maps": "^3.53.1"
+    "@types/google.maps": "^3.65.2"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.9.5",
