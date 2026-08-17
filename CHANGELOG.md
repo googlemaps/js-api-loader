@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.2](https://github.com/googlemaps/js-api-loader/compare/v2.1.1...v2.1.2) (2026-08-17)
+
+
+### Bug Fixes
+
+* update dependencies and refactor library typing to use `google.maps.ImportLibraryMap` ([#1247](https://github.com/googlemaps/js-api-loader/issues/1247)) ([412f177](https://github.com/googlemaps/js-api-loader/commit/412f177a1c375faac21e7b295d63aee31d65c482))
+
 ## [2.1.1](https://github.com/googlemaps/js-api-loader/compare/v2.1.0...v2.1.1) (2026-06-09)
 
 
