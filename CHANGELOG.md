@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.1.3](https://github.com/googlemaps/js-api-loader/compare/v2.1.2...v2.1.3) (2026-09-22)
+
+
+### Bug Fixes
+
+* add allowScripts block to package.json ([#1302](https://github.com/googlemaps/js-api-loader/issues/1302)) ([0c794c8](https://github.com/googlemaps/js-api-loader/commit/0c794c8da8314333c2b8fb3cd6da6e59bd026ca0))
+
 ## [2.1.2](https://github.com/googlemaps/js-api-loader/compare/v2.1.1...v2.1.2) (2026-09-14)
 
 
