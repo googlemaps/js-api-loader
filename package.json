@@ -81,6 +81,12 @@
   "prettier": {
     "trailingComma": "es5"
   },
+  "allowScripts": {
+    "@parcel/watcher": false,
+    "core-js": false,
+    "core-js-pure": false,
+    "unrs-resolver": false
+  },
   "browserslist": [
     "last 2 versions",
     "not dead"
