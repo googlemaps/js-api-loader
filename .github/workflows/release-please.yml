@@ -70,6 +70,25 @@ jobs:
         if: ${{ steps.release.outputs.release_created }}
         uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3
 
+      - name: Clean up stale releases from staging repo
+        run: |
+          # clean up stale releases from staging repo
+          packages=$(gcloud artifacts packages list \
+              --project="oss-exit-gate-prod" \
+              --location="us" \
+              --repository="js-api-loader--npm" \
+              --format="value(name)" 2>/dev/null)
+
+          echo "${packages}" | xargs -r -I {} sh -c '
+              package_name=$(basename "{}")
+              echo "Deleting package: $package_name..."
+              gcloud artifacts packages delete "{}" \
+                  --project="\'"oss-exit-gate-prod"\'" \
+                  --location="\'"us"\'" \
+                  --repository="\'js-api-loader--npm\'" \
+                  --quiet
+          '
+
       - name: Stage to Artifact Registry and trigger OSS Exit Gate
         if: ${{ steps.release.outputs.release_created }}
         env:
